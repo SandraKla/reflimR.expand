@@ -1,0 +1,67 @@
+---
+title: "reflimR.Expand: Advanced Reference Limit Estimation Using Routine Laboratory Data"
+
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{reflimR.Expand: Advanced Reference Limit Estimation Using Routine Laboratory Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+1.  [Introduction](#introduction)
+2.  [Installation](#installation)
+3.  [Usage](#usage)
+4.  [References](#references)
+
+# Introduction <a name = "introduction"></a> {#introduction}
+
+Reference intervals play a crucial role in the medical interpretation and statistical evaluation of laboratory results. By definition, reference intervals include the central 95% of results measured in non-diseased reference individuals [1, 2].
+
+The *reflimR.expand* package provides a powerful extension to the existing *reflimR* package. While *reflimR* focuses on estimating reference intervals from laboratory data, *reflimR.expand* adds methods specifically designed to address challenges in real-world data, such as:
+
+* handling values below the limit of detection (LOD), and
+* applying sliding window techniques for age-dependent reference intervals.
+
+# Installation <a name = "installation"></a> {#installation}
+
+To use the *reflimR.expand* package, you must first install its dependency, *reflimR*, from CRAN. Open R and enter the following command in the console:
+
+```{r, eval = FALSE}
+install.packages("reflimR")
+```
+
+This will download and install the *reflimR* package from CRAN. Next, install the *reflimR.expand* package directly from GitHub using the *devtools* package:
+
+```{r, eval = FALSE}
+# If devtools is not installed yet:
+install.packages("devtools")
+
+# Install reflimR.expand from GitHub
+devtools::install_github("SandraKla/reflimR.expand")
+```
+
+Once the installation is complete, load the package into your R session with:
+
+```{r}
+library(reflimR.expand)
+```
+
+# Usage <a name = "usage"></a> {#usage}
+
+After installing and loading the package, you can use the main functions to compute reference intervals with enhanced methods:
+
+* Use the Sliding Window functions to calculate reference intervals based on a sliding window approach, allowing for local estimation across covariates such as age.
+* Use the reflimLOD functions to handle and adjust data values below the limit of detection (LOD).
+
+# References <a name = "references"></a> {#references}
+
+1. Clinical and Laboratory Standards Institute document EP28-A3c—Defining, Establishing, and Verifying Reference Intervals in the Clinical Laboratory. 2010;ISBN 1-56238-682-4. <https://clsi.org/shop/standards/ep28/>.
+
+2. Hoffmann, G., Klawitter, S., Trulson, I., Adler, J., Holdenrieder, S., & Klawonn, F. (2024). A Novel Tool for the Rapid and Transparent Verification of Reference Intervals in Clinical Laboratories. Journal of clinical medicine, 13(15), 4397. <https://doi.org/10.3390/jcm13154397>.

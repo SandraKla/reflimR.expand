@@ -1,11 +1,27 @@
 Package: reflimR.expand
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Title: Advanced Reference Limit Estimation Using Routine Laboratory Data
+Version: 0.0.1
+Date: 2025-08-11
+Authors@R: c(person("Sandra", "Klawitter", role = c("aut", "cre"),
+                     email = "sandra.klawitter@trillium.de"),
+                     person("Georg", "Hoffmann", role = "aut"),
+                     person("Xufan", "Dong", role = "aut"),
+                     person("Inga", "Trulson", role = "aut"),
+                     person("Stefan", "Holdenrieder", role = "aut"),
+                     person("Andreas", "Haag", role = "aut"),
+                     person("Frank", "Klawonn", role = "aut"))
+Maintainer: Sandra Klawitter <sandra.klawitter@trillium.de>
+Description: Extends the 'reflimR' package with methods for handling data below the limit of detection (LOD) and for applying sliding window techniques.
+License: GPL-2
 Encoding: UTF-8
 LazyData: true
+Imports: stats, graphics, grDevices, reflimR, truncnorm, ggplot2, Hmisc, rlang
+Depends: R (>= 3.5.0)
+Suggests: knitr, rmarkdown, testthat (>= 3.0.0)
+VignetteBuilder: knitr
+URL: https://github.com/SandraKla/reflimR.expand
+BugReports: https://github.com/SandraKla/reflimR.expand/issues
+Roxygen: list(markdown=TRUE)
+RoxygenNote: 7.3.2
+NeedsCompilation: no
