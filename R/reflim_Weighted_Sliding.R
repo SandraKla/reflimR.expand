@@ -304,7 +304,7 @@ draw.sliding.w.reflims <- function(result.sliding.reflim, log.scale = FALSE, use
     rsr <- result.sliding.reflim
 
     cova <- rsr$covariate.mean
-    if (!use.mean) {
+    if (use.mean) {
         cova <- rsr$covariate.mean
     }else{
       cova <- rsr$covariate.median
