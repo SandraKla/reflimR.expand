@@ -306,6 +306,8 @@ draw.sliding.w.reflims <- function(result.sliding.reflim, log.scale = FALSE, use
     cova <- rsr$covariate.mean
     if (!use.mean) {
         cova <- rsr$covariate.mean
+    }else{
+      cova <- rsr$covariate.median
     }
 
     df <- data.frame(
@@ -391,8 +393,8 @@ draw.sliding.w.reflims.compare <- function(result.sliding.reflim1, result.slidin
     rsr1 <- result.sliding.reflim1
     rsr2 <- result.sliding.reflim2
 
-    cova1 <- if (use.mean) rsr1$covariate.mean else rsr1$covariate.sd
-    cova2 <- if (use.mean) rsr2$covariate.mean else rsr2$covariate.sd
+    cova1 <- if (use.mean) rsr1$covariate.mean else rsr1$covariate.median
+    cova2 <- if (use.mean) rsr2$covariate.mean else rsr2$covariate.median
 
     # Create data frames for plotting
     df1 <- data.frame(

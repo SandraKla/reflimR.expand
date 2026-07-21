@@ -226,6 +226,8 @@ draw.sliding.reflims <- function(result.sliding.reflim, use.mean=T, xlim=NULL, y
   cova <- rsr$covariate.mean
   if (!use.mean) {
     cova <- rsr$covariate.mean
+  }else{
+    cova <- rsr$covariate.median
   }
 
   ylim.mod <- ylim
