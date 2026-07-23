@@ -37,6 +37,7 @@ sliding.w.reflim <- function(x, t, distribution = "truncated_gaussian", log.scal
         res <- w.sliding.reflim(x, t, distribution = distribution, standard_deviation = standard_deviation,
                                 vertex1 = vertex1, vertex2 = vertex2,
                                 window.size = window.size, step.width = step.width, lognormal = lognormal,
+                                perc.trunc=perc.trunc, n.min.window=n.min.window, n.min=n.min, apply.rounding=apply.rounding,
                                 weight_threshold = weight_threshold, verbose = verbose, MLE = MLE)
         if (verbose) print(res[, 1:2])
         draw.sliding.w.reflims(result.sliding.reflim = res, log.scale = log.scale)
@@ -44,10 +45,12 @@ sliding.w.reflim <- function(x, t, distribution = "truncated_gaussian", log.scal
         res1 <- w.sliding.reflim(x, t, distribution = distribution, standard_deviation = standard_deviation,
                                  vertex1 = vertex1, vertex2 = vertex2,
                                  window.size = window.size, step.width = step.width, lognormal = lognormal,
+                                 perc.trunc=perc.trunc, n.min.window=n.min.window, n.min=n.min, apply.rounding=apply.rounding,
                                  weight_threshold = weight_threshold, verbose = verbose, MLE = MLE)
         res2 <- w.sliding.reflim(x, t, distribution = distribution, standard_deviation = standard_deviation_compare,
                                  vertex1 = vertex1_com, vertex2 = vertex2_com,
                                  window.size = window.size_com, step.width = step.width_com, lognormal = lognormal,
+                                 perc.trunc=perc.trunc, n.min.window=n.min.window, n.min=n.min, apply.rounding=apply.rounding,
                                  weight_threshold = weight_threshold, verbose = verbose, MLE = MLE)
         draw.sliding.w.reflims.compare(result.sliding.reflim1 = res1, result.sliding.reflim2 = res2, log.scale = log.scale)
     }
@@ -696,7 +699,7 @@ w.sliding.reflim <- function(x,covariate,distribution = "truncated_gaussian", st
             }
 
             if (!MLE) {
-                res.reflim <- w.reflim(xx, www, n.min = n.min, apply.rounding = apply.rounding, lognormal = lognormal, plot.all = FALSE)
+                res.reflim <- w.reflim(xx, www, n.min = n.min, apply.rounding = apply.rounding, lognormal = lognormal, perc.trunc=perc.trunc, plot.all = FALSE)
 
                 lower.lim[i] <- res.reflim$limits[1]
                 upper.lim[i] <- res.reflim$limits[2]
@@ -804,6 +807,7 @@ w.sliding.reflim <- function(x,covariate,distribution = "truncated_gaussian", st
                             n.min = n.min,
                             apply.rounding = apply.rounding,
                             lognormal = lognormal,
+                            perc.trunc=perc.trunc,
                             plot.all = FALSE
                         )
 
@@ -918,6 +922,7 @@ w.sliding.reflim <- function(x,covariate,distribution = "truncated_gaussian", st
                             n.min = n.min,
                             apply.rounding = apply.rounding,
                             lognormal = lognormal,
+                            perc.trunc=perc.trunc,
                             plot.all = FALSE
                         )
 
