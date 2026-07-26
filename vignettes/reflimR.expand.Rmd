@@ -11,7 +11,9 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 4.5
 )
 ```
 
@@ -50,6 +52,7 @@ devtools::install_github("SandraKla/reflimR.expand")
 Once the installation is complete, load the package into your R session with:
 
 ```{r}
+library(reflimR)
 library(reflimR.expand)
 ```
 
@@ -57,8 +60,55 @@ library(reflimR.expand)
 
 After installing and loading the package, you can use the main functions to compute reference intervals with enhanced methods:
 
-* Use the Sliding Window functions to calculate reference intervals based on a sliding window approach, allowing for local estimation across covariates such as age.
-* Use the reflimLOD functions to handle and adjust data values below the limit of detection (LOD).
+## 1. Sliding Window Reference Limits
+
+Biological parameters often change continuously across covariates such as age. Instead of creating arbitrary discrete age groups, `sliding.reflim()` applies a moving window to compute continuous local reference limits.
+
+### Example: Continuous Age-Dependent Limits
+
+```{r}
+set.seed(123)
+
+# Generate synthetic age data (18 to 80 years)
+age <- runif(1000, min = 18, max = 80)
+
+# Generate biomarker values with an age-dependent upward trend
+biomarker <- 40 + 0.12 * age + rnorm(1000, mean = 0, sd = 2.5)
+
+# Calculate sliding reference limits
+res_sliding <- sliding.reflim(
+  x = biomarker,
+  covariate = age,
+  window.size = 20,   # Span of covariate per window
+  step.width = 2,     # Shift per iteration
+  n.min = 39          # Minimum required observations per window
+)
+
+# Inspect output structure
+head(res_sliding)
+```
+
+### Visualizing Results
+
+The companion function `draw.sliding.reflims()` visualizes local reference limits. You can plot results aligned by local median covariate (`use.mean = FALSE`) or mean covariate (`use.mean = TRUE`):
+
+```{r fig.width=6, fig.height=4.5}
+# Aligning by median covariate value
+draw.sliding.reflims(res_sliding, use.mean = FALSE)
+```
+
+```{r fig.width=6, fig.height=4.5}
+# Aligning by mean covariate value
+draw.sliding.reflims(res_sliding, use.mean = TRUE)
+```
+
+## 2. Weighted Sliding Window
+
+For datasets with sparse regions or non-uniform age distributions, localized kernel weights can be applied via weighted sliding functions (`reflim_Weighted_Sliding.R`) to assign higher weights to observations near the center of the window.
+
+## 3. Limit of Detection (LOD) Functions
+
+Laboratory results close to analytical sensitivity thresholds often fall below the Limit of Detection (LOD). The LOD routines (`reflimLOD.r`) handle left-censored measurements without introducing bias caused by deleting low values or imputing zeros.
 
 # References <a name = "references"></a> {#references}
 
