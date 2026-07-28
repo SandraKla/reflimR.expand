@@ -23,5 +23,5 @@ VignetteBuilder: knitr
 URL: https://github.com/SandraKla/reflimR.expand
 BugReports: https://github.com/SandraKla/reflimR.expand/issues
 Roxygen: list(markdown=TRUE)
-RoxygenNote: 7.3.2
 NeedsCompilation: no
+Config/roxygen2/version: 8.0.0

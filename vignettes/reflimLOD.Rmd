@@ -1,0 +1,69 @@
+---
+title: "Reference Limits with Limit of Detection (LOD)"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Reference Limits with Limit of Detection (LOD)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 4.5
+)
+```
+
+# Handling Data Below Limit of Detection (LOD)
+Laboratory measurements frequently encounter values below lower limit of detection or truncated distributions. The reflimR.expand package provides functions to estimate reference intervals without losing statistical integrity when dealing with LOD-constrained data.
+
+
+## 1. Estimating Reference Limits with LOD
+The reflimLOD.MLE() function adjusts reference limit calculations when a portion of the dataset is below a specified detection threshold:
+```{r}
+library(reflimR)
+pkgload::load_all("..")
+
+set.seed(42)
+# Generate synthetic biomarker data
+raw_data <- rnorm(800, mean = 15, sd = 4)
+
+# Define a Limit of Detection (LOD)
+lod_value <- 10
+
+# Separate values above LOD and count values below LOD
+measured_values <- raw_data[raw_data >= lod_value]
+n_lod <- sum(raw_data < lod_value)
+
+# Calculate reference limits using MLE
+res_lod <- reflimLOD.MLE(
+  measured.values = measured_values,
+  lod = lod_value,
+  n.lod = n_lod,
+  lambda = 0
+)
+
+# Inspect output structure
+res_lod
+```
+## 2. Visualization
+You can visualize the distribution and estimated reference bounds directly:
+```{r}
+# Plotting a Basic Histogram
+hist(res_lod$selected.values,
+     main = "Reference Interval with LOD Data",
+     xlab = "Biomarker Level",
+     col = "lightblue",
+     border = "white")
+
+# Use vectorized functions to compute and superimpose density curves
+f_dens <- Vectorize(function(x) {
+  area <- (length(res_lod$selected.values) + res_lod$n.lod) * 1  # 自动计算步长面积
+  area * dens.box.cox.inv(x, mu = res_lod$mu.log, sigma = res_lod$sigma.log, lambda = res_lod$lambda)
+})
+
+curve(f_dens, add = TRUE, col = "red", lwd = 2)
+```
+
