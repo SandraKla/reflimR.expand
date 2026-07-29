@@ -1,14 +1,35 @@
+library(testthat)
+
+test_that("reflim_Weighted_Sliding functions handle invalid inputs", {
+  dataset_false <- "A"
+
+  expect_error(sliding.w.reflim(dataset_false))
+  expect_error(MLE(dataset_false))
+  expect_error(w.reflimLOD.MLE(dataset_false))
+  expect_error(w.modTrunc(dataset_false))
+  expect_error(draw.sliding.w.reflims(dataset_false))
+  expect_error(draw.sliding.w.reflims_compare(dataset_false))
+  expect_error(dtriang(dataset_false))
+  expect_error(dtrapezoid(dataset_false))
+  expect_error(makeWeightFunction(dataset_false))
+  expect_error(calculate_weight_threshold(dataset_false))
+  expect_error(w.sliding.reflim(dataset_false))
+  expect_error(w.sliding.reflim.plot(dataset_false))
+  expect_error(w.reflim(dataset_false))
+  expect_error(w.bowley(dataset_false))
+  expect_error(w.IQR(dataset_false))
+  expect_error(w.lognorm(dataset_false))
+  expect_error(w.iboxplot(dataset_false))
+  expect_error(w.truncated_qqplot(dataset_false))
+})
+
 test_that("sliding.w.reflim forwards arguments in normal mode", {
-  captured <- new.env(parent = emptyenv()) #Container named captured create
+  captured <- new.env(parent = emptyenv())
 
   local_mocked_bindings(
     w.sliding.reflim = function(...) {
       captured$arguments <- list(...)
-
-      data.frame(
-        lower.lim = 1,
-        upper.lim = 2
-      )
+      data.frame(lower.lim = 1, upper.lim = 2)
     },
     draw.sliding.w.reflims = function(...) NULL,
     .package = "reflimR.expand"
@@ -30,7 +51,6 @@ test_that("sliding.w.reflim forwards arguments in normal mode", {
   expect_true(captured$arguments$apply.rounding)
 })
 
-
 test_that("comparison mode forwards arguments to both calculations", {
   captured <- new.env(parent = emptyenv())
   captured$calls <- list()
@@ -38,11 +58,7 @@ test_that("comparison mode forwards arguments to both calculations", {
   local_mocked_bindings(
     w.sliding.reflim = function(...) {
       captured$calls[[length(captured$calls) + 1]] <- list(...)
-
-      data.frame(
-        lower.lim = 1,
-        upper.lim = 2
-      )
+      data.frame(lower.lim = 1, upper.lim = 2)
     },
     draw.sliding.w.reflims.compare = function(...) NULL,
     .package = "reflimR.expand"

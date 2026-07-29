@@ -1,4 +1,4 @@
 library(testthat)
-library(reflimR)
+library(reflimR.expand)
 
 test_check("reflimR.expand")
