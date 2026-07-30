@@ -50,3 +50,23 @@ Generates and plots a quantile-quantile plot (Q-Q plot) with a theoretical norma
 and the corresponding empirical distribution on the y-axis. Returns the intercept, slope, and estimated
 2.5\% and 97.5\% quantiles (i.e., preliminary reference limits).
 }
+\examples{
+set.seed(123)
+x <- rlnorm(250, meanlog = log(50), sdlog = 0.15)
+weights <- rep(1, length(x))
+
+truncated <- w.iboxplot(
+  x = x,
+  x_weight = weights,
+  plot.it = FALSE
+)
+
+result <- w.truncated_qqplot(
+  x.trunc = truncated$trunc,
+  x_weight = truncated$w_trunc,
+  n.min = 40,
+  plot.it = FALSE
+)
+result$result
+
+}

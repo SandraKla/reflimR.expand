@@ -23,3 +23,15 @@ Generates an artificial data set from a standard normal distribution for the hea
 population and a values from a pathological population with expected value mu and
 standard deviation 1.
 }
+\examples{
+set.seed(123)
+sample <- lod.artificial.sample(
+  n = 200,
+  prop.lod.healthy = 0.05,
+  prop.path = 0.1,
+  mu.path = 3
+)
+sample$n.lod
+head(sample$measured.values)
+
+}

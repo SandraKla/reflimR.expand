@@ -17,3 +17,9 @@ Interquartile Range (IQR)
 \description{
 Calculates a IQR for \code{x}.
 }
+\examples{
+x <- c(1, 2, 3, 4, 5)
+weights <- c(1, 1, 2, 1, 1)
+w.IQR(x, weights)
+
+}

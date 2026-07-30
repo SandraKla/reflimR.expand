@@ -32,6 +32,22 @@
 #'
 #' @import reflimR
 #'
+#' @examples
+#' \donttest{
+#' set.seed(123)
+#' age <- sample(20:70, 500, replace = TRUE)
+#' value <- 40 + 0.3 * age + rnorm(500, sd = 5)
+#'
+#' result <- sliding.reflim(
+#'   x = value,
+#'   covariate = age,
+#'   window.size = 15,
+#'   step.width = 5,
+#'   n.min = 40
+#' )
+#' head(result)
+#' }
+#'
 #' @export
 sliding.reflim <- function(x, covariate, window.size=NULL, step.width=NULL, lognormal=NULL, perc.trunc=2.5, n.min.window=200, n.min=100, apply.rounding=FALSE){
 
@@ -171,6 +187,19 @@ sliding.reflim <- function(x, covariate, window.size=NULL, step.width=NULL, logn
 #'   \item{covariate.right}{The right limits of the covariate windows.}
 #' }
 #'
+#' @examples
+#' set.seed(123)
+#' age <- sample(20:70, 500, replace = TRUE)
+#' value <- 40 + 0.3 * age + rnorm(500, sd = 5)
+#'
+#' counts <- count.n.per.window(
+#'   x = value,
+#'   covariate = age,
+#'   window.size = 15,
+#'   step.width = 5
+#' )
+#' head(counts)
+#'
 #' @export
 count.n.per.window <- function(x,covariate,window.size,step.width){
   is.nona <- !is.na(x) & !is.na(covariate)
@@ -217,6 +246,24 @@ count.n.per.window <- function(x,covariate,window.size,step.width){
 #'
 #' @importFrom grDevices rgb
 #' @importFrom graphics points polygon grid
+#'
+#' @examples
+#' age <- 20:30
+#' result <- data.frame(
+#'   lower.lim = 35 + 0.1 * age,
+#'   upper.lim = 55 + 0.1 * age,
+#'   ci.lower.lim.l = 34 + 0.1 * age,
+#'   ci.lower.lim.u = 36 + 0.1 * age,
+#'   ci.upper.lim.l = 54 + 0.1 * age,
+#'   ci.upper.lim.u = 56 + 0.1 * age,
+#'   covariate.mean = age,
+#'   covariate.median = age
+#' )
+#' draw.sliding.reflims(
+#'   result,
+#'   xlab = "Age",
+#'   ylab = "Reference limits"
+#' )
 #'
 #' @export
 draw.sliding.reflims <- function(result.sliding.reflim, use.mean=T, xlim=NULL, ylim=NULL, xlab=NULL, ylab=NULL, col.low=c(0,0,1), col.upp=c(1,0,0), lwd=2, transparency=0.8, draw.cis=T, grid.col=NULL){

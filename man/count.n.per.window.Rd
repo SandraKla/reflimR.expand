@@ -27,3 +27,17 @@ A data frame with the following columns:
 Computes the number of values in reference intervals based on a sliding window with a
 fixed window size and a fixed step width by which the window is shifted.
 }
+\examples{
+set.seed(123)
+age <- sample(20:70, 500, replace = TRUE)
+value <- 40 + 0.3 * age + rnorm(500, sd = 5)
+
+counts <- count.n.per.window(
+  x = value,
+  covariate = age,
+  window.size = 15,
+  step.width = 5
+)
+head(counts)
+
+}

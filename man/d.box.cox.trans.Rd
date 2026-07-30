@@ -17,3 +17,9 @@ Derivative of the Box-Cox transformation at x.
 \description{
 Derivative of the Box-Cox transformation.
 }
+\examples{
+x <- c(1,2,4)
+d.box.cox.trans(x, lambda = 1)
+d.box.cox.trans(x, lambda = 0)
+
+}

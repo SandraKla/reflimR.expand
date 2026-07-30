@@ -21,3 +21,9 @@ Probability density at point x.
 \description{
 Triangular Probability Density Function
 }
+\examples{
+x <- seq(0, 1, length.out = 100)
+density <- dtriang(x, a = 0, b = 0.5, c = 1)
+plot(x, density, type = "l")
+
+}

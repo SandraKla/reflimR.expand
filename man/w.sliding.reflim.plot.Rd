@@ -62,3 +62,22 @@ Performs a sliding window analysis using various weight functions to estimate re
 The function supports multiple distribution types and allows comparison between different parameter configurations.
 It is useful for analyzing trends in laboratory or clinical data while accounting for varying data density and noise.
 }
+\examples{
+\donttest{
+set.seed(123)
+age <- sample(20:70, 500, replace = TRUE)
+value <- 40 + 0.3 * age + rnorm(500, sd = 5)
+
+result <- w.sliding.reflim.plot(
+  x = value,
+  covariate = age,
+  distribution = "gaussian",
+  standard_deviation = 5,
+  n.min = 40,
+  weight_threshold = 0,
+  verbose = FALSE
+)
+head(result)
+}
+
+}

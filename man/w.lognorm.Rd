@@ -39,3 +39,16 @@ A logical value indicating whether a lognormal distribution is suggested (\code{
 Suggests lognormal modelling of a numeric vector \code{x} by comparing Bowley's quantile skewness for \code{x} and \code{log(x)}.
 Lognormality is suggested if \code{bowley(x) - bowley(log(x)) >= cutoff}.
 }
+\examples{
+set.seed(123)
+x <- rlnorm(200, meanlog = log(50), sdlog = 0.15)
+weights <- rep(1, length(x))
+
+result <- w.lognorm(
+  x = x,
+  x_weight = weights,
+  plot.it = FALSE
+)
+result$lognormal
+
+}

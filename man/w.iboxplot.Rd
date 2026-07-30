@@ -45,3 +45,17 @@ A list with the following elements:
 \description{
 Iteratively truncates a vector of quantitative laboratory results until no more values outside the specified truncation interval are left.
 }
+\examples{
+set.seed(123)
+x <- rlnorm(200, meanlog = log(50), sdlog = 0.15)
+weights <- rep(1, length(x))
+
+result <- w.iboxplot(
+  x = x,
+  x_weight = weights,
+  perc.trunc = 2.5,
+  plot.it = FALSE
+)
+length(result$trunc)
+
+}

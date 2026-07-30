@@ -38,3 +38,14 @@ Removes outliers from a vector of measured values with values below LOD. It is a
 that the values from the healthy subjects follow a normal distribution. It is also
 assumed that the median of the values from the healthy subjects is above LOD.
 }
+\examples{
+set.seed(123)
+measured <- 5 + rlnorm(200, meanlog = log(5), sdlog = 0.2)
+result <- w.modTrunc(
+  measured.values = measured,
+  lod = 5,
+  n.lod = 10
+)
+result$upper.truncation
+
+}

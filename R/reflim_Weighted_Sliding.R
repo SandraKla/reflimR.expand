@@ -28,6 +28,22 @@
 #'
 #' @return A plot object showing reference limits with confidence intervals.
 #'
+#' @examples
+#' \donttest{
+#' set.seed(123)
+#' age <- sample(20:70, 500, replace = TRUE)
+#' value <- 40 + 0.3 * age + rnorm(500, sd = 5)
+#'
+#' sliding.w.reflim(
+#'   x = value,
+#'   t = age,
+#'   distribution = "gaussian",
+#'   standard_deviation = 5,
+#'   n.min = 40,
+#'   verbose = FALSE
+#' )
+#' }
+#'
 #' @export
 sliding.w.reflim <- function(x, t, distribution = "truncated_gaussian", log.scale = FALSE, standard_deviation = 5,
                             standard_deviation_compare = NULL, vertex1 = NULL, vertex2 = NULL, vertex1_com = NULL, vertex2_com = NULL, window.size=NULL, step.width=NULL, window.size_com = NULL, step.width_com = NULL,
@@ -65,6 +81,16 @@ sliding.w.reflim <- function(x, t, distribution = "truncated_gaussian", log.scal
 #'
 #' @return Result of w.reflimLOD.MLE()
 #'
+#' @examples
+#' \donttest{
+#' set.seed(123)
+#' data <- c(
+#'   rep(5, 10),
+#'   5 + rlnorm(200, meanlog = log(5), sdlog = 0.2)
+#' )
+#' result <- MLE(data)
+#' c(result$lower.limit, result$upper.limit)
+#' }
 #' @export
 MLE <- function(data, weights = NULL, verbose = FALSE) {
 
@@ -131,6 +157,22 @@ MLE <- function(data, weights = NULL, verbose = FALSE) {
 #' }
 #'
 #' @importFrom truncnorm ptruncnorm dtruncnorm
+#'
+#' @examples
+#' \donttest{
+#' set.seed(123)
+#' measured <- 5 + rlnorm(200, meanlog = log(5), sdlog = 0.2)
+#' weights <- seq(0.5, 1.5, length.out = length(measured))
+#'
+#' result <- w.reflimLOD.MLE(
+#'   measured.values = measured,
+#'   lod = 5,
+#'   n.lod = 10,
+#'   weights = weights,
+#'   lambda = 0
+#' )
+#' c(result$lower.limit, result$upper.limit)
+#' }
 #'
 #' @export
 w.reflimLOD.MLE <- function(measured.values, lod, n.lod, weights = NULL, lambda = 0, right.quantile = 0.75, verbose = FALSE) {
@@ -222,6 +264,16 @@ w.reflimLOD.MLE <- function(measured.values, lod, n.lod, weights = NULL, lambda 
 #'   of this function.}
 #' }
 #'
+#' @examples
+#' set.seed(123)
+#' measured <- 5 + rlnorm(200, meanlog = log(5), sdlog = 0.2)
+#' result <- w.modTrunc(
+#'   measured.values = measured,
+#'   lod = 5,
+#'   n.lod = 10
+#' )
+#' result$upper.truncation
+#'
 #' @export
 w.modTrunc <- function(measured.values, lod, n.lod, right.quantile=0.75){
 
@@ -298,6 +350,26 @@ w.modTrunc <- function(measured.values, lod, n.lod, right.quantile=0.75){
 #' @importFrom rlang .data
 #'
 #' @return A `ggplot` object displaying the sliding reference limits and optional confidence intervals.
+#'
+#' @examples
+#' age <- 20:30
+#' result <- data.frame(
+#'   lower.lim = 35 + 0.1 * age,
+#'   upper.lim = 55 + 0.1 * age,
+#'   ci.lower.lim.l = 34 + 0.1 * age,
+#'   ci.lower.lim.u = 36 + 0.1 * age,
+#'   ci.upper.lim.l = 54 + 0.1 * age,
+#'   ci.upper.lim.u = 56 + 0.1 * age,
+#'   covariate.mean = age,
+#'   covariate.median = age
+#' )
+#'
+#' plot <- draw.sliding.w.reflims(
+#'   result,
+#'   xlab = "Age",
+#'   ylab = "Reference limits"
+#' )
+#' print(plot)
 #'
 #' @export
 draw.sliding.w.reflims <- function(result.sliding.reflim, log.scale = FALSE, use.mean = TRUE, xlim = NULL, ylim = NULL,
@@ -385,6 +457,30 @@ draw.sliding.w.reflims <- function(result.sliding.reflim, log.scale = FALSE, use
 #' @importFrom rlang .data
 #'
 #' @return A `ggplot` object displaying the sliding reference limits and optional confidence intervals.
+#'
+#' @examples
+#' age <- 20:30
+#' result1 <- data.frame(
+#'   lower.lim = 35 + 0.1 * age,
+#'   upper.lim = 55 + 0.1 * age,
+#'   ci.lower.lim.l = 34 + 0.1 * age,
+#'   ci.lower.lim.u = 36 + 0.1 * age,
+#'   ci.upper.lim.l = 54 + 0.1 * age,
+#'   ci.upper.lim.u = 56 + 0.1 * age,
+#'   covariate.mean = age,
+#'   covariate.median = age
+#' )
+#' result2 <- result1
+#' result2$lower.lim <- result2$lower.lim + 1
+#' result2$upper.lim <- result2$upper.lim + 1
+#'
+#' plot <- draw.sliding.w.reflims.compare(
+#'   result.sliding.reflim1 = result1,
+#'   result.sliding.reflim2 = result2,
+#'   xlab = "Age",
+#'   ylab = "Reference limits"
+#' )
+#' print(plot)
 #'
 #' @export
 draw.sliding.w.reflims.compare <- function(result.sliding.reflim1, result.sliding.reflim2, log.scale = FALSE, use.mean = TRUE,
@@ -486,6 +582,11 @@ draw.sliding.w.reflims.compare <- function(result.sliding.reflim1, result.slidin
 #'
 #' @return Probability density at point x.
 #'
+#' @examples
+#' x <- seq(0, 1, length.out = 100)
+#' density <- dtriang(x, a = 0, b = 0.5, c = 1)
+#' plot(x, density, type = "l")
+#'
 #' @export
 dtriang <- function(x, a, b, c) {
     y <- ifelse(x < a | x > c, 0,
@@ -504,6 +605,17 @@ dtriang <- function(x, a, b, c) {
 #'
 #' @return Probability density.
 #'
+#' @examples
+#' x <- seq(0, 1, length.out = 100)
+#' density <- dtrapezoid(
+#'   x,
+#'   a = 0,
+#'   b = 0.3,
+#'   c = 0.7,
+#'   d = 1
+#' )
+#' plot(x, density, type = "l")
+#'
 #' @export
 dtrapezoid <- function(x, a, b, c, d) {
     y <- ifelse(x < a | x > d, 0,
@@ -519,6 +631,15 @@ dtrapezoid <- function(x, a, b, c, d) {
 #' @param ... Additional arguments passed to the internal weight function.
 #'
 #' @return Weighting function.
+#'
+#' @examples
+#' gaussian_weight <- makeWeightFunction(
+#'   distribution = "gaussian",
+#'   sigma = 5
+#' )
+#' age <- 20:40
+#' weights <- gaussian_weight(age, mean = 30)
+#' plot(age, weights, type = "l")
 #'
 #' @export
 makeWeightFunction <- function(distribution = "truncated_gaussian", ...) {
@@ -568,6 +689,14 @@ makeWeightFunction <- function(distribution = "truncated_gaussian", ...) {
 #' @param n Number of sample points used to calculate threshold, default is 40.
 #'
 #' @return Sum of weights.
+#'
+#' @examples
+#' threshold <- calculate_weight_threshold(
+#'   distribution = "gaussian",
+#'   params = list(standard_deviation = 5),
+#'   n = 40
+#' )
+#' threshold
 #'
 #' @export
 calculate_weight_threshold <- function(distribution, params, n = 40) {
@@ -626,6 +755,25 @@ calculate_weight_threshold <- function(distribution, params, n = 40) {
 #' @return A plot object showing reference limits with confidence intervals.
 #'
 #' @importFrom graphics text
+#'
+#' @examples
+#' \donttest{
+#' set.seed(123)
+#' age <- sample(20:70, 500, replace = TRUE)
+#' value <- 40 + 0.3 * age + rnorm(500, sd = 5)
+#'
+#' result <- w.sliding.reflim(
+#'   x = value,
+#'   covariate = age,
+#'   distribution = "gaussian",
+#'   standard_deviation = 5,
+#'   n.min = 40,
+#'   plot.weight = TRUE,
+#'   weight_threshold = 0,
+#'   verbose = FALSE
+#' )
+#' head(result)
+#' }
 #'
 #' @export
 w.sliding.reflim <- function(x,covariate,distribution = "truncated_gaussian", standard_deviation = 5,
@@ -999,6 +1147,24 @@ w.sliding.reflim <- function(x,covariate,distribution = "truncated_gaussian", st
 #'
 #' @return A plot object showing the estimated reference limits across the covariate, including confidence intervals.
 #'
+#' @examples
+#' \donttest{
+#' set.seed(123)
+#' age <- sample(20:70, 500, replace = TRUE)
+#' value <- 40 + 0.3 * age + rnorm(500, sd = 5)
+#'
+#' result <- w.sliding.reflim.plot(
+#'   x = value,
+#'   covariate = age,
+#'   distribution = "gaussian",
+#'   standard_deviation = 5,
+#'   n.min = 40,
+#'   weight_threshold = 0,
+#'   verbose = FALSE
+#' )
+#' head(result)
+#' }
+#'
 #' @export
 w.sliding.reflim.plot <- function(x,covariate,distribution = "truncated_gaussian",
                                   standard_deviation = 5, vertex1 = NULL, vertex2 = NULL,
@@ -1265,6 +1431,22 @@ w.sliding.reflim.plot <- function(x,covariate,distribution = "truncated_gaussian
 #' @importFrom reflimR conf_int95 permissible_uncertainty interpretation ri_hist
 #' @importFrom graphics par legend
 #'
+#' @examples
+#' \donttest{
+#' set.seed(123)
+#' x <- rlnorm(250, meanlog = log(50), sdlog = 0.15)
+#' weights <- seq(0.5, 1.5, length.out = length(x))
+#'
+#' result <- w.reflim(
+#'   x = x,
+#'   x_weight = weights,
+#'   n.min = 40,
+#'   apply.rounding = FALSE,
+#'   print.n = FALSE
+#' )
+#' result$limits
+#' }
+#'
 #' @export
 w.reflim <- function(x, x_weight, lognormal = NULL, targets = NULL, perc.trunc = 2.5,
              n.min = 200, apply.rounding = TRUE, plot.it = FALSE, plot.all = FALSE,
@@ -1463,6 +1645,11 @@ w.reflim <- function(x, x_weight, lognormal = NULL, targets = NULL, perc.trunc =
 #'
 #' @importFrom Hmisc wtd.quantile
 #'
+#' @examples
+#' x <- c(1, 2, 3, 4, 5)
+#' weights <- c(1, 1, 2, 1, 1)
+#' w.bowley(x, weights)
+#'
 #' @export
 w.bowley <- function(x, x_weight) {
     w_quantiles <- wtd.quantile(x, x_weight, probs = c(0.25, 0.5, 0.75))
@@ -1481,6 +1668,11 @@ w.bowley <- function(x, x_weight) {
 #' @param x_weight Weights of the numeric vector of positive numbers.
 #'
 #' @return Interquartile Range (IQR)
+#'
+#' @examples
+#' x <- c(1, 2, 3, 4, 5)
+#' weights <- c(1, 1, 2, 1, 1)
+#' w.IQR(x, weights)
 #'
 #' @export
 w.IQR <- function(x, x_weight) {
@@ -1506,6 +1698,18 @@ w.IQR <- function(x, x_weight) {
 #' @return A logical value indicating whether a lognormal distribution is suggested (\code{TRUE}) or not (\code{FALSE}).
 #'
 #' @importFrom graphics par lines boxplot
+#'
+#' @examples
+#' set.seed(123)
+#' x <- rlnorm(200, meanlog = log(50), sdlog = 0.15)
+#' weights <- rep(1, length(x))
+#'
+#' result <- w.lognorm(
+#'   x = x,
+#'   x_weight = weights,
+#'   plot.it = FALSE
+#' )
+#' result$lognormal
 #'
 #' @export
 w.lognorm <- function(x, x_weight, cutoff = 0.05, digits = 3, plot.it = FALSE, xlab = "x",
@@ -1600,6 +1804,19 @@ w.lognorm <- function(x, x_weight, cutoff = 0.05, digits = 3, plot.it = FALSE, x
 #' @importFrom reflimR adjust_digits
 #' @importFrom Hmisc wtd.quantile
 #' @importFrom graphics par lines boxplot
+#'
+#' @examples
+#' set.seed(123)
+#' x <- rlnorm(200, meanlog = log(50), sdlog = 0.15)
+#' weights <- rep(1, length(x))
+#'
+#' result <- w.iboxplot(
+#'   x = x,
+#'   x_weight = weights,
+#'   perc.trunc = 2.5,
+#'   plot.it = FALSE
+#' )
+#' length(result$trunc)
 #'
 #' @export
 w.iboxplot <- function(x, x_weight, lognormal = NULL, perc.trunc = 2.5,
@@ -1753,6 +1970,25 @@ w.iboxplot <- function(x, x_weight, lognormal = NULL, perc.trunc = 2.5,
 #' @importFrom Hmisc wtd.quantile
 #' @importFrom reflimR adjust_digits
 #' @importFrom graphics axis text
+#'
+#' @examples
+#' set.seed(123)
+#' x <- rlnorm(250, meanlog = log(50), sdlog = 0.15)
+#' weights <- rep(1, length(x))
+#'
+#' truncated <- w.iboxplot(
+#'   x = x,
+#'   x_weight = weights,
+#'   plot.it = FALSE
+#' )
+#'
+#' result <- w.truncated_qqplot(
+#'   x.trunc = truncated$trunc,
+#'   x_weight = truncated$w_trunc,
+#'   n.min = 40,
+#'   plot.it = FALSE
+#' )
+#' result$result
 #'
 #' @export
 w.truncated_qqplot <- function(x.trunc, x_weight, lognormal = NULL, perc.trunc = 2.5, n.min = 200,

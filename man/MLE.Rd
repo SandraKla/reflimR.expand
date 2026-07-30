@@ -19,3 +19,14 @@ Result of w.reflimLOD.MLE()
 \description{
 Maximum Likelihood Estimation (MLE)
 }
+\examples{
+\donttest{
+set.seed(123)
+data <- c(
+  rep(5, 10),
+  5 + rlnorm(200, meanlog = log(5), sdlog = 0.2)
+)
+result <- MLE(data)
+c(result$lower.limit, result$upper.limit)
+}
+}

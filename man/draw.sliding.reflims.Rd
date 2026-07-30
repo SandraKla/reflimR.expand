@@ -47,3 +47,22 @@ draw.sliding.reflims(
 \description{
 Draws the reference limits computed by the function sliding.reflim()
 }
+\examples{
+age <- 20:30
+result <- data.frame(
+  lower.lim = 35 + 0.1 * age,
+  upper.lim = 55 + 0.1 * age,
+  ci.lower.lim.l = 34 + 0.1 * age,
+  ci.lower.lim.u = 36 + 0.1 * age,
+  ci.upper.lim.l = 54 + 0.1 * age,
+  ci.upper.lim.u = 56 + 0.1 * age,
+  covariate.mean = age,
+  covariate.median = age
+)
+draw.sliding.reflims(
+  result,
+  xlab = "Age",
+  ylab = "Reference limits"
+)
+
+}

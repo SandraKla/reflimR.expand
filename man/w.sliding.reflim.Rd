@@ -73,3 +73,23 @@ This function estimates reference limits using a sliding window approach, applyi
 (truncated Gaussian, triangular, trapezoidal) to the covariate data. It is designed to handle missing values,
 perform ordered computations, and calculate weighted reference limits for each windowed interval.
 }
+\examples{
+\donttest{
+set.seed(123)
+age <- sample(20:70, 500, replace = TRUE)
+value <- 40 + 0.3 * age + rnorm(500, sd = 5)
+
+result <- w.sliding.reflim(
+  x = value,
+  covariate = age,
+  distribution = "gaussian",
+  standard_deviation = 5,
+  n.min = 40,
+  plot.weight = TRUE,
+  weight_threshold = 0,
+  verbose = FALSE
+)
+head(result)
+}
+
+}

@@ -47,3 +47,16 @@ A data frame with three columns: lambda, lower and upper reference limit.
 \description{
 Computes and plots the reference intervals for different lambdas
 }
+\examples{
+\donttest{
+set.seed(123)
+measured <- 5 + rlnorm(200, meanlog = log(5), sdlog = 0.2)
+draw.reflims(
+  measured.values = measured,
+  lod = 5,
+  n.lod = 10,
+  lambdas = c(0, 0.5, 1)
+)
+}
+
+}

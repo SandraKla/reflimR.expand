@@ -17,3 +17,9 @@ The Box-Cox transformed data.
 \description{
 Computes the standard Box-Cox transformation.
 }
+\examples{
+x <- c(1,2,4)
+box.cox.trans(x, lambda = 1)
+box.cox.trans(x, lambda = 0)
+
+}

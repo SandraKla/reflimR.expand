@@ -5,6 +5,11 @@
 #'
 #' @return The Box-Cox transformed data.
 #'
+#' @examples
+#' x <- c(1,2,4)
+#' box.cox.trans(x, lambda = 1)
+#' box.cox.trans(x, lambda = 0)
+#'
 #' @export
 box.cox.trans <- function(x,lambda=1){
   if (lambda == 0) {
@@ -20,6 +25,11 @@ box.cox.trans <- function(x,lambda=1){
 #' @param lambda The parameter of the (inverse) Box-Cox transformation.
 #'
 #' @return The inverse Box-Cox transformed data.
+#'
+#' @examples
+#' x <- c(1,2,4)
+#' transformed <- box.cox.trans(x, lambda = 0)
+#' box.cox.trans(transformed, lambda = 0)
 #'
 #' @export
 box.cox.inv.trans <- function(x,lambda=1){
@@ -37,6 +47,11 @@ box.cox.inv.trans <- function(x,lambda=1){
 #'
 #' @return Derivative of the Box-Cox transformation at x.
 #'
+#' @examples
+#' x <- c(1,2,4)
+#' d.box.cox.trans(x, lambda = 1)
+#' d.box.cox.trans(x, lambda = 0)
+#'
 #' @export
 d.box.cox.trans <- function(x,lambda=1){
   if (lambda == 0) {
@@ -52,6 +67,10 @@ d.box.cox.trans <- function(x,lambda=1){
 #' @param lambda The parameter of the (inverse) Box-Cox transformation.
 #'
 #' @return Derivative of the inverse Box-Cox transformation at x.
+#'
+#' @examples
+#' x <- seq(-1,1,length.out = 5)
+#' d.box.cox.inv.trans(x, lambda = 0)
 #'
 #' @export
 d.box.cox.inv.trans <- function(x,lambda=1){
@@ -72,6 +91,17 @@ d.box.cox.inv.trans <- function(x,lambda=1){
 #'
 #' @return Density of the transformed (truncated) Normal distribution at x.
 #'
+#' @examples
+#' x <- seq(1,10,length.out = 100)
+#' density <- dens.bcinv.bc(
+#'  x,
+#'  mu=5,
+#'  sigma=1,
+#'  lambda.inv=1,
+#'  lambda = 1
+#' )
+#' plot(x,density,type = "l")
+#'
 #' @export
 dens.bcinv.bc <- function(x, mu=5, sigma=1, lambda.inv=1, lambda=1){
   return(dnorm(box.cox.inv.trans(box.cox.trans(x,lambda = lambda.inv),lambda = lambda),mean = mu,sd = sigma)*d.box.cox.trans(box.cox.inv.trans(x,lambda = lambda),
@@ -86,6 +116,16 @@ dens.bcinv.bc <- function(x, mu=5, sigma=1, lambda.inv=1, lambda=1){
 #' @param lambda The parameter of the Box-Cox transformation.
 #'
 #' @return Density of the transformed (truncated) Normal distribution at x.
+#'
+#' @examples
+#' x <- seq(1,10,length.out = 100)
+#' density <- dens.box.cox.inv(
+#'  x,
+#'  mu=2,
+#'  sigma=0.5,
+#'  lambda=0
+#' )
+#' plot(x,density,type="l")
 #'
 #' @export
 dens.box.cox.inv <- function(x, mu=5, sigma=1, lambda=1){
@@ -117,6 +157,16 @@ dens.box.cox.inv <- function(x, mu=5, sigma=1, lambda=1){
 #'   \item{n.lod}{The number of values below LOD as it was specified in the argument
 #'   of this function.}
 #' }
+#'
+#' @examples
+#' set.seed(123)
+#' measured <- 5 + rlnorm(200, meanlog = log(5),sdlog=0.2)
+#' result <-modTrunc(
+#'  measured.values = measured,
+#'  lod = 5,
+#'  n.lod = 10
+#' )
+#' result$upper.truncation
 #'
 #' @export
 modTrunc <- function(measured.values,lod,n.lod,right.quantile=0.75){
@@ -207,6 +257,19 @@ modTrunc <- function(measured.values,lod,n.lod,right.quantile=0.75){
 #'   \item{minus.log.likelihood}{Negative log-likelihood.}
 #' }
 #'
+#' @examples
+#' \donttest{
+#' set.seed(123)
+#' measured <- 5 + rlnorm(200, meanlog = log(5), sdlog = 0.2)
+#' result <- reflimLOD.MLE(
+#'   measured.values = measured,
+#'   lod = 5,
+#'   n.lod = 10,
+#'   lambda = 0
+#' )
+#' c(result$lower.limit, result$upper.limit)
+#' }
+#'
 #' @export
 reflimLOD.MLE <- function(measured.values, lod, n.lod, lambda=0, right.quantile=0.75){
   transformed.measured.values <- box.cox.trans(measured.values,lambda = lambda)
@@ -294,6 +357,19 @@ reflimLOD.MLE <- function(measured.values, lod, n.lod, lambda=0, right.quantile=
 #'   \item{minus.log.likelihood}{Negative log-likelihood.}
 #' }
 #'
+#' @examples
+#' \donttest{
+#' set.seed(123)
+#' measured <- 5 + rlnorm(200, meanlog = log(5), sdlog = 0.2)
+#' result <- reflimLOD.Quant(
+#'   measured.values = measured,
+#'   lod = 5,
+#'   n.lod = 10,
+#'   lambda = 0
+#' )
+#' c(result$lower.limit, result$upper.limit)
+#' }
+#'
 #' @export
 reflimLOD.Quant <- function(measured.values, lod, n.lod, lambda=0, right.quantile=0.75){
   transformed.measured.values <- box.cox.trans(measured.values,lambda = lambda)
@@ -340,6 +416,19 @@ reflimLOD.Quant <- function(measured.values, lod, n.lod, lambda=0, right.quantil
 #' }
 #' @import stats
 #'
+#' @examples
+#' \donttest{
+#' set.seed(123)
+#' measured <- 5 + rlnorm(200, meanlog = log(5), sdlog = 0.2)
+#' intervals <- ci.reflimLOD.MLE(
+#'   measured.values = measured,
+#'   lod = 5,
+#'   n.lod = 10,
+#'   lambda = 0,
+#'   n.bootstrap = 50
+#' )
+#' intervals
+#' }
 #' @export
 ci.reflimLOD.MLE <- function(measured.values, lod, n.lod, lambda=0, right.quantile=0.75, conf.level=0.95, n.bootstrap=1000){
   lower.limits <- rep(NA,n.bootstrap)
@@ -393,6 +482,19 @@ ci.reflimLOD.MLE <- function(measured.values, lod, n.lod, lambda=0, right.quanti
 #'   \item{adj.r.squared}{Adjusted coefficient of determination.}
 #' }
 #'
+#' @examples
+#' \donttest{
+#' set.seed(123)
+#' measured <- 5 + rlnorm(200, meanlog = log(5), sdlog = 0.2)
+#' fit <- reflimLOD.MLE(
+#'   measured.values = measured,
+#'   lod = 5,
+#'   n.lod = 10,
+#'   lambda = 0
+#' )
+#' compute.r.squared(fit)
+#' }
+#'
 #' @export
 compute.r.squared <- function(res.lodiboxplot){
 
@@ -425,6 +527,19 @@ compute.r.squared <- function(res.lodiboxplot){
 #' @param ylab The usual graphics parameters.
 #'
 #' @importFrom graphics abline grid
+#'
+#' @examples
+#' \donttest{
+#' set.seed(123)
+#' measured <- 5 + rlnorm(200, meanlog = log(5), sdlog = 0.2)
+#' fit <- reflimLOD.MLE(
+#'   measured.values = measured,
+#'   lod = 5,
+#'   n.lod = 10,
+#'   lambda = 0
+#' )
+#' lod.qqplot(fit)
+#' }
 #'
 #' @export
 lod.qqplot <- function(res.lodiboxplot, pch=16, line.col="red", lwd=2, col.grid=NA, xlab="Theoretical Quantiles", ylab="Transformed Sample Quantiles"){
@@ -466,6 +581,18 @@ lod.qqplot <- function(res.lodiboxplot, pch=16, line.col="red", lwd=2, col.grid=
 #' @return A data frame with two columns: lambda and R-squared values of this function.
 #'
 #' @importFrom graphics points grid
+#'
+#' @examples
+#' \donttest{
+#' set.seed(123)
+#' measured <- 5 + rlnorm(200, meanlog = log(5), sdlog = 0.2)
+#' draw.r.squared(
+#'   measured.values = measured,
+#'   lod = 5,
+#'   n.lod = 10,
+#'   lambdas = c(0, 0.5, 1)
+#' )
+#' }
 #'
 #' @export
 draw.r.squared <- function(measured.values, lod, n.lod, lambdas=seq(from = 0,to = 1,by = 0.1), adjusted=F, right.quantile=0.75, lwd=2, ylim=NULL, pch=16, col.grid=NULL){
@@ -514,6 +641,18 @@ draw.r.squared <- function(measured.values, lod, n.lod, lambdas=seq(from = 0,to 
 #'
 #' @return A data frame with three columns: lambda, lower and upper reference limit.
 #'
+#' @examples
+#' \donttest{
+#' set.seed(123)
+#' measured <- 5 + rlnorm(200, meanlog = log(5), sdlog = 0.2)
+#' draw.reflims(
+#'   measured.values = measured,
+#'   lod = 5,
+#'   n.lod = 10,
+#'   lambdas = c(0, 0.5, 1)
+#' )
+#' }
+#'
 #' @export
 draw.reflims <- function(measured.values, lod, n.lod, lambdas=seq(from = 0,to = 1,by = 0.1), right.quantile=0.75, lwd=2, ylim=NULL, ylab="", pch=c(15,16), col=c(2,4), col.grid=NULL){
   # Old name: plot.reflims
@@ -556,6 +695,19 @@ draw.reflims <- function(measured.values, lod, n.lod, lambdas=seq(from = 0,to = 
 #'
 #' @importFrom graphics hist curve grid
 #'
+#' @examples
+#' \dontrun{
+#' set.seed(123)
+#' measured <- 5 + rlnorm(200, meanlog = log(5), sdlog = 0.2)
+#' fit <- reflimLOD.MLE(
+#'   measured.values = measured,
+#'   lod = 5,
+#'   n.lod = 10,
+#'   lambda = 0
+#' )
+#' lod.hist(fit, main = "LOD-adjusted distribution")
+#' }
+#'
 #' @export
 lod.hist <- function(res.lodiboxplot, xlab="", ylab="Frequency", main="", lwd=2, col.curve=2, breaks=10, col.grid=NULL){
   tmv <- res.lodiboxplot$selected.values
@@ -591,6 +743,12 @@ lod.hist <- function(res.lodiboxplot, xlab="", ylab="Frequency", main="", lwd=2,
 #'
 #' @return A list with mu and sigma as the corresponding estimates.
 #'
+#' @examples
+#' set.seed(123)
+#' x <- rnorm(200)
+#' x <- x[x >= -2 & x <= 2]
+#' fit.trunc.norm(x, a = -2, b = 2)
+#'
 #' @export
 fit.trunc.norm <- function(x, a=-Inf, b=Inf){
   if (sum(x < a) > 0 | sum(x > b) > 0) {
@@ -618,6 +776,17 @@ fit.trunc.norm <- function(x, a=-Inf, b=Inf){
 #' @param mu.path Expected value of the normal distribution from the path. population
 #'
 #' @return A list with the measured values above LOD, the number of values below LOD and the based on the specified desired proportion of values below LOD in the healthy population
+#'
+#' @examples
+#' set.seed(123)
+#' sample <- lod.artificial.sample(
+#'   n = 200,
+#'   prop.lod.healthy = 0.05,
+#'   prop.path = 0.1,
+#'   mu.path = 3
+#' )
+#' sample$n.lod
+#' head(sample$measured.values)
 #'
 #' @export
 lod.artificial.sample <- function(n, prop.lod.healthy=0, prop.path=0, mu.path=3){
