@@ -44,3 +44,17 @@ A list with the following elements:
 \description{
 Similar to reflimLOD.MLE(), but computes bootstrap confidence intervals for the reference interval limits and 1\% and 99\% quantile
 }
+\examples{
+\donttest{
+set.seed(123)
+measured <- 5 + rlnorm(200, meanlog = log(5), sdlog = 0.2)
+intervals <- ci.reflimLOD.MLE(
+  measured.values = measured,
+  lod = 5,
+  n.lod = 10,
+  lambda = 0,
+  n.bootstrap = 50
+)
+intervals
+}
+}

@@ -35,3 +35,17 @@ lod.hist(
 \description{
 Plots a histogram of the selected measured values and the estimated density curve
 }
+\examples{
+\dontrun{
+set.seed(123)
+measured <- 5 + rlnorm(200, meanlog = log(5), sdlog = 0.2)
+fit <- reflimLOD.MLE(
+  measured.values = measured,
+  lod = 5,
+  n.lod = 10,
+  lambda = 0
+)
+lod.hist(fit, main = "LOD-adjusted distribution")
+}
+
+}

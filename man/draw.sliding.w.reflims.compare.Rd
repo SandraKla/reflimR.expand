@@ -70,3 +70,28 @@ Used to compare results for two different parameters. Creates a \code{ggplot2} v
 optionally including confidence intervals. This function is useful for inspecting the dynamics
 of lower and upper reference limits over time, especially in the context of individualized or age-dependent reference intervals.
 }
+\examples{
+age <- 20:30
+result1 <- data.frame(
+  lower.lim = 35 + 0.1 * age,
+  upper.lim = 55 + 0.1 * age,
+  ci.lower.lim.l = 34 + 0.1 * age,
+  ci.lower.lim.u = 36 + 0.1 * age,
+  ci.upper.lim.l = 54 + 0.1 * age,
+  ci.upper.lim.u = 56 + 0.1 * age,
+  covariate.mean = age,
+  covariate.median = age
+)
+result2 <- result1
+result2$lower.lim <- result2$lower.lim + 1
+result2$upper.lim <- result2$upper.lim + 1
+
+plot <- draw.sliding.w.reflims.compare(
+  result.sliding.reflim1 = result1,
+  result.sliding.reflim2 = result2,
+  xlab = "Age",
+  ylab = "Reference limits"
+)
+print(plot)
+
+}

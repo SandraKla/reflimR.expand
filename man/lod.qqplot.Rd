@@ -32,3 +32,17 @@ lod.qqplot(
 \description{
 Generates a QQ-plot
 }
+\examples{
+\donttest{
+set.seed(123)
+measured <- 5 + rlnorm(200, meanlog = log(5), sdlog = 0.2)
+fit <- reflimLOD.MLE(
+  measured.values = measured,
+  lod = 5,
+  n.lod = 10,
+  lambda = 0
+)
+lod.qqplot(fit)
+}
+
+}

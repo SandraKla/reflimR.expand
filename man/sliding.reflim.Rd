@@ -57,3 +57,20 @@ Computes reference intervals based on a sliding window technique. There are two 
 A fixed window size and a fixed step width by which the window is shifted or windows with
 a guaranteed minimum number of values.
 }
+\examples{
+\donttest{
+set.seed(123)
+age <- sample(20:70, 500, replace = TRUE)
+value <- 40 + 0.3 * age + rnorm(500, sd = 5)
+
+result <- sliding.reflim(
+  x = value,
+  covariate = age,
+  window.size = 15,
+  step.width = 5,
+  n.min = 40
+)
+head(result)
+}
+
+}

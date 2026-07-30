@@ -61,3 +61,17 @@ pre-specified Box-Cox transformation. The default is lambda=0, i.e. it is assume
 the values from the healthy subjects follow a lognormal distribution. It is also assumed
 that the median of the values from the  healthy subjects is above LOD.
 }
+\examples{
+\donttest{
+set.seed(123)
+measured <- 5 + rlnorm(200, meanlog = log(5), sdlog = 0.2)
+result <- reflimLOD.MLE(
+  measured.values = measured,
+  lod = 5,
+  n.lod = 10,
+  lambda = 0
+)
+c(result$lower.limit, result$upper.limit)
+}
+
+}

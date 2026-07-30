@@ -61,3 +61,20 @@ A list with the following elements:
 Estimation of reference limits from mixed distributions of normal and pathological laboratory results. Updated for weighted data.
 Estimates lower and upper reference limits and provides statistical characteristics and graphics to evaluate the results.
 }
+\examples{
+\donttest{
+set.seed(123)
+x <- rlnorm(250, meanlog = log(50), sdlog = 0.15)
+weights <- seq(0.5, 1.5, length.out = length(x))
+
+result <- w.reflim(
+  x = x,
+  x_weight = weights,
+  n.min = 40,
+  apply.rounding = FALSE,
+  print.n = FALSE
+)
+result$limits
+}
+
+}

@@ -19,3 +19,10 @@ A list with mu and sigma as the corresponding estimates.
 \description{
 Computes the MLE for mu and sigma of a normal distribution truncated to the interval(a,b)
 }
+\examples{
+set.seed(123)
+x <- rnorm(200)
+x <- x[x >= -2 & x <= 2]
+fit.trunc.norm(x, a = -2, b = 2)
+
+}

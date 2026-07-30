@@ -17,3 +17,13 @@ Weighting function.
 \description{
 Generate a weighting function based on the specified distribution type
 }
+\examples{
+gaussian_weight <- makeWeightFunction(
+  distribution = "gaussian",
+  sigma = 5
+)
+age <- 20:40
+weights <- gaussian_weight(age, mean = 30)
+plot(age, weights, type = "l")
+
+}

@@ -17,3 +17,8 @@ Derivative of the inverse Box-Cox transformation at x.
 \description{
 Derivative of the inverse Box-Cox transformation.
 }
+\examples{
+x <- seq(-1,1,length.out = 5)
+d.box.cox.inv.trans(x, lambda = 0)
+
+}

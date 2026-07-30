@@ -17,3 +17,9 @@ Bowley's quantile skewness (a single numeric value).
 \description{
 Calculates a robust skewness measure for \code{x} based on the interquartile range (or any other quantile range).
 }
+\examples{
+x <- c(1, 2, 3, 4, 5)
+weights <- c(1, 1, 2, 1, 1)
+w.bowley(x, weights)
+
+}

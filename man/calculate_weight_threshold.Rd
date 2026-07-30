@@ -19,3 +19,12 @@ Sum of weights.
 \description{
 Used to determine if there are enough points in the distribution.
 }
+\examples{
+threshold <- calculate_weight_threshold(
+  distribution = "gaussian",
+  params = list(standard_deviation = 5),
+  n = 40
+)
+threshold
+
+}

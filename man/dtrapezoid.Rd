@@ -23,3 +23,15 @@ Probability density.
 \description{
 Trapezoidal Probability Density Function
 }
+\examples{
+x <- seq(0, 1, length.out = 100)
+density <- dtrapezoid(
+  x,
+  a = 0,
+  b = 0.3,
+  c = 0.7,
+  d = 1
+)
+plot(x, density, type = "l")
+
+}

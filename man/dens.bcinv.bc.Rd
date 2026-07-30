@@ -23,3 +23,15 @@ Density of the transformed (truncated) Normal distribution at x.
 \description{
 Density of an inverse Box-Cox and then Box-Cox transformed (truncated) Normal distribution.
 }
+\examples{
+x <- seq(1,10,length.out = 100)
+density <- dens.bcinv.bc(
+ x,
+ mu=5,
+ sigma=1,
+ lambda.inv=1,
+ lambda = 1
+)
+plot(x,density,type = "l")
+
+}

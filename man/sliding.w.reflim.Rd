@@ -81,3 +81,20 @@ A plot object showing reference limits with confidence intervals.
 Window slider main function that performs sliding window analysis with different weight functions.
 The function supports multiple distribution types and comparison between different parameter settings.
 }
+\examples{
+\donttest{
+set.seed(123)
+age <- sample(20:70, 500, replace = TRUE)
+value <- 40 + 0.3 * age + rnorm(500, sd = 5)
+
+sliding.w.reflim(
+  x = value,
+  t = age,
+  distribution = "gaussian",
+  standard_deviation = 5,
+  n.min = 40,
+  verbose = FALSE
+)
+}
+
+}

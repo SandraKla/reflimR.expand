@@ -44,3 +44,16 @@ A data frame with two columns: lambda and R-squared values of this function.
 \description{
 Computes and plots the R-squared values of the QQ-plots for different lambdas
 }
+\examples{
+\donttest{
+set.seed(123)
+measured <- 5 + rlnorm(200, meanlog = log(5), sdlog = 0.2)
+draw.r.squared(
+  measured.values = measured,
+  lod = 5,
+  n.lod = 10,
+  lambdas = c(0, 0.5, 1)
+)
+}
+
+}

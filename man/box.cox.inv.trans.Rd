@@ -17,3 +17,9 @@ The inverse Box-Cox transformed data.
 \description{
 Computes the standard inverse Box-Cox transformation.
 }
+\examples{
+x <- c(1,2,4)
+transformed <- box.cox.trans(x, lambda = 0)
+box.cox.trans(transformed, lambda = 0)
+
+}
