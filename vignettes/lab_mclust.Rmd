@@ -1,0 +1,43 @@
+---
+title: "Indirect Reference Interval Estimation using lab_mclust"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Indirect Reference Interval Estimation using lab_mclust}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+The lab_mclust() function provides an indirect method for estimating reference intervals using Gaussian Finite Mixture Models via the mclust algorithm. Originally developed in the VeRIf repository, this approach is designed to model multi-modal or non-normal laboratory data and isolate the non-pathological subpopulation.
+
+## Basic Usage
+Below is a standard workflow for applying lab_mclust to indirect reference interval calculations.
+
+```{r setup, message = FALSE}
+library(reflimR.expand)
+library(reflimR)
+```
+### Example with livertests Dataset
+We can estimate reference limits for Alanine Aminotransferase (ALT) using the built-in dataset:
+
+```{r example, eval = FALSE}
+# Load example dataset from reflimR
+data("livertests", package = "reflimR")
+
+# Run lab_mclust on ALT values
+alt_data <- livertests$ALT
+res <- lab_mclust(alt_data)
+
+# Print results
+print(res)
+```
+## References
+
+Algorithm original source: https://github.com/SandraKla/VeRIf/blob/main/functions.R
