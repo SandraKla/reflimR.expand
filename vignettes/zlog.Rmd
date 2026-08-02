@@ -1,0 +1,47 @@
+---
+title: "Standardization of Laboratory Data using zlog"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Standardization of Laboratory Data using zlog}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+The zlog() function and its related utilities provide methods for standardizing and normalizing laboratory measurement data using reference limits via $z$-score and logarithmic transformations. Ported from the VeRIf repository, zlog helps make laboratory values comparable across different analytes or instruments.
+
+## Basic Usage
+Below is a basic demonstration of applying zlog transformations.
+
+```{r setup, message = FALSE}
+library(reflimR.expand)
+library(reflimR)
+```
+
+### Example Usage
+We can transform laboratory measurements based on defined lower and upper reference limits:
+
+```{r example, eval = FALSE}
+# Example analyte measurements
+vals <- c(10, 15, 20, 25, 30, 100)
+
+# Define reference limits (e.g., Lower Limit = 12, Upper Limit = 25)
+limits <- c(lower = 12, upper = 25)
+
+# Calculate zlog values
+z_scores <- zlog(vals, limits = limits)
+
+# Print standardized zlog scores
+print(z_scores)
+```
+
+## References
+
+- Algorithm original source: [VeRIf (functions.R)](https://github.com/SandraKla/VeRIf/blob/main/functions.R)
