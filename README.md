@@ -25,15 +25,18 @@ install.packages("devtools")
 devtools::install_github("SandraKla/reflimR.expand")
 ```
 
-Once the installation is complete, load the package into your R session with:
+Once the installation is complete, load the package into
+your R session with:
 
 ```bash
 library(reflimR.expand)
 ```
 
-# Usage
+## Usage
 
 After installing and loading the package, you can use the main functions to compute reference intervals with enhanced methods:
 
-- Use the Sliding Window functions to calculate reference intervals based on a sliding window approach, allowing for reference interval estimation across covariates such as age.
-- Use the reflimLOD functions to handle data values below the limit of detection (LOD).
+- **reflimLOD**: Handles data values below the limit of detection (LOD).
+- **rpart sliding window**: Estimates continuous age-dependent reference intervals using decision tree partitioning and sliding window algorithms (ported from [AdRI](https://github.com/SandraKla/AdRI/blob/master/R/window.R) and [AdRI_rpart](https://github.com/SandraKla/AdRI_rpart/blob/main/rpart.R)). See `vignette("sliding_rpart")` for detailed usage.
+- **lab_mclust**: Indirect reference interval estimation using Gaussian Finite Mixture Models (ported from [VeRIf](https://github.com/SandraKla/VeRIf)). See `vignette("lab_mclust")` for detailed usage.
+- **zlog**: Standardizes laboratory measurements using reference-limit-based z-scores and logarithmic transformations (ported from [VeRIf](https://github.com/SandraKla/VeRIf)). See `vignette("zlog")` for detailed usage.
