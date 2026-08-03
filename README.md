@@ -7,35 +7,30 @@ The *reflimR.expand* package provides a powerful extension to the existing *refl
 * handling values below the limit of detection (LOD), and
 * applying sliding window techniques for age-dependent reference intervals.
 
-## Installation
+### Installation
 
-To use the *reflimR.expand* package, you must first install its dependency, *reflimR*, from CRAN. Open R and enter the following command in the console:
+You can install `reflimR.expand` directly from GitHub. The snippet below automatically checks and installs required dependencies:
 
-```bash
-install.packages("reflimR")
-```
-
-This will download and install the *reflimR* package. Next, install the *reflimR.expand* package directly from GitHub using the *devtools* package:
-
-```bash
-# If devtools is not installed yet:
-install.packages("devtools")
-
-# Install reflimR.expand from GitHub
-devtools::install_github("SandraKla/reflimR.expand")
-```
-
-Once the installation is complete, load the package into
-your R session with:
-
-```bash
-library(reflimR.expand)
+```r
+if ("reflimR.expand" %in% rownames(installed.packages())) {
+  library(reflimR.expand)
+} else {
+  if ("devtools" %in% rownames(installed.packages())) {
+    library(devtools)
+  } else {
+    install.packages("devtools")
+    library(devtools)
+  }
+  devtools::install_github("SandraKla/reflimR.expand")
+  library(reflimR.expand)
+}
 ```
 
 ## Usage
 
 After installing and loading the package, you can use the main functions to compute reference intervals with enhanced methods:
 
+- **make_data / generate_data_from_ri**: Generates age-dependent synthetic laboratory datasets using mathematical trends or provided reference intervals. Supports Limit of Detection (LOD) threshold flags.
 - **reflimLOD**: Handles data values below the limit of detection (LOD).
 - **rpart sliding window**: Estimates continuous age-dependent reference intervals using decision tree partitioning and sliding window algorithms (ported from [AdRI](https://github.com/SandraKla/AdRI/blob/master/R/window.R) and [AdRI_rpart](https://github.com/SandraKla/AdRI_rpart/blob/main/rpart.R)). See `vignette("sliding_rpart")` for detailed usage.
 - **lab_mclust**: Indirect reference interval estimation using Gaussian Finite Mixture Models (ported from [VeRIf](https://github.com/SandraKla/VeRIf)). See `vignette("lab_mclust")` for detailed usage.
