@@ -727,12 +727,19 @@ lod.hist <- function(res.lodiboxplot, xlab="", ylab="Frequency", main="", lwd=2,
   if (!is.null(col.grid)) {
     grid(col = col.grid)
   }
-  curve(function(x) area * dens.box.cox.inv(
-    x, mu = res.lodiboxplot$mu.log,
-    sigma = res.lodiboxplot$sigma.log,
-    lambda = lambda),
-    from = min(tmv), to = max(tmv),
-    add = TRUE, lwd = lwd, col = col.curve)
+  curve(
+    area * dens.box.cox.inv(
+      x,
+      mu = res.lodiboxplot$mu.log,
+      sigma = res.lodiboxplot$sigma.log,
+      lambda = lambda
+    ),
+    from = min(tmv),
+    to = max(tmv),
+    add = TRUE,
+    lwd = lwd,
+    col = col.curve
+  )
 }
 
 #' Computes the MLE for mu and sigma of a normal distribution truncated to the interval(a,b)

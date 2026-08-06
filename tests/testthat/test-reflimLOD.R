@@ -20,3 +20,35 @@ test_that("reflimLOD functions handle invalid inputs", {
   expect_error(lod.hist(dataset_false))
   expect_error(lod.artificial.sample(dataset_false))
 })
+test_that("lod.hist draws the fitted density curve without an error", {
+  set.seed(123)
+
+  measured <- 5 + rlnorm(
+    200,
+    meanlog = log(5),
+    sdlog = 0.2
+  )
+
+  fit <- reflimLOD.MLE(
+    measured.values = measured,
+    lod = 5,
+    n.lod = 10,
+    lambda = 0
+  )
+
+  plot_file <- tempfile(fileext = ".pdf")
+  grDevices::pdf(plot_file)
+
+  on.exit({
+    grDevices::dev.off()
+    unlink(plot_file)
+  }, add = TRUE)
+
+  expect_error(
+    lod.hist(
+      fit,
+      main = "LOD-adjusted distribution"
+    ),
+    NA
+  )
+})
