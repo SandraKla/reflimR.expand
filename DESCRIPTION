@@ -16,7 +16,7 @@ Description: Extends the 'reflimR' package with methods for handling data below 
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
-Imports: stats, graphics, grDevices, reflimR, truncnorm, ggplot2, Hmisc, rlang
+Imports: stats, graphics, grDevices, reflimR, truncnorm, ggplot2, Hmisc, rlang, mclust
 Depends: R (>= 3.5.0)
 Suggests: knitr, rmarkdown, testthat (>= 3.0.0)
 VignetteBuilder: knitr
