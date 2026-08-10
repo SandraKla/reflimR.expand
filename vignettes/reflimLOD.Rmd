@@ -1,5 +1,6 @@
 ---
 title: "Reference Limits with Limit of Detection (LOD)"
+author: "Sandra Klawitter"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Reference Limits with Limit of Detection (LOD)}
@@ -16,11 +17,11 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Handling Data Below Limit of Detection (LOD)
-Laboratory measurements frequently encounter values below lower limit of detection or truncated distributions. The reflimR.expand package provides functions to estimate reference intervals without losing statistical integrity when dealing with LOD-constrained data.
+## Introduction
+Laboratory measurements frequently encounter values below lower limit of detection or truncated distributions. 
 
-
-## 1. Estimating Reference Limits with LOD
+## Usage
+### 1. Estimating Reference Limits with LOD
 The reflimLOD.MLE() function adjusts reference limit calculations when a portion of the dataset is below a specified detection threshold:
 ```{r}
 library(reflimR)
@@ -48,7 +49,8 @@ res_lod <- reflimLOD.MLE(
 # Inspect output structure
 res_lod
 ```
-## 2. Visualization
+### 2. Visualization
+
 You can visualize the distribution and estimated reference bounds directly:
 ```{r}
 # Plotting a Basic Histogram
@@ -67,3 +69,6 @@ f_dens <- Vectorize(function(x) {
 curve(f_dens, add = TRUE, col = "red", lwd = 2)
 ```
 
+## References
+
+Klawonn, F., Hoffmann, G., Holdenrieder, S., & Trulson, I. (2024). reflimLOD: A Modified reflimR Approach for Estimating Reference Limits with Tolerance for Values Below the Lower Limit of Detection (LOD). Stats, 7(4), 1296-1314. https://doi.org/10.3390/stats7040075 

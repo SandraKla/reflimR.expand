@@ -55,10 +55,6 @@
 #' result$stats
 #' }
 #'
-#' @references
-#' The original implementation was developed in the VeRIf repository:
-#' https://github.com/SandraKla/VeRIf
-#'
 #' @import mclust
 #'
 #' @export

@@ -1,24 +1,26 @@
 Package: reflimR.expand
 Type: Package
 Title: Advanced Reference Limit Estimation Using Routine Laboratory Data
-Version: 0.0.1
-Date: 2025-08-11
+Version: 0.0.2
+Date: 2026-08-10
 Authors@R: c(person("Sandra", "Klawitter", role = c("aut", "cre"),
                      email = "sandra.klawitter@trillium.de"),
                      person("Georg", "Hoffmann", role = "aut"),
                      person("Xufan", "Dong", role = "aut"),
+                     person("Yihao", "Han", role = "aut"),
+                     person("Weihao", "Qiu", role = "aut"),
                      person("Inga", "Trulson", role = "aut"),
                      person("Stefan", "Holdenrieder", role = "aut"),
                      person("Andreas", "Haag", role = "aut"),
                      person("Frank", "Klawonn", role = "aut"))
 Maintainer: Sandra Klawitter <sandra.klawitter@trillium.de>
-Description: Extends the 'reflimR' package with methods for handling data below the limit of detection (LOD) and for applying sliding window techniques.
+Description: Extends the 'reflimR' package with methods for handling data below the limit of detection (LOD), for applying sliding window techniques and various more functions.
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
 Imports: stats, graphics, grDevices, reflimR, truncnorm, ggplot2, Hmisc, rlang, mclust
-Depends: R (>= 3.5.0)
-Suggests: knitr, rmarkdown, testthat (>= 3.0.0)
+Depends: R (>= 4.5.2)
+Suggests: knitr, rmarkdown, testthat (>= 3.0.1)
 VignetteBuilder: knitr
 URL: https://github.com/SandraKla/reflimR.expand
 BugReports: https://github.com/SandraKla/reflimR.expand/issues

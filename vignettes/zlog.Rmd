@@ -1,5 +1,6 @@
 ---
 title: "Standardization of Laboratory Data using zlog"
+author: "Sandra Klawitter"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Standardization of Laboratory Data using zlog}
@@ -15,17 +16,15 @@ knitr::opts_chunk$set(
 ```
 
 ## Introduction
-The zlog() function and its related utilities provide methods for standardizing and normalizing laboratory measurement data using reference limits via $z$-score and logarithmic transformations. Ported from the VeRIf repository, zlog helps make laboratory values comparable across different analytes or instruments.
+The zlog() function and its related utilities provide methods for standardizing and normalizing laboratory measurement data using reference limits. The lower reference limits (LL) and upper reference limits (UL) can transform any result x into a zlog value using the following equation: zlog(x) = (log(x)–(log(LL)+ log(UL))/2)*3.92/(log(UL)–log(LL)). Values ranging from –1.96 to 1.96 are considered normal, while values below –5 and above 5 indicate pathological conditions.
 
-## Basic Usage
+## Usage
 Below is a basic demonstration of applying zlog transformations.
 
 ```{r setup, message = FALSE}
 library(reflimR.expand)
-library(reflimR)
 ```
 
-### Example Usage
 We can transform laboratory measurements based on defined lower and upper reference limits:
 
 ```{r example, eval = FALSE}
@@ -36,12 +35,12 @@ vals <- c(10, 15, 20, 25, 30, 100)
 limits <- c(lower = 12, upper = 25)
 
 # Calculate zlog values
-z_scores <- zlog(vals, limits = limits)
+zlog_scores <- zlog(vals, limits = limits)
 
 # Print standardized zlog scores
-print(z_scores)
+print(zlog_scores)
 ```
 
-## References
+### References
 
-- Algorithm original source: [VeRIf (functions.R)](https://github.com/SandraKla/VeRIf/blob/main/functions.R)
+Hoffmann, Georg & Klawonn, Frank & Lichtinghagen, Ralf & Orth, Matthias. (2018). The zlog value as a basis for the standardization of laboratory results. LaboratoriumsMedizin. 41. 10.1515/labmed-2017-0135. 

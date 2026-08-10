@@ -1,5 +1,6 @@
 ---
 title: "Sliding Window Methods for Age-Dependent Reference Intervals"
+author: "Sandra Klawitter"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Sliding Window Methods for Age-Dependent Reference Intervals}
@@ -16,10 +17,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Sliding Window Reference Limits
+## Introduction
+
 Biological parameters often change continuously across covariates such as age. Instead of creating arbitrary discrete age groups, sliding.reflim() applies a moving window to compute continuous local reference limits.
 
-## 1. Standard Sliding Window (sliding.reflim)
+## Usage
+
+### 1. Standard Sliding Window (sliding.reflim)
 ```{r}
 library(reflimR)
 library(reflimR.expand)
@@ -45,13 +49,13 @@ res_sliding <- sliding.reflim(
 head(res_sliding)
 ```
 
-Visualizing Results
 The companion function draw.sliding.reflims() visualizes local reference limits. You can plot results aligned by local median covariate (use.mean = FALSE) or mean covariate (use.mean = TRUE):
 
 ```{r}
 draw.sliding.reflims(res_sliding, use.mean = FALSE)
 ```
-## 2. Weighted Sliding Window (sliding.w.reflim)
+
+### 2. Weighted Sliding Window (sliding.w.reflim)
 For datasets with sparse regions or non-uniform age distributions, localized kernel weights can be applied via weighted sliding functions (sliding.w.reflim) to assign higher weights to observations near the center of the window:
 
 ```{r, eval = FALSE}

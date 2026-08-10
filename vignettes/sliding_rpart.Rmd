@@ -1,5 +1,6 @@
 ---
 title: "Indirect Reference Interval Estimation using Sliding Window and Decision Trees (rpart)"
+author: "Sandra Klawitter"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Indirect Reference Interval Estimation using Sliding Window and Decision Trees (rpart)}
@@ -15,9 +16,9 @@ knitr::opts_chunk$set(
 ```
 
 ## Introduction
-The rpart sliding window methods integrate decision tree partitioning (rpart) with sliding window algorithms for indirect reference interval estimation across continuous covariates (e.g., age). Ported from the AdRI and AdRI_rpart repositories, these functions enable continuous, non-linear partitioning of reference limits.
+The rpart decision tree partitioning for indirect reference interval estimation across continuous covariates (e.g., age).
 
-## Basic Usage
+## Usage
 Below is a standard workflow demonstration for using sliding window decision tree algorithms.
 
 ```{r setup, message = FALSE}
@@ -25,8 +26,7 @@ library(reflimR.expand)
 library(reflimR)
 ```
 
-### Example Usage
-We can estimate age-dependent reference intervals using partitioning decision trees:
+We can estimate age- and sex-dependent reference intervals using partitioning decision trees:
 
 ```{r example, eval = FALSE}
 # Load example dataset from reflimR
@@ -41,6 +41,4 @@ data("livertests", package = "reflimR")
 
 ## References
 
-- Sliding window algorithms original sources:
-  - [AdRI (window.R)](https://github.com/SandraKla/AdRI/blob/master/R/window.R)
-  - [AdRI_rpart (rpart.R)](https://github.com/SandraKla/AdRI_rpart/blob/main/rpart.R)
+Klawitter, Sandra, Böhm, Johannes, Tolios, Alexander and Gebauer, Julian E.. "Automated sex and age partitioning for the estimation of reference intervals using a regression tree model" Journal of Laboratory Medicine, vol. 48, no. 5, 2024, pp. 223-237. https://doi.org/10.1515/labmed-2024-0083
