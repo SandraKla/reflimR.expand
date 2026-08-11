@@ -1,0 +1,86 @@
+---
+title: "Synthetic Data Generation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Synthetic Data Generation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 4.5
+)
+```
+## Introduction
+Testing and benchmarking indirect methods for reference interval estimation requires flexible synthetic datasets with known underlying trends, pathological noise, and Limit of Detection (LOD) censoring. The reflimR.expand package provides two main functions for generating such datasets without relying on external GUIs:
+
+make_data(): Generates age-dependent laboratory measurements using mathematical trends across various continuous distributions.
+
+generate_data_from_ri(): Generates synthetic laboratory data directly from pre-defined reference intervals.
+```{r setup, message = FALSE}
+library(reflimR.expand)
+```
+
+## 1. Generating Data using Mathematical Trends (make_data)
+The make_data() function simulates continuous, age-dependent laboratory measurements. You can specify mathematical formulas for the mean (formula_mu) and standard deviation (formula_sigma), add pathological cases (ill_factor), and flag values below a Limit of Detection (lod).
+
+```{r make_data_example}
+# Generate synthetic biomarker data across 0 to 10 years
+df_synthetic <- make_data(
+age = 10,
+age_steps = 365,
+distribution = "NO",
+n_ = 50,
+name_value = "ALT",
+formula_mu = "linear(x, a = 0.5, b = 10)",
+formula_sigma = "linear(x, a = 0, b = 2)",
+ill_factor = 0.1,
+mu_factor_ill = 5,
+lod = 8.5,
+seed = 42
+)
+
+# Inspect generated dataset structure
+head(df_synthetic)
+
+# Count observations below Limit of Detection
+table(df_synthetic$IS_BELOW_LOD)
+```
+### Visualizing the Synthetic Dataset
+
+```{r plot_make_data}
+plot(
+  df_synthetic$AGE_YEARS, df_synthetic$VALUE,
+  col = ifelse(df_synthetic$IS_BELOW_LOD, "red", "black"),
+  pch = 16, cex = 0.6,
+  xlab = "Age (Years)", ylab = "ALT (U/L)",
+  main = "Synthetic Data: Black = Measured, Red = Below LOD"
+)
+```
+
+## 2. Generating Data from Known Reference Intervals (`generate_data_from_ri`)
+
+If reference limits (2.5% and 97.5% percentiles) are already known across different age steps, `generate_data_from_ri()` back-calculates Gaussian distribution parameters ($\mu, \sigma$) and generates corresponding observations.
+
+```{r generate_data_ri}
+# Define known reference intervals (age in days)
+ref_table <- data.frame(
+  age = c(365, 730, 1095), # 1, 2, and 3 years
+  down = c(2.0, 2.0, 3.0),
+  up = c(6.0, 6.0, 6.0)
+)
+
+# Generate synthetic dataset
+df_from_ri <- generate_data_from_ri(
+  reference_data = ref_table,
+  n_ = 50,
+  text_name = "AST",
+  seed = 123
+)
+
+head(df_from_ri)
+```
