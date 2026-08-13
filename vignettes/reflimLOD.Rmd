@@ -24,8 +24,7 @@ Laboratory measurements frequently encounter values below lower limit of detecti
 ### 1. Estimating Reference Limits with LOD
 The reflimLOD.MLE() function adjusts reference limit calculations when a portion of the dataset is below a specified detection threshold:
 ```{r}
-library(reflimR)
-pkgload::load_all("..")
+library(reflimR.expand)
 
 set.seed(42)
 # Generate synthetic biomarker data

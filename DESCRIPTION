@@ -20,7 +20,7 @@ Encoding: UTF-8
 LazyData: true
 Imports: stats, graphics, grDevices, reflimR, truncnorm, ggplot2, Hmisc, rlang, mclust
 Depends: R (>= 4.5.2)
-Suggests: knitr, rmarkdown, testthat (>= 3.0.1)
+Suggests: knitr, rmarkdown, testthat (>= 3.0.1), gamlss.dist
 VignetteBuilder: knitr
 URL: https://github.com/SandraKla/reflimR.expand
 BugReports: https://github.com/SandraKla/reflimR.expand/issues
