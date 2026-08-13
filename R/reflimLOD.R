@@ -693,7 +693,7 @@ draw.reflims <- function(measured.values, lod, n.lod, lambdas=seq(from = 0,to = 
 #' @param breaks The usual graphics parameters.
 #' @param col.grid The usual graphics parameters.
 #'
-#' @importFrom graphics hist curve grid
+#' @importFrom graphics hist lines grid
 #'
 #' @examples
 #' \dontrun{
@@ -727,16 +727,20 @@ lod.hist <- function(res.lodiboxplot, xlab="", ylab="Frequency", main="", lwd=2,
   if (!is.null(col.grid)) {
     grid(col = col.grid)
   }
-  curve(
-    area * dens.box.cox.inv(
-      x,
+  curve.x <- seq(
+    from = min(tmv),
+    to = max(tmv),
+    length.out = 101
+  )
+  curve.y <- area * dens.box.cox.inv(
+      curve.x,
       mu = res.lodiboxplot$mu.log,
       sigma = res.lodiboxplot$sigma.log,
       lambda = lambda
-    ),
-    from = min(tmv),
-    to = max(tmv),
-    add = TRUE,
+  )
+  lines(
+    curve.x,
+    curve.y,
     lwd = lwd,
     col = col.curve
   )
