@@ -1,6 +1,6 @@
 ---
 title: "Indirect Reference Interval Estimation using Sliding Window and Decision Trees (rpart)"
-author: "Sandra Klawitter"
+author: "Sandra Klawitter, Weihao Qiu"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Indirect Reference Interval Estimation using Sliding Window and Decision Trees (rpart)}
@@ -24,19 +24,32 @@ Below is a standard workflow demonstration for using sliding window decision tre
 ```{r setup, message = FALSE}
 library(reflimR.expand)
 library(reflimR)
+library(rpart)
 ```
 
 We can estimate age- and sex-dependent reference intervals using partitioning decision trees:
 
-```{r example, eval = FALSE}
-# Load example dataset from reflimR
+```{r example}
+# Load example dataset
 data("livertests", package = "reflimR")
 
-# Run decision tree sliding window algorithm (assuming age and analyte columns)
-# res <- rpart_window(livertests, analyte = "ALT", covariate = "age")
+# Fit decision tree model to partition ALT by Age and Sex
+fit_tree <- rpart(
+  ALT ~ Age + Sex,
+  data = livertests,
+  method = "anova",
+  control = rpart.control(cp = 0.01, minsplit = 30)
+)
 
-# Print summary
-# summary(res)
+# Print tree summary
+print(fit_tree)
+```
+
+### Visualizing the Decision Tree
+
+```{r plot_rpart, fig.width = 8, fig.height = 5}
+plot(fit_tree, uniform = TRUE, margin = 0.15, main = "Patient Partitioning by Age & Sex (ALT)")
+text(fit_tree, use.n = TRUE, all = TRUE, cex = 0.7, digits = 3)
 ```
 
 ## References

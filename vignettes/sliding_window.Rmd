@@ -1,6 +1,6 @@
 ---
 title: "Sliding Window Methods for Age-Dependent Reference Intervals"
-author: "Sandra Klawitter"
+author: "Sandra Klawitter, Weihao Qiu"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Sliding Window Methods for Age-Dependent Reference Intervals}
@@ -58,11 +58,14 @@ draw.sliding.reflims(res_sliding, use.mean = FALSE)
 ### 2. Weighted Sliding Window (sliding.w.reflim)
 For datasets with sparse regions or non-uniform age distributions, localized kernel weights can be applied via weighted sliding functions (sliding.w.reflim) to assign higher weights to observations near the center of the window:
 
-```{r, eval = FALSE}
-res_w_sliding <- sliding.w.reflim(
+```{r weighted_sliding, warning = FALSE, message = FALSE}
+# Run weighted sliding window and display the plot directly
+sliding.w.reflim(
   x = biomarker,
   t = age,
-  distribution = "truncated_gaussian",
-  standard_deviation = 5
+  distribution = "gaussian",
+  standard_deviation = 5,
+  n.min = 39,
+  verbose = FALSE
 )
 ```
