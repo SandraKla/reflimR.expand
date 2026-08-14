@@ -1,5 +1,6 @@
 ---
 title: "Synthetic Data Generation"
+author: "Weihao Qiu"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Synthetic Data Generation}
