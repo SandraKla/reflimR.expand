@@ -15,6 +15,10 @@
 #' zlog(4, L = 2, U = 8)
 #' zlog(c(2, 4, 8), L = 2, U = 8)
 #'
+#' #' @references
+#' The original implementation was developed in the VeRIf repository:
+#' \url{https://github.com/SandraKla/VeRIf}
+#'
 #' @export
 zlog <- function(x, L = 0, U = 0) {
   if (!is.numeric(x)) {

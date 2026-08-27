@@ -26,8 +26,8 @@ values using lower and upper reference limits.
 zlog(4, L = 2, U = 8)
 zlog(c(2, 4, 8), L = 2, U = 8)
 
-}
-\references{
+#' @references
 The original implementation was developed in the VeRIf repository:
-https://github.com/SandraKla/VeRIf
+\url{https://github.com/SandraKla/VeRIf}
+
 }
