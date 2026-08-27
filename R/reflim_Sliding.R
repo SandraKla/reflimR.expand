@@ -1,4 +1,4 @@
-#' Reference intervals based on a sliding window technique
+ #' Reference intervals based on a sliding window technique
 #'
 #' Computes reference intervals based on a sliding window technique. There are two variants.
 #' A fixed window size and a fixed step width by which the window is shifted or windows with

@@ -22,19 +22,9 @@ and \code{up} (upper limit).}
 \item{seed}{Optional integer. Random seed for reproducibility (default: NULL).}
 }
 \value{
-A data.frame with standard laboratory columns: \code{AGE_YEARS}, \code{AGE_DAYS},
-\code{VALUE}, \code{ID}, \code{SEX}, \code{STATION}, and \code{ANALYTE}.
+A data.frame with standard laboratory columns.
 }
 \description{
 Generates synthetic observations using pre-defined 2.5\\% and 97.5\\% reference limits
-(percentiles) assuming an underlying Gaussian distribution. Ported from AdRI_Generator.
-}
-\examples{
-ref_df <- data.frame(
-  age = c(365, 730, 1095),
-  down = c(2, 2, 3),
-  up = c(6, 6, 6)
-)
-df <- generate_data_from_ri(ref_df, n_ = 20, text_name = "ALT", seed = 42)
-head(df)
+(percentiles) assuming an underlying Gaussian distribution.
 }

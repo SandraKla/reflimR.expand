@@ -16,33 +16,37 @@ knitr::opts_chunk$set(
   fig.height = 4.5
 )
 ```
+
 ## Introduction
-Testing and benchmarking indirect methods for reference interval estimation requires flexible synthetic datasets with known underlying trends, pathological noise, and Limit of Detection (LOD) censoring. The reflimR.expand package provides two main functions for generating such datasets without relying on external GUIs:
 
-make_data(): Generates age-dependent laboratory measurements using mathematical trends across various continuous distributions.
+Testing and benchmarking indirect methods for reference interval estimation requires flexible synthetic datasets with known underlying trends, pathological noise, and Limit of Detection (LOD) censoring. The `reflimR.expand` package provides three dedicated functions for generating synthetic laboratory data:
 
-generate_data_from_ri(): Generates synthetic laboratory data directly from pre-defined reference intervals.
+* `make_data()`: Simulates continuous, age-dependent laboratory measurements using mathematical trends across various distributions (Normal, Log-Normal, Box-Cox variants).
+* `generate_data_from_ri()`: Generates age-stratified synthetic observations directly from pre-defined reference limits.
+* `synthetic_data()`: Generates multi-subgroup patient cohorts from lower/upper limits with built-in parameter estimation and distribution plotting.
+
 ```{r setup, message = FALSE}
 library(reflimR.expand)
 ```
 
-## 1. Generating Data using Mathematical Trends (make_data)
-The make_data() function simulates continuous, age-dependent laboratory measurements. You can specify mathematical formulas for the mean (formula_mu) and standard deviation (formula_sigma), add pathological cases (ill_factor), and flag values below a Limit of Detection (lod).
+## 1. Generating Data using Mathematical Trends (`make_data`)
+
+The `make_data()` function simulates continuous, age-dependent laboratory measurements. You can specify mathematical formulas for the mean (`formula_mu`) and standard deviation (`formula_sigma`), add pathological cases (`ill_factor`), and flag values below a Limit of Detection (`lod`).
 
 ```{r make_data_example}
 # Generate synthetic biomarker data across 0 to 10 years
 df_synthetic <- make_data(
-age = 10,
-age_steps = 365,
-distribution = "NO",
-n_ = 50,
-name_value = "ALT",
-formula_mu = "linear(x, a = 0.5, b = 10)",
-formula_sigma = "linear(x, a = 0, b = 2)",
-ill_factor = 0.1,
-mu_factor_ill = 5,
-lod = 8.5,
-seed = 42
+  age = 10,
+  age_steps = 365,
+  distribution = "NO",
+  n_ = 50,
+  name_value = "ALT",
+  formula_mu = "linear(x, a = 0.5, b = 10)",
+  formula_sigma = "linear(x, a = 0, b = 2)",
+  ill_factor = 0.1,
+  mu_factor_ill = 5,
+  lod = 8.5,
+  seed = 42
 )
 
 # Inspect generated dataset structure
@@ -51,6 +55,7 @@ head(df_synthetic)
 # Count observations below Limit of Detection
 table(df_synthetic$IS_BELOW_LOD)
 ```
+
 ### Visualizing the Synthetic Dataset
 
 ```{r plot_make_data}
@@ -84,4 +89,21 @@ df_from_ri <- generate_data_from_ri(
 )
 
 head(df_from_ri)
+```
+
+## 3. Multi-Subgroup Synthetic Data (`synthetic_data`)
+
+The `synthetic_data()` function generates multi-subgroup patient cohorts based on defined lower and upper limits, estimates underlying distribution parameters, and visualizes the cohort distribution with an optional boxplot:
+
+```{r synthetic_data_example, fig.width = 7, fig.height = 5}
+res_synth <- synthetic_data(
+  n = c(200, 600, 200),
+  ll = c(10, 15, 20),
+  ul = c(14, 22, 28),
+  main = "Synthetic Multi-Subgroup Distribution",
+  xlab = "Biomarker Level"
+)
+
+# Subgroup parameter statistics
+print(res_synth$stats)
 ```

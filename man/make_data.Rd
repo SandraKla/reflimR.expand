@@ -57,17 +57,3 @@ Generates synthetic age-dependent laboratory dataset across continuous age range
 using normal, log-normal, or Box-Cox transformation distributions (BCCG, BCPE, BCT).
 Supports adding pathological cases and censoring values below Limit of Detection (LOD).
 }
-\examples{
-df <- make_data(
-  age = 10,
-  age_steps = 365,
-  distribution = "NO",
-  n_ = 50,
-  formula_mu = "linear(x, a = 0.5, b = 10)",
-  formula_sigma = "linear(x, a = 0, b = 2)",
-  ill_factor = 0.1,
-  mu_factor_ill = 5,
-  lod = 8.5
-)
-head(df)
-}
