@@ -22,20 +22,6 @@
 #' @return A data.frame with standard laboratory columns: \code{AGE_YEARS}, \code{AGE_DAYS},
 #'   \code{VALUE}, \code{IS_BELOW_LOD}, \code{ID}, \code{SEX}, \code{STATION}, and \code{ANALYTE}.
 #' @export
-#'
-#' @examples
-#' df <- make_data(
-#'   age = 10,
-#'   age_steps = 365,
-#'   distribution = "NO",
-#'   n_ = 50,
-#'   formula_mu = "linear(x, a = 0.5, b = 10)",
-#'   formula_sigma = "linear(x, a = 0, b = 2)",
-#'   ill_factor = 0.1,
-#'   mu_factor_ill = 5,
-#'   lod = 8.5
-#' )
-#' head(df)
 make_data <- function(age,
                       age_steps = 365,
                       distribution = "NO",
@@ -69,8 +55,10 @@ make_data <- function(age,
   step_years <- age_steps / 365
   age_sequence <- seq(0, age, by = step_years)
 
+  eval_env <- list(linear = linear, expo = expo)
   eval_trend <- function(parsed_f, x_val) {
-    eval(parsed_f, envir = list(x = x_val, linear = linear, expo = expo))
+    eval_env$x <- x_val
+    eval(parsed_f, envir = eval_env)
   }
 
   generated_list <- vector("list", length(age_sequence))
@@ -95,14 +83,14 @@ make_data <- function(age,
 
     } else if (distribution == "BCCG") {
       if (!requireNamespace("gamlss.dist", quietly = TRUE)) {
-        stop("Package 'gamlss.dist' is required for BCCG distribution.")
+        stop("Package 'gamlss.dist' is required for BCCG distribution.", call. = FALSE)
       }
       current_nu <- eval_trend(parsed_nu, i_age)
       vals <- gamlss.dist::rBCCG(n = n_, mu = current_mu, sigma = current_sigma, nu = current_nu)
 
     } else if (distribution == "BCPE") {
       if (!requireNamespace("gamlss.dist", quietly = TRUE)) {
-        stop("Package 'gamlss.dist' is required for BCPE distribution.")
+        stop("Package 'gamlss.dist' is required for BCPE distribution.", call. = FALSE)
       }
       current_nu <- eval_trend(parsed_nu, i_age)
       current_tau <- eval_trend(parsed_tau, i_age)
@@ -110,14 +98,14 @@ make_data <- function(age,
 
     } else if (distribution == "BCT") {
       if (!requireNamespace("gamlss.dist", quietly = TRUE)) {
-        stop("Package 'gamlss.dist' is required for BCT distribution.")
+        stop("Package 'gamlss.dist' is required for BCT distribution.", call. = FALSE)
       }
       current_nu <- eval_trend(parsed_nu, i_age)
       current_tau <- eval_trend(parsed_tau, i_age)
       vals <- gamlss.dist::rBCT(n = n_, mu = current_mu, sigma = current_sigma, nu = current_nu, tau = current_tau)
 
     } else {
-      stop("Unsupported distribution type. Choose from: NO, LOGNO, BCCG, BCPE, BCT.")
+      stop("Unsupported distribution type. Choose from: NO, LOGNO, BCCG, BCPE, BCT.", call. = FALSE)
     }
 
     generated_list[[idx]] <- data.frame(
@@ -128,7 +116,6 @@ make_data <- function(age,
 
   generated_data <- do.call(rbind, generated_list)
 
-  # Check Limit of Detection (LOD)
   is_below_lod <- rep(FALSE, nrow(generated_data))
   if (!is.null(lod)) {
     is_below_lod <- generated_data$value < lod
@@ -152,7 +139,7 @@ make_data <- function(age,
 #' Generator for Synthetic Laboratory Data from Provided Reference Intervals
 #'
 #' Generates synthetic observations using pre-defined 2.5\% and 97.5\% reference limits
-#' (percentiles) assuming an underlying Gaussian distribution. Ported from AdRI_Generator.
+#' (percentiles) assuming an underlying Gaussian distribution.
 #'
 #' @param reference_data A data.frame containing columns \code{age} (in days), \code{down} (lower limit),
 #'   and \code{up} (upper limit).
@@ -160,29 +147,30 @@ make_data <- function(age,
 #' @param text_name Character. Name of the analyte (default: \code{"Analyte"}).
 #' @param seed Optional integer. Random seed for reproducibility (default: NULL).
 #'
-#' @return A data.frame with standard laboratory columns: \code{AGE_YEARS}, \code{AGE_DAYS},
-#'   \code{VALUE}, \code{ID}, \code{SEX}, \code{STATION}, and \code{ANALYTE}.
+#' @return A data.frame with standard laboratory columns.
 #' @export
-#'
-#' @examples
-#' ref_df <- data.frame(
-#'   age = c(365, 730, 1095),
-#'   down = c(2, 2, 3),
-#'   up = c(6, 6, 6)
-#' )
-#' df <- generate_data_from_ri(ref_df, n_ = 20, text_name = "ALT", seed = 42)
-#' head(df)
 generate_data_from_ri <- function(reference_data, n_ = 100, text_name = "Analyte", seed = NULL) {
   if (!is.null(seed)) {
     set.seed(seed)
   }
 
-  colnames(reference_data)[1:3] <- c("age", "down", "up")
-  ref_clean <- data.frame(
-    age = as.integer(reference_data$age),
-    down = as.numeric(reference_data$down),
-    up = as.numeric(reference_data$up)
-  )
+  req_cols <- c("age", "down", "up")
+  if (all(req_cols %in% colnames(reference_data))) {
+    ref_clean <- data.frame(
+      age = as.integer(reference_data$age),
+      down = as.numeric(reference_data$down),
+      up = as.numeric(reference_data$up)
+    )
+  } else {
+    if (ncol(reference_data) < 3) {
+      stop("`reference_data` must have at least 3 columns (age, down, up).", call. = FALSE)
+    }
+    ref_clean <- data.frame(
+      age = as.integer(reference_data[[1]]),
+      down = as.numeric(reference_data[[2]]),
+      up = as.numeric(reference_data[[3]])
+    )
+  }
 
   sigma <- (ref_clean$up - ref_clean$down) / (1.96 - (-1.96))
   mu <- ref_clean$up - 1.96 * sigma
@@ -198,7 +186,7 @@ generate_data_from_ri <- function(reference_data, n_ = 100, text_name = "Analyte
   }
 
   generated_data <- do.call(rbind, generated_list)
-  generated_data <- generated_data[generated_data$value > 0, ]
+  generated_data <- generated_data[generated_data$value > 0, , drop = FALSE]
 
   res <- data.frame(
     AGE_YEARS = round(generated_data$age / 365, 3),
@@ -212,4 +200,136 @@ generate_data_from_ri <- function(reference_data, n_ = 100, text_name = "Analyte
   )
 
   return(res)
+}
+
+#' Generate Synthetic Laboratory Data from Subgroups with Limits
+#'
+#' Generates synthetic data for multiple subgroups based on reference limits (lower and upper limits),
+#' estimates underlying distribution parameters, and optionally plots histograms, densities, and boxplots.
+#'
+#' @param n Integer vector specifying sample sizes for each subgroup.
+#' @param ll Numeric vector specifying the lower reference limits for each subgroup.
+#' @param ul Numeric vector specifying the upper reference limits for each subgroup.
+#' @param lognormal Logical, whether to generate lognormal distribution data instead of normal. Default is \code{FALSE}.
+#' @param hist.bins Number of histogram bins if sample size > 200. Default is 50.
+#' @param plot.it Logical, whether to generate a visualization plot. Default is \code{TRUE}.
+#' @param add.boxplot Logical, whether to superimpose a horizontal boxplot on the top. Default is \code{TRUE}.
+#' @param plot.legend Logical, whether to display a legend with reference intervals. Default is \code{TRUE}.
+#' @param pos.legend Position of the legend. Default is \code{"topright"}.
+#' @param main Title of the plot. Default is \code{""}.
+#' @param xlab Label for x-axis. Default is \code{""}.
+#' @param apply.rounding Logical, whether to round the generated data. Default is \code{TRUE}.
+#' @param digits Integer, number of decimal digits to round. If \code{NULL}, auto-determined.
+#'
+#' @return A list containing `values` and `stats`.
+#' @export
+synthetic_data <- function(n = c(100, 800, 100),
+                           ll = c(10, 12, 15),
+                           ul = c(13, 16, 20),
+                           lognormal = FALSE, hist.bins = 50,
+                           plot.it = TRUE, add.boxplot = TRUE,
+                           plot.legend = TRUE, pos.legend = "topright",
+                           main = "", xlab = "",
+                           apply.rounding = TRUE, digits = NULL){
+  if (length(n) != length(ll) || length(n) != length(ul) || length(ll) != length(ul)) {
+    stop("The three vectors n, ll, and ul must have the same length.", call. = FALSE)
+  }
+
+  estimate_parameters <- function(lower, upper){
+    m <- (lower + upper) / 2
+    s <- (upper - lower) / 3.92
+    return(c(m, s))
+  }
+
+  l <- length(n)
+  val_list <- vector("list", l)
+  res.tab <- data.frame(
+    n = n,
+    ll = ll,
+    ul = ul,
+    param1 = numeric(l),
+    param2 = numeric(l)
+  )
+
+  if (lognormal) {
+    colnames(res.tab)[4:5] <- c("meanlog", "sdlog")
+  } else {
+    colnames(res.tab)[4:5] <- c("mean", "sd")
+  }
+
+  for (i in seq_len(l)) {
+    if (lognormal) {
+      params <- estimate_parameters(log(ll[i]), log(ul[i]))
+      res.tab[i, 4] <- params[1]
+      res.tab[i, 5] <- params[2]
+      val_list[[i]] <- stats::rlnorm(n[i], params[1], params[2])
+    } else {
+      params <- estimate_parameters(ll[i], ul[i])
+      res.tab[i, 4] <- params[1]
+      res.tab[i, 5] <- params[2]
+      val_list[[i]] <- stats::rnorm(n[i], params[1], params[2])
+    }
+  }
+
+  dat <- unlist(val_list, use.names = FALSE)
+
+  if (apply.rounding) {
+    if (is.null(digits)) {
+      med_val <- stats::median(dat)
+      digits <- if (med_val > 0) max(0, 2 - floor(log10(med_val))) else 2
+    }
+    dat <- round(dat, digits)
+    if (lognormal) {
+      res.tab[, 4:5] <- round(res.tab[, 4:5], 3)
+    } else {
+      res.tab[, 4:5] <- round(res.tab[, 4:5], digits + 1)
+    }
+  }
+
+  if (length(dat) > 200) {
+    breaks <- seq(0.9 * min(dat), 1.1 * max(dat), length.out = hist.bins)
+  } else {
+    breaks <- "Sturges"
+  }
+
+  if (plot.it) {
+    col <- grDevices::rainbow(max(9, l))
+    d <- stats::density(dat)
+    y.max <- max(d$y) * 1.1
+    if (add.boxplot) { y.max <- y.max * 1.4 }
+
+    graphics::hist(dat, freq = FALSE,
+                   breaks = breaks,
+                   col = "white", border = "grey",
+                   ylim = c(0, y.max), yaxt = "n",
+                   main = main, xlab = xlab, ylab = "")
+    graphics::box()
+    graphics::lines(d, lty = 2)
+
+    n.total <- sum(n)
+    if (lognormal) {
+      for (i in seq_len(l)) {
+        graphics::curve(stats::dlnorm(x, res.tab[i, 4], res.tab[i, 5]) * (n[i] / n.total),
+                        from = min(dat), to = max(dat), lwd = 2, col = col[i], add = TRUE)
+      }
+    } else {
+      for (i in seq_len(l)) {
+        graphics::curve(stats::dnorm(x, res.tab[i, 4], res.tab[i, 5]) * (n[i] / n.total),
+                        from = min(dat), to = max(dat), lwd = 2, col = col[i], add = TRUE)
+      }
+    }
+
+    if (add.boxplot) {
+      graphics::boxplot(dat, horizontal = TRUE, at = y.max * 0.9, boxwex = y.max * 0.1, add = TRUE)
+    }
+
+    if (plot.legend) {
+      legend_labels <- paste0(res.tab[, 2], "-", res.tab[, 3], " (", round(n / sum(n) * 100, 1), "%)")
+      graphics::legend(pos.legend,
+                       legend = legend_labels,
+                       lwd = 2, col = col[seq_len(l)], cex = 0.8)
+    }
+  }
+
+  return(list(values = dat, stats = res.tab))
 }
