@@ -14,7 +14,8 @@ make_data(
   formula_sigma = "linear(x, 0, 1)",
   formula_nu = "linear(x, 0, 1)",
   formula_tau = "linear(x, 0, 2)",
-  ill_factor = 0,
+  prop.path = 0,
+  ill_factor = NULL,
   mu_factor_ill = 0,
   lod = NULL,
   seed = NULL
@@ -28,7 +29,7 @@ make_data(
 \item{distribution}{Character. Type of distribution: \code{"NO"} (Normal), \code{"LOGNO"} (Log-Normal),
 \code{"BCCG"}, \code{"BCPE"}, or \code{"BCT"}.}
 
-\item{n_}{Integer. Number of healthy observations per age step.}
+\item{n_}{Integer. Total number of observations per age step.}
 
 \item{name_value}{Character. Name of the analyte (default: \code{"Synthetic_Analyte"}).}
 
@@ -40,7 +41,9 @@ make_data(
 
 \item{formula_tau}{Character string or expression defining the trend for tau (for BCPE, BCT).}
 
-\item{ill_factor}{Numeric between 0 and 1. Proportion of pathological cases to add per age step.}
+\item{prop.path}{Numeric between 0 and 1. Proportion of pathological cases per age step (default: 0).}
+
+\item{ill_factor}{Alias for \code{prop.path} for backward compatibility.}
 
 \item{mu_factor_ill}{Numeric. Mean shift magnitude added to simulate pathological values.}
 
