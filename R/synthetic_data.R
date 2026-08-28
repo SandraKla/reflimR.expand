@@ -8,13 +8,14 @@
 #' @param age_steps Numeric. Step size for data generation in days (e.g., 365 for 1-year steps).
 #' @param distribution Character. Type of distribution: \code{"NO"} (Normal), \code{"LOGNO"} (Log-Normal),
 #'   \code{"BCCG"}, \code{"BCPE"}, or \code{"BCT"}.
-#' @param n_ Integer. Number of healthy observations per age step.
+#' @param n_ Integer. Total number of observations per age step.
 #' @param name_value Character. Name of the analyte (default: \code{"Synthetic_Analyte"}).
 #' @param formula_mu Character string or expression defining the trend for mu over age \code{x}.
 #' @param formula_sigma Character string or expression defining the trend for sigma over age \code{x}.
 #' @param formula_nu Character string or expression defining the trend for nu (for BCCG, BCPE, BCT).
 #' @param formula_tau Character string or expression defining the trend for tau (for BCPE, BCT).
-#' @param ill_factor Numeric between 0 and 1. Proportion of pathological cases to add per age step.
+#' @param prop.path Numeric between 0 and 1. Proportion of pathological cases per age step (default: 0).
+#' @param ill_factor Alias for \code{prop.path} for backward compatibility.
 #' @param mu_factor_ill Numeric. Mean shift magnitude added to simulate pathological values.
 #' @param lod Optional numeric. Limit of Detection threshold. Values below LOD will be flagged or processed.
 #' @param seed Optional integer. Seed for random number generation (default: NULL).
@@ -31,13 +32,19 @@ make_data <- function(age,
                       formula_sigma = "linear(x, 0, 1)",
                       formula_nu = "linear(x, 0, 1)",
                       formula_tau = "linear(x, 0, 2)",
-                      ill_factor = 0,
+                      prop.path = 0,
+                      ill_factor = NULL,
                       mu_factor_ill = 0,
                       lod = NULL,
                       seed = NULL) {
 
   if (!is.null(seed)) {
     set.seed(seed)
+  }
+
+  # Backward compatibility for the old parameter `ill_factor`
+  if (!is.null(ill_factor)) {
+    prop.path <- ill_factor
   }
 
   linear <- function(x, a, b) { x * a + b }
@@ -69,16 +76,18 @@ make_data <- function(age,
     current_mu <- eval_trend(parsed_mu, i_age)
     current_sigma <- eval_trend(parsed_sigma, i_age)
 
+    # follow the logic defined in `lod.artificial.sample` to separate the diseased and healthy samples
+    n_path <- round(n_ * prop.path)
+    n_healthy <- n_ - n_path
+
     if (distribution == "NO") {
-      healthy_vals <- stats::rnorm(n = n_, mean = current_mu, sd = current_sigma)
-      n_ill <- round(n_ * ill_factor)
-      ill_vals <- if (n_ill > 0) stats::rnorm(n = n_ill, mean = current_mu + mu_factor_ill, sd = current_sigma) else numeric(0)
+      healthy_vals <- if (n_healthy > 0) stats::rnorm(n = n_healthy, mean = current_mu, sd = current_sigma) else numeric(0)
+      ill_vals <- if (n_path > 0) stats::rnorm(n = n_path, mean = current_mu + mu_factor_ill, sd = current_sigma) else numeric(0)
       vals <- c(healthy_vals, ill_vals)
 
     } else if (distribution == "LOGNO") {
-      healthy_vals <- stats::rlnorm(n = n_, meanlog = current_mu, sdlog = current_sigma)
-      n_ill <- round(n_ * ill_factor)
-      ill_vals <- if (n_ill > 0) stats::rlnorm(n = n_ill, meanlog = current_mu + log(1 + mu_factor_ill), sdlog = current_sigma) else numeric(0)
+      healthy_vals <- if (n_healthy > 0) stats::rlnorm(n = n_healthy, meanlog = current_mu, sdlog = current_sigma) else numeric(0)
+      ill_vals <- if (n_path > 0) stats::rlnorm(n = n_path, meanlog = current_mu + log(1 + mu_factor_ill), sdlog = current_sigma) else numeric(0)
       vals <- c(healthy_vals, ill_vals)
 
     } else if (distribution == "BCCG") {
