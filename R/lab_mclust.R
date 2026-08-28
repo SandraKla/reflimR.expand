@@ -59,24 +59,24 @@
 #'
 #' @export
 lab_mclust <- function(
-    x,
-    lognormal = FALSE,
-    remove.extremes = FALSE,
-    targets = NULL,
-    plot.it = TRUE,
-    add.boxplot = TRUE,
-    plot.legend = TRUE,
-    pos.legend = "topright",
-    plot.bic = FALSE,
-    xlim = NULL,
-    ylim = NULL,
-    main = "",
-    xlab = "",
-    hist.bins = 50,
-    model = NULL,
-    n.cluster = NULL,
-    apply.rounding = TRUE,
-    digits = NULL) {
+  x,
+  lognormal = FALSE,
+  remove.extremes = FALSE,
+  targets = NULL,
+  plot.it = TRUE,
+  add.boxplot = TRUE,
+  plot.legend = TRUE,
+  pos.legend = "topright",
+  plot.bic = FALSE,
+  xlim = NULL,
+  ylim = NULL,
+  main = "",
+  xlab = "",
+  hist.bins = 50,
+  model = NULL,
+  n.cluster = NULL,
+  apply.rounding = TRUE,
+  digits = NULL) {
 
   if (!is.numeric(x)) {
     stop("x must be numeric.")
@@ -193,11 +193,10 @@ lab_mclust <- function(
     }
   }
 
+  # Calculate the number of decimal places to retain based on the VeRIf specification and safety checks
   if (is.null(digits)) {
-    digits <- max(
-      0,
-      2 - floor(log10(stats::median(x)))
-    )
+    med_val <- stats::median(x)
+    digits <- if (med_val > 0) max(0, 2 - floor(log10(med_val))) else 2
   }
 
   if (apply.rounding) {

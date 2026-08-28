@@ -37,3 +37,22 @@ test_that("lab_mclust validates its input", {
     "at least two positive finite values"
   )
 })
+test_that("lab_mclust works with lognormal distribution and proper rounding", {
+  set.seed(42)
+  vals <- stats::rlnorm(220, meanlog = log(50), sdlog = 0.2)
+
+  res <- lab_mclust(
+    vals,
+    lognormal = TRUE,
+    remove.extremes = FALSE,
+    plot.it = FALSE,
+    model = "V",
+    n.cluster = 1,
+    apply.rounding = TRUE
+  )
+
+  expect_type(res, "list")
+  expect_s3_class(res$stats, "data.frame")
+  expect_true(all(c("meanlog", "sdlog") %in% colnames(res$stats)))
+  expect_true(res$stats$ll < res$stats$ul)
+})
