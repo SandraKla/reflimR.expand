@@ -342,3 +342,5 @@ synthetic_data <- function(n = c(100, 800, 100),
 
   return(list(values = dat, stats = res.tab))
 }
+
+utils::globalVariables(c("x"))

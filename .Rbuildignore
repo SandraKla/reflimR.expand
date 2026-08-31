@@ -1,2 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.idea$
+^reflimR\.expand_.*\.tar\.gz$
+^.*\.Rcheck$
+^vignettes/.*\.html$
+^tests/testthat/Rplots\.pdf$
