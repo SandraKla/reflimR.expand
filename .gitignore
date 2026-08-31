@@ -4,3 +4,11 @@
 .Ruserdata
 .idea/
 inst/doc
+..Rcheck/
+*.Rcheck/
+*.tar.gz
+Rplots.pdf
+..Rcheck/
+*.Rcheck/
+*.tar.gz
+Rplots.pdf
