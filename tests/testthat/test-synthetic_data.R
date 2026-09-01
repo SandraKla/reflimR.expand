@@ -24,8 +24,61 @@ test_that("make_data generiert gueltige Normalverteilungsdaten mit prop.path und
   expect_true(any(df$IS_BELOW_LOD))
 })
 
-test_that("generate_data_from_ri funktioniert mit definierten Referenzgrenzen", {
-  # Referenztabelle mit 2 Altersstufen definieren
+test_that("make_data unterstuetzt LOGNO, Rueckwaertskompatibilitaet und wirft Fehler bei ungueltiger Verteilung", {
+  # 1. LOGNO mit ill_factor Rueckwaertskompatibilitaet
+  df_logno <- make_data(
+    age = 1,
+    age_steps = 365,
+    distribution = "LOGNO",
+    n_ = 15,
+    formula_mu = "linear(x, 0, 2)",
+    formula_sigma = "linear(x, 0, 0.2)",
+    ill_factor = 0.2,
+    mu_factor_ill = 0.5,
+    seed = 42
+  )
+  expect_s3_class(df_logno, "data.frame")
+  expect_equal(nrow(df_logno), 30)
+
+  # 2. Fehler bei unbekanntem Verteilungstyp
+  expect_error(
+    make_data(age = 1, distribution = "UNKNOWN_DIST"),
+    regexp = "Unsupported distribution type"
+  )
+})
+
+test_that("make_data unterstuetzt Box-Cox Verteilungen (BCCG, BCPE, BCT)", {
+  skip_if_not_installed("gamlss.dist")
+
+  # BCCG
+  df_bccg <- make_data(
+    age = 1, age_steps = 365, distribution = "BCCG", n_ = 10,
+    formula_mu = "linear(x, 0, 10)", formula_sigma = "linear(x, 0, 0.2)", formula_nu = "linear(x, 0, 1)",
+    seed = 42
+  )
+  expect_equal(nrow(df_bccg), 20)
+
+  # BCPE
+  df_bcpe <- make_data(
+    age = 1, age_steps = 365, distribution = "BCPE", n_ = 10,
+    formula_mu = "linear(x, 0, 10)", formula_sigma = "linear(x, 0, 0.2)",
+    formula_nu = "linear(x, 0, 1)", formula_tau = "linear(x, 0, 2)",
+    seed = 42
+  )
+  expect_equal(nrow(df_bcpe), 20)
+
+  # BCT
+  df_bct <- make_data(
+    age = 1, age_steps = 365, distribution = "BCT", n_ = 10,
+    formula_mu = "linear(x, 0, 10)", formula_sigma = "linear(x, 0, 0.2)",
+    formula_nu = "linear(x, 0, 1)", formula_tau = "linear(x, 0, 2)",
+    seed = 42
+  )
+  expect_equal(nrow(df_bct), 20)
+})
+
+test_that("generate_data_from_ri funktioniert mit definierten Referenzgrenzen und Spalten-Fallback", {
+  # 1. Standard-Spalten
   ref_df <- data.frame(
     age = c(365, 730),
     down = c(2, 2),
@@ -36,6 +89,17 @@ test_that("generate_data_from_ri funktioniert mit definierten Referenzgrenzen", 
   expect_s3_class(df, "data.frame")
   expect_equal(nrow(df), 20)
   expect_equal(unique(df$ANALYTE), "AST")
+
+  # 2. Spalten ohne exakte Namen (Positions-Fallback)
+  ref_anon <- data.frame(c(365, 730), c(2, 2), c(6, 6))
+  df_anon <- generate_data_from_ri(ref_anon, n_ = 5, seed = 123)
+  expect_equal(nrow(df_anon), 10)
+
+  # 3. Fehler bei zu wenigen Spalten
+  expect_error(
+    generate_data_from_ri(data.frame(c(365), c(2))),
+    regexp = "must have at least 3 columns"
+  )
 })
 
 test_that("synthetic_data berechnet korrekte Subgruppenparameter und faengt Fehler ab", {
