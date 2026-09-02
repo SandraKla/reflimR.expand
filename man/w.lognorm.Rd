@@ -2,17 +2,18 @@
 % Please edit documentation in R/reflim_Weighted_Sliding.R
 \name{w.lognorm}
 \alias{w.lognorm}
-\title{Lognormal distribution model}
+\title{Lognormal distribution model with weights}
 \usage{
 w.lognorm(
   x,
-  x_weight,
+  x_weight = NULL,
   cutoff = 0.05,
+  alpha = 0.25,
   digits = 3,
   plot.it = FALSE,
-  xlab = "x",
   plot.logtype = TRUE,
-  main = "w.bowley skewness"
+  main = "Bowley skewness",
+  xlab = "x"
 )
 }
 \arguments{
@@ -22,22 +23,30 @@ w.lognorm(
 
 \item{cutoff}{Numeric. Skewness threshold to suggest a lognormal distribution. Default is \code{0.05}.}
 
+\item{alpha}{Numeric. Quantile parameter for Bowley skewness. Default is \code{0.25}.}
+
 \item{digits}{Integer. Number of digits to be displayed for the Bowley skewness values. Default is \code{3}.}
 
-\item{plot.it}{Logical. If \code{TRUE}, a graphic comparing the distributions is created. Default is \code{TRUE}.}
-
-\item{xlab}{Character. Label for the x-axis. Default is \code{"x"}.}
+\item{plot.it}{Logical. If \code{TRUE}, a graphic comparing the distributions is created. Default is \code{FALSE}.}
 
 \item{plot.logtype}{Logical. If \code{TRUE}, the suggested distribution type is printed in the plot. Default is \code{TRUE}.}
 
 \item{main}{Character. Title of the plot. Default is \code{"Bowley skewness"}.}
+
+\item{xlab}{Character. Label for the x-axis. Default is \code{"x"}.}
 }
 \value{
-A logical value indicating whether a lognormal distribution is suggested (\code{TRUE}) or not (\code{FALSE}).
+A list with the following elements:
+\describe{
+\item{lognormal}{Logical value indicating whether a lognormal distribution is suggested.}
+\item{BowleySkewness}{Named vector containing skewness for normal, lognormal, and their difference (delta).}
+}
 }
 \description{
-Suggests lognormal modelling of a numeric vector \code{x} by comparing Bowley's quantile skewness for \code{x} and \code{log(x)}.
-Lognormality is suggested if \code{bowley(x) - bowley(log(x)) >= cutoff}.
+Suggests lognormal modelling of a numeric vector \code{x} with weights by comparing
+Bowley's quantile skewness for \code{x} and \code{log(x)}.
+Lognormality is suggested if \code{bs[1] >= 0}, \code{abs(bs[2]) < abs(bs[1])},
+and \code{bs[1] - bs[2] >= cutoff}.
 }
 \examples{
 set.seed(123)

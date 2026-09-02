@@ -1636,10 +1636,11 @@ w.reflim <- function(x, x_weight, lognormal = NULL, targets = NULL, perc.trunc =
 
 #' Bowley skewness with weights
 #'
-#' Calculates a robust skewness measure for \code{x} based on the interquartile range (or any other quantile range).
+#' Calculates a robust skewness measure for \code{x} based on specified quantile ranges with weights.
 #'
 #' @param x Numeric vector of positive numbers.
 #' @param x_weight Weights of the numeric vector of positive numbers.
+#' @param alpha Quantile parameter for Bowley skewness (default is 0.25 for interquartile range).
 #'
 #' @return Bowley's quantile skewness (a single numeric value).
 #'
@@ -1651,13 +1652,26 @@ w.reflim <- function(x, x_weight, lognormal = NULL, targets = NULL, perc.trunc =
 #' w.bowley(x, weights)
 #'
 #' @export
-w.bowley <- function(x, x_weight) {
-    w_quantiles <- wtd.quantile(x, x_weight, probs = c(0.25, 0.5, 0.75))
-    if (abs(w_quantiles[3] - w_quantiles[2]) < .Machine$double.eps) {
-        return(0)
-    }
-    return((w_quantiles[3] + w_quantiles[1] - 2 * w_quantiles[2]) / (w_quantiles[3] -
-                                                                         w_quantiles[2]))
+w.bowley <- function(x, x_weight = NULL, alpha = 0.25) {
+  if (!is.numeric(x)) {
+    stop("x must be numeric.")
+  }
+  if (is.null(x_weight)) {
+    x_weight <- rep(1, length(x))
+  }
+  if (!is.numeric(x_weight)) {
+    stop("x_weight must be numeric.")
+  }
+  is_valid <- !is.na(x) & !is.na(x_weight)
+  xx <- x[is_valid]
+  ww <- x_weight[is_valid]
+
+  q <- Hmisc::wtd.quantile(xx, weights = ww, probs = c(alpha, 0.5, 1 - alpha))
+  denom <- q[3] - q[1]
+  if (is.na(denom) || abs(denom) < .Machine$double.eps) {
+    return(0)
+  }
+  return(unname((q[3] + q[1] - 2 * q[2]) / denom))
 }
 
 #' Interquartile Range (IQR)
@@ -1669,6 +1683,7 @@ w.bowley <- function(x, x_weight) {
 #'
 #' @return Interquartile Range (IQR)
 #'
+#' @importFrom Hmisc wtd.quantile
 #' @examples
 #' x <- c(1, 2, 3, 4, 5)
 #' weights <- c(1, 1, 2, 1, 1)
@@ -1676,28 +1691,37 @@ w.bowley <- function(x, x_weight) {
 #'
 #' @export
 w.IQR <- function(x, x_weight) {
-    w_quantiles <- wtd.quantile(x, x_weight, probs = c(0.25, 0.5, 0.75))
-    iqr <- w_quantiles[3] - w_quantiles[1]
-    return(iqr)
+  w_quantiles <- Hmisc::wtd.quantile(x, x_weight, probs = c(0.25, 0.5, 0.75))
+  iqr <- w_quantiles[3] - w_quantiles[1]
+  return(iqr)
 }
 
-#' Lognormal distribution model
+#' Lognormal distribution model with weights
 #'
-#' Suggests lognormal modelling of a numeric vector \code{x} by comparing Bowley's quantile skewness for \code{x} and \code{log(x)}.
-#' Lognormality is suggested if \code{bowley(x) - bowley(log(x)) >= cutoff}.
+#' Suggests lognormal modelling of a numeric vector \code{x} with weights by comparing
+#' Bowley's quantile skewness for \code{x} and \code{log(x)}.
+#' Lognormality is suggested if \code{bs[1] >= 0}, \code{abs(bs[2]) < abs(bs[1])},
+#' and \code{bs[1] - bs[2] >= cutoff}.
 #'
 #' @param x Numeric vector of positive numbers.
 #' @param x_weight Weights of the numeric vector of positive numbers.
 #' @param cutoff Numeric. Skewness threshold to suggest a lognormal distribution. Default is \code{0.05}.
+#' @param alpha Numeric. Quantile parameter for Bowley skewness. Default is \code{0.25}.
 #' @param digits Integer. Number of digits to be displayed for the Bowley skewness values. Default is \code{3}.
-#' @param plot.it Logical. If \code{TRUE}, a graphic comparing the distributions is created. Default is \code{TRUE}.
-#' @param xlab Character. Label for the x-axis. Default is \code{"x"}.
+#' @param plot.it Logical. If \code{TRUE}, a graphic comparing the distributions is created. Default is \code{FALSE}.
 #' @param plot.logtype Logical. If \code{TRUE}, the suggested distribution type is printed in the plot. Default is \code{TRUE}.
 #' @param main Character. Title of the plot. Default is \code{"Bowley skewness"}.
+#' @param xlab Character. Label for the x-axis. Default is \code{"x"}.
 #'
-#' @return A logical value indicating whether a lognormal distribution is suggested (\code{TRUE}) or not (\code{FALSE}).
+#' @return A list with the following elements:
+#' \describe{
+#'   \item{lognormal}{Logical value indicating whether a lognormal distribution is suggested.}
+#'   \item{BowleySkewness}{Named vector containing skewness for normal, lognormal, and their difference (delta).}
+#' }
 #'
-#' @importFrom graphics par lines boxplot
+#' @importFrom graphics axis boxplot lines plot text
+#' @importFrom stats density median quantile
+#' @importFrom Hmisc wtd.quantile
 #'
 #' @examples
 #' set.seed(123)
@@ -1712,72 +1736,122 @@ w.IQR <- function(x, x_weight) {
 #' result$lognormal
 #'
 #' @export
-w.lognorm <- function(x, x_weight, cutoff = 0.05, digits = 3, plot.it = FALSE, xlab = "x",
-                      plot.logtype = TRUE, main = "w.bowley skewness") {
-    if (!is.numeric(x)) {
-        stop("x must be numeric.")
-    }
-    if (length(x) < 2) {
-        stop("x must be a vector of at least 2 numeric values.")
-    }
-    if (min(x) <= 0) {
-        stop("Negative values not allowed.")
-    }
-    bs <- rep(NA, 2)
-    bs[1] <- w.bowley(x, x_weight)
-    bs[2] <- w.bowley(log(x), x_weight)
+w.lognorm <- function(x, x_weight = NULL, cutoff = 0.05, alpha = 0.25, digits = 3,
+                      plot.it = FALSE, plot.logtype = TRUE,
+                      main = "Bowley skewness", xlab = "x") {
+  # Standardgewichte setzen, falls nicht angegeben
+  if (is.null(x_weight)) {
+    x_weight <- rep(1, length(x))
+  }
 
-    # delta can determine whether the logarithmic transformation significantly reduces the skewness of the data
-    if (bs[1] < 0) {
-        lognormal <- FALSE
+  # Fehlende Werte (NA) paarweise entfernen
+  is_valid <- !is.na(x) & !is.na(x_weight)
+  xx <- x[is_valid]
+  ww <- x_weight[is_valid]
+
+  # Eingabevalidierung
+  if (!is.numeric(xx)) {
+    stop("x must be numeric.")
+  }
+  if (length(xx) < 2) {
+    stop("x must be a vector of at least 2 numeric values.")
+  }
+  if (min(xx) <= 0) {
+    stop("Negative values not allowed.")
+  }
+
+  # Bowley-Schiefe berechnen
+  bs <- rep(NA, 2)
+  bs[1] <- w.bowley(xx, ww, alpha = alpha)
+  bs[2] <- w.bowley(log(xx), ww, alpha = alpha)
+
+  # Entscheidungslogik fuer Lognormalitaet
+  if (bs[1] < 0 || abs(bs[2]) >= abs(bs[1])) {
+    lognormal <- FALSE
+  } else {
+    lognormal <- (bs[1] - bs[2]) >= cutoff
+  }
+
+  # Delta vor Runden definieren
+  delta <- bs[1] - bs[2]
+  if (!is.na(digits)) {
+    bs <- round(bs, digits)
+    delta <- round(delta, digits)
+  }
+
+  # Grafische Darstellung
+  if (plot.it) {
+    w_med <- unname(Hmisc::wtd.quantile(xx, weights = ww, probs = 0.5))
+    w_iqr <- w.IQR(xx, x_weight = ww)
+    idx_filter <- xx < (w_med + 6 * w_iqr)
+
+    # Defensiver Fallback: Sicherstellen, dass mindestens 2 Datenpunkte fuer density() vorhanden sind
+    if (sum(idx_filter) >= 2) {
+      xxx <- xx[idx_filter]
+      www <- ww[idx_filter]
     } else {
-        lognormal <- (bs[1] - bs[2]) >= cutoff
+      xxx <- xx
+      www <- ww
     }
 
-    if (!is.na(digits)) {
-        bs <- round(bs, digits)
+    df.x <- data.frame(lin = xxx, log = log(xxx))
+    df.quant <- cbind(
+      lin = Hmisc::wtd.quantile(df.x[, 1], weights = www, probs = c(0.1, 0.5)),
+      log = Hmisc::wtd.quantile(df.x[, 2], weights = www, probs = c(0.1, 0.5))
+    )
+
+    slope <- (df.quant[2, 1] - df.quant[1, 1]) / (df.quant[2, 2] - df.quant[1, 2])
+    intercept <- df.quant[1, 1] - slope * df.quant[1, 2]
+    df.x <- cbind(df.x, transformed = intercept + slope * df.x[, 2])
+
+    # Gewichtete Dichteschaetzung
+    d1 <- stats::density(df.x[, 1], weights = www / sum(www))
+    d2 <- stats::density(df.x[, 3], weights = www / sum(www))
+    ymax <- max(max(d1$y), max(d2$y)) * 1.4
+
+    graphics::plot(
+      d1$x, d1$y,
+      main = main, xlab = xlab, ylab = "",
+      type = "l", lwd = 2, yaxt = "n",
+      xlim = c(0.9 * min(df.x[, 1]), max(max(d1$x), max(d2$x))),
+      ylim = c(0, ymax)
+    )
+    graphics::lines(d2$x, d2$y, col = "blue", lwd = 2)
+
+    # Logarithmische Hilfsachse
+    base.scale <- c(1, 1.5, 2, 3, 5, 7)
+    num.scale <- c(
+      base.scale * 10^-1,
+      base.scale * 10^0,
+      base.scale * 10^1,
+      base.scale * 10^2,
+      base.scale * 10^3,
+      base.scale * 10^4
+    )
+    log.scale <- intercept + slope * log(num.scale)
+    graphics::axis(
+      3, at = log.scale, labels = as.character(num.scale),
+      col.axis = "blue", mgp = c(3, 0.1, 0), tcl = -0.1
+    )
+    graphics::boxplot(
+      df.x[, 1], horizontal = TRUE, at = 0.75 * ymax, boxwex = ymax / 20,
+      col = "lightgrey", pch = 20, add = TRUE
+    )
+    graphics::boxplot(
+      df.x[, 3], horizontal = TRUE, at = 0.85 * ymax, boxwex = ymax / 20,
+      col = "blue", pch = 20, add = TRUE
+    )
+    graphics::text(w_med, 0, paste("delta =", delta), pos = 3)
+    if (plot.logtype) {
+      tx <- ifelse(lognormal, "lognormal distribution", "normal distribution")
+      graphics::text(0.9 * min(df.x[, 1]), 0.95 * ymax, tx, pos = 4)
     }
-    if (plot.it) {
-        xx <- x[x < median(x) + 6 * w.IQR(x, x_weight = x_weight)]
-        df.x <- data.frame(lin = xx, log = log(xx))
-        df.quant <- cbind(lin = wtd.quantile(df.x[, 1], x_weight, c(0.1, 0.5)),
-                          log = wtd.quantile(df.x[, 2], x_weight, c(0.1, 0.5)))
+  }
 
-        slope <- (df.quant[2, 1] - df.quant[1, 1]) / (df.quant[2, 2] - df.quant[1, 2])
-
-        intercept <- df.quant[1, 1] - slope * df.quant[1, 2]
-        df.x <- cbind(df.x, transformed = intercept + slope * df.x[, 2])
-
-        # Plotting probability density functions
-        d1 <- density(df.x[, 1])
-        d2 <- density(df.x[, 3])
-        ymax <- max(max(d1$y), max(d2$y)) * 1.4
-        plot(d1$x, d1$y, main = main, xlab = xlab, ylab = "",
-            type = "l", lwd = 2, yaxt = "n", xlim = c(0.9 * min(df.x[,1]), max(max(d1$x), max(d2$x))), ylim = c(0,
-                                                                                                                ymax))
-        lines(d2$x, d2$y, col = "blue", lwd = 2)
-        base.scale <- c(1, 1.5, 2, 3, 5, 7)
-        num.scale <- c(base.scale * 10^-1,base.scale * 10^0,base.scale * 10^1,base.scale * 10^2,
-                       base.scale * 10^3,base.scale * 10^4)
-        log.scale <- intercept + slope * log(num.scale)
-        axis(3, at = log.scale, labels = as.character(num.scale),
-            col.axis = "blue", mgp = c(3, 0.1, 0), tcl = -0.1)
-        boxplot(df.x[, 1], horizontal = TRUE, at = 0.75 * ymax,
-                boxwex = ymax/20, col = "lightgrey", pch = 20, add = TRUE)
-        boxplot(df.x[, 3], horizontal = TRUE, at = 0.85 * ymax,
-                boxwex = ymax/20, col = "blue", pch = 20, add = TRUE)
-        text(median(df.x[, 1]), 0, paste("delta =", bs[1] - bs[2]),
-            pos = 3)
-        if (plot.logtype) {
-            tx <- ifelse(lognormal, "lognormal distribution", "normal distribution")
-            text(0.9 * min(df.x[, 1]), 0.95 * ymax, tx, pos = 4)
-        }
-    }
-
-    return(list(lognormal = lognormal, BowleySkewness = c(normal = bs[1],
-                                                   lognormal = bs[2],
-                                                   delta = bs[1] - bs[2])))
-
+  return(list(
+    lognormal = lognormal,
+    BowleySkewness = c(normal = bs[1], lognormal = bs[2], delta = delta)
+  ))
 }
 
 #' Removal of pathological values with weights
@@ -1821,127 +1895,131 @@ w.lognorm <- function(x, x_weight, cutoff = 0.05, digits = 3, plot.it = FALSE, x
 #' @export
 w.iboxplot <- function(x, x_weight, lognormal = NULL, perc.trunc = 2.5,
                        apply.rounding = TRUE, plot.it = FALSE, main = "w.iBoxplot", xlab = "x") {
-    na_indices <- is.na(x)
-    x_clean <- x[!na_indices]
-    ww_clean <- x_weight[!na_indices]
+  # Bereinigung fehlender Werte (NA)
+  na_indices <- is.na(x)
+  x_clean <- x[!na_indices]
+  ww_clean <- x_weight[!na_indices]
 
-    if (!is.numeric(x_clean)) {
-        stop("x must be numeric.")
-    }
-    if (min(x_clean) <= 0) {
-        stop("x must be a vector of positive numbers.")
-    }
-    digits <- adjust_digits(median(x_clean))$digits
-    n <- length(x_clean)
-    if (n < 40) {
-        stop(paste0("n = ", n, ". The absolute minimum for reference limit estimation is 40."))
-    }
-    progress <- data.frame(n = n, min = min(x_clean), max = max(x_clean), w = length(x_weight))
+  # Sicherung der unlogarithmierten, ungeschnittenen Daten fuer Plotzwecke
+  x_clean_orig <- x_clean
+  ww_clean_orig <- ww_clean
 
-    if (is.null(lognormal)) {
-        lognormal <- w.lognorm(x_clean, ww_clean, plot.it = FALSE)$lognormal
-    }
+  if (!is.numeric(x_clean)) {
+    stop("x must be numeric.")
+  }
+  if (min(x_clean) <= 0) {
+    stop("x must be a vector of positive numbers.")
+  }
+  digits <- adjust_digits(median(x_clean))$digits
+  n <- length(x_clean)
+  if (n < 40) {
+    stop(paste0("n = ", n, ". The absolute minimum for reference limit estimation is 40."))
+  }
+  progress <- data.frame(n = n, min = min(x_clean), max = max(x_clean), w = length(x_weight))
+
+  if (is.null(lognormal)) {
+    lognormal <- w.lognorm(x_clean, ww_clean, plot.it = FALSE)$lognormal
+  }
+  if (lognormal) {
+    x_clean <- log(x_clean)
+  }
+
+  if (is.null(perc.trunc) || perc.trunc <= 0 || perc.trunc > 25) {
+    stop("perc.trunc must not be NULL, negative, zero, or greater than 25.")
+  }
+
+  q.trunc <- perc.trunc/100
+
+  # Gewichtete Trunkierschleife
+  w.truncate_x <- function(x, x_weight, qf) {
+    Q <- Hmisc::wtd.quantile(x, x_weight, c(0.25, 0.5, 0.75))
+    var1 <- Q[2] - Q[1]
+    var2 <- Q[3] - Q[2]
+    var <- min(var1, var2)
+    lim <- c(Q[2] - qf * var, Q[2] + qf * var)
+    idx <- which(x >= lim[1] & x <= lim[2])
+    return(list(x = x[idx], x_weight = x_weight[idx]))
+  }
+
+  print.progress <- function(x, x_weight, lognormal = FALSE) {
     if (lognormal) {
-        x_clean <- log(x_clean)
+      x <- exp(x)
+    }
+    return(c(length(x), min(x), max(x), length(x_weight)))
+  }
+
+  n.steps <- 5
+  for (i in 1:n.steps) {
+    target.quantile <- 1 - q.trunc * i / n.steps
+    alpha <- (2 * q.trunc) * (i - 1) / n.steps
+    qf <- qnorm(target.quantile)/qnorm(0.75 - 0.25 * alpha)
+
+    result <- w.truncate_x(x_clean, ww_clean, qf)
+    x_clean <- result$x
+    ww_clean <- result$x_weight
+    progress <- rbind(progress, print.progress(x_clean, ww_clean, lognormal = lognormal))
+  }
+
+  n0 <- 1
+  n1 <- 0
+  qf <- qnorm(1 - q.trunc)/qnorm(0.75 - 0.25 * q.trunc)
+  while (n0 > n1) {
+    i <- i + 1
+    n0 <- length(x_clean)
+    result <- w.truncate_x(x_clean, ww_clean, qf)
+    x_clean <- result$x
+    ww_clean <- result$x_weight
+    n1 <- length(x_clean)
+    progress <- rbind(progress, print.progress(x_clean, ww_clean, lognormal = lognormal))
+  }
+  if (lognormal) {
+    x_clean <- exp(x_clean)
+  }
+  lim <- c(lower = min(x_clean), upper = max(x_clean))
+  if (apply.rounding) {
+    lim <- round(lim, digits)
+  }
+  prop <- round(length(x_clean) * 100 / 0.95 / n, 1)
+  if (prop > 100) {
+    prop <- 100
+  }
+
+  if (plot.it) {
+    # 使用对应的原始权重向量 ww_clean_orig，确保向量长度对齐
+    x1 <- x_clean_orig[x_clean_orig < stats::median(x_clean_orig) + 8 * w.IQR(x_clean_orig, x_weight = ww_clean_orig)]
+
+    # Dichteschaetzung
+    d0 <- density(x1)
+    d1 <- data.frame(d0$x, d0$y)
+    d <- subset(d1, d1[, 1] >= lim[1] & d1[, 1] <= lim[2])
+
+    # Festlegung der Histogramm-Klassen (Breaks)
+    if (n < 200) {
+      breaks <- "Sturges"
+    } else {
+      delta <- max(x1) - min(x1)
+      breaks <- seq(from = min(x1) - 0.1 * delta, to = max(x1) + 0.1 * delta,
+                    by = (lim[2] - lim[1]) / 10)
     }
 
-    if (is.null(perc.trunc) || perc.trunc <= 0 || perc.trunc > 25) {
-        stop("perc.trunc must not be NULL, negative, zero, or greater than 25.")
-    }
+    # Zeichnen des Histogramms und der Trunkierschwellen
+    hist(x1, freq = FALSE, breaks = breaks, yaxt = "n", ylim = c(0, max(d[, 2]) * 1.5),
+         main = main, xlab = xlab, ylab = "", col = "white", border = "grey")
+    lines(d[, 1], d[, 2], col = "blue", lwd = 2)
+    lines(rep(lim[1], 2), c(0, d[1, 2]), col = "blue", lwd = 2)
+    lines(rep(lim[2], 2), c(0, d[nrow(d), 2]), col = "blue", lwd = 2)
+    text(lim[1], 0, round(lim[1], digits), pos = 3)
+    text(lim[2], 0, round(lim[2], digits), pos = 3)
+    boxplot(x1, at = max(d[, 2]) * 1.4, boxwex = max(d[, 2]) / 10, col = "white", pch = 20,
+            horizontal = TRUE, add = TRUE)
+    boxplot(x_clean, at = max(d[, 2]) * 1.25, boxwex = max(d[, 2]) / 10, col = "blue", pch = 20,
+            horizontal = TRUE, add = TRUE)
+  }
 
-    q.trunc <- perc.trunc/100
-
-    w.truncate_x <- function(x, x_weight, qf) {
-        Q <- wtd.quantile(x, x_weight, c(0.25, 0.5, 0.75))
-        var1 <- Q[2] - Q[1]
-        var2 <- Q[3] - Q[2]
-        var <- min(var1, var2)
-        lim <- c(Q[2] - qf * var, Q[2] + qf * var)
-        idx <- which(x >= lim[1] & x <= lim[2])
-        return(list(x = x[idx], x_weight = x_weight[idx]))
-    }
-
-    print.progress <- function(x, x_weight, lognormal = FALSE) {
-        if (lognormal) {
-            x <- exp(x)
-        }
-        return(c(length(x), min(x), max(x), length(x_weight)))
-    }
-
-    n.steps <- 5
-    for (i in 1:n.steps) {
-        target.quantile <- 1 - q.trunc * i / n.steps
-        alpha <- (2 * q.trunc) * (i - 1) / n.steps
-        qf <- qnorm(target.quantile)/qnorm(0.75 - 0.25 * alpha)
-
-        result <- w.truncate_x(x_clean, ww_clean, qf)
-        x_clean <- result$x
-        ww_clean <- result$x_weight
-        progress <- rbind(progress, print.progress(x_clean, ww_clean, lognormal = lognormal))
-    }
-
-    n0 <- 1
-    n1 <- 0
-    qf <- qnorm(1 - q.trunc)/qnorm(0.75 - 0.25 * q.trunc)
-    while (n0 > n1) {
-        i <- i + 1
-        n0 <- length(x_clean)
-        result <- w.truncate_x(x_clean, ww_clean, qf)
-        x_clean <- result$x
-        ww_clean <- result$x_weight
-        n1 <- length(x_clean)
-        progress <- rbind(progress, print.progress(x_clean, ww_clean, lognormal = lognormal))
-    }
-    if (lognormal) {
-        x_clean <- exp(x_clean)
-    }
-    lim <- c(lower = min(x_clean), upper = max(x_clean))
-    if (apply.rounding) {
-        lim <- round(lim, digits)
-    }
-    prop <- round(length(x_clean) * 100 / 0.95 / n, 1)
-    if (prop > 100) {
-        prop <- 100
-    }
-
-    if (plot.it) {
-
-        # Select the range of data to be plotted
-        x1 <- x[x < median(x) + 8 * IQR(x)]
-        # Calculate weighted density estimates
-        d0 <- density(x1)
-        # Determine the scope of the mapping data
-        d1 <- data.frame(d0$x, d0$y)
-        d <- subset(d1, d1[, 1] >= lim[1] & d1[, 1] <= lim[2])
-        # Choosing the right histogram breakpoints based on the amount of data
-        if (n < 200) {
-            breaks <- "Sturges"
-        } else {
-        delta <- max(x1) - min(x1)
-        breaks <- seq(from = min(x1) - 0.1 * delta, to = max(x1) + 0.1 * delta,
-                        by = (lim[2] - lim[1]) / 10)
-        }
-        # Plotting weighted histograms
-        hist(x1, freq = FALSE, breaks = breaks, yaxt = "n", ylim = c(0, max(d[, 2]) * 1.5),
-            main = main, xlab = xlab, ylab = "", col = "white", border = "grey")
-        # Plotting weighted density curves
-        lines(d[, 1], d[, 2], col = "blue", lwd = 2)
-        lines(rep(lim[1], 2), c(0, d[1, 2]), col = "blue", lwd = 2) # left border
-        lines(rep(lim[2], 2), c(0, d[nrow(d), 2]), col = "blue", lwd = 2)  # right border
-        # Adding text labels
-        text(lim[1], 0, round(lim[1], digits), pos = 3)
-        text(lim[2], 0, round(lim[2], digits), pos = 3)
-        # Plotting a weighted box plot
-        boxplot(x1, at = max(d[, 2]) * 1.4, boxwex = max(d[, 2]) / 10, col = "white", pch = 20,
-                horizontal = TRUE, add = TRUE)
-        boxplot(x_clean, at = max(d[, 2]) * 1.25, boxwex = max(d[, 2]) / 10, col = "blue", pch = 20,
-                horizontal = TRUE, add = TRUE)
-    }
-
-    progress[, 2:3] <- round(progress[, 2:3], digits)
-    row.names(progress) <- paste0("cycle", 0:i)
-    return(list(trunc = x_clean, w_trunc = ww_clean, truncation.points = lim, lognormal = lognormal,
-                perc.norm = prop, progress = progress))
+  progress[, 2:3] <- round(progress[, 2:3], digits)
+  row.names(progress) <- paste0("cycle", 0:i)
+  return(list(trunc = x_clean, w_trunc = ww_clean, truncation.points = lim, lognormal = lognormal,
+              perc.norm = prop, progress = progress))
 }
 
 #' Quantile-Quantile plot of truncated laboratory results with weights
@@ -2029,7 +2107,7 @@ w.truncated_qqplot <- function(x.trunc, x_weight, lognormal = NULL, perc.trunc =
     p1 <- seq(from = perc.trunc / 100, to = 1 - perc.trunc / 100, length.out = n.quantiles)
     p2 <- seq(from = 0, to = 1, length.out = n.quantiles)
     x.ax <- qnorm(p1) # theoretical quantiles
-    y.ax <- wtd.quantile(x_clean, ww_clean, p2) #  sample quantiles
+    y.ax <- Hmisc::wtd.quantile(x_clean, ww_clean, p2) #  sample quantiles
     central.part <- floor(0.05 * n.quantiles):ceiling(0.95 * n.quantiles)
     reg <- lm(y.ax[central.part] ~ x.ax[central.part])
     a <- reg$coefficients[2]  # Regression Steigung slope

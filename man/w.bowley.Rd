@@ -4,18 +4,20 @@
 \alias{w.bowley}
 \title{Bowley skewness with weights}
 \usage{
-w.bowley(x, x_weight)
+w.bowley(x, x_weight = NULL, alpha = 0.25)
 }
 \arguments{
 \item{x}{Numeric vector of positive numbers.}
 
 \item{x_weight}{Weights of the numeric vector of positive numbers.}
+
+\item{alpha}{Quantile parameter for Bowley skewness (default is 0.25 for interquartile range).}
 }
 \value{
 Bowley's quantile skewness (a single numeric value).
 }
 \description{
-Calculates a robust skewness measure for \code{x} based on the interquartile range (or any other quantile range).
+Calculates a robust skewness measure for \code{x} based on specified quantile ranges with weights.
 }
 \examples{
 x <- c(1, 2, 3, 4, 5)
