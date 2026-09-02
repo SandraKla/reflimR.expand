@@ -46,7 +46,7 @@ After installing and loading the package, you can use the main functions to comp
 
 - **make_data / generate_data_from_ri**: Generates age-dependent synthetic laboratory datasets using mathematical trends or provided reference intervals. Supports Limit of Detection (LOD) threshold flags.
 - **reflimLOD**: Handles data values below the limit of detection (LOD). See `vignette("reflimLOD")` for detailed usage.
-- **rpart**: Estimates age-dependent reference intervals groups using decision tree partitioning. See `vignette("sliding_rpart")` for detailed usage.
+- **rpart**: Estimates age- and sex-dependent reference interval groups using decision tree partitioning via `generate_rpart()`. See `vignette("rpart_analysis")` for detailed usage.
 - **lab_mclust**: Indirect reference interval estimation using Gaussian Finite Mixture Models. See `vignette("lab_mclust")` for detailed usage.
 - **zlog**: Standardizes laboratory measurements using the zlog transformation. See `vignette("zlog")` for detailed usage.
 - **sliding_window**: Applying sliding window techniques for age-dependent reference intervals. See `vignette("sliding_window")` for detailed usage.

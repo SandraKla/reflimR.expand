@@ -1,0 +1,50 @@
+---
+title: "Indirect Reference Interval Estimation using Decision Trees (rpart)"
+author: "Sandra Klawitter, Weihao Qiu"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Indirect Reference Interval Estimation using Decision Trees (rpart)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+This vignette demonstrates regression tree partitioning using rpart for indirect reference interval estimation across continuous and categorical covariates (e.g., age and sex).
+
+## Usage
+Below is a standard workflow demonstration using the generate_rpart() function for regression tree partitioning and visualization.
+
+```{r setup, message = FALSE}
+library(reflimR.expand)
+library(reflimR)
+library(rpart)
+```
+
+We can estimate age- and sex-dependent reference intervals using partitioning decision trees on clinical laboratory data:
+
+```{r example}
+# Load example dataset
+data("livertests", package = "reflimR")
+
+# Fit decision tree model to partition ALT by Age and Sex
+fit_tree <- generate_rpart(
+  df = livertests,
+  analyte = "ALT",
+  tree_cp = 0.01,
+  tree_minsplit = 30
+)
+
+# Print tree summary
+print(fit_tree)
+```
+
+## References
+
+Klawitter, Sandra, Böhm, Johannes, Tolios, Alexander and Gebauer, Julian E.. "Automated sex and age partitioning for the estimation of reference intervals using a regression tree model" Journal of Laboratory Medicine, vol. 48, no. 5, 2024, pp. 223-237. https://doi.org/10.1515/labmed-2024-0083
