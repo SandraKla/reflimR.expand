@@ -22,11 +22,11 @@
 #'   Sex = sample(c("m", "f"), 200, replace = TRUE),
 #'   ALT = rnorm(200, mean = 25, sd = 5)
 #' )
-#' fit <- generate_rpart(sample_data, analyte = "ALT", tree_cp = 0.05, tree_minsplit = 20)
+#' fit <- generate.rpart(sample_data, analyte = "ALT", tree_cp = 0.05, tree_minsplit = 20)
 #' }
 #'
 #' @export
-generate_rpart <- function(df, analyte = "ALT", tree_cp = 0.01, tree_minsplit = 30) {
+generate.rpart <- function(df, analyte = "ALT", tree_cp = 0.01, tree_minsplit = 30) {
   # Eingabepruefung
   if (!is.data.frame(df)) {
     stop("'df' muss ein data.frame sein.")

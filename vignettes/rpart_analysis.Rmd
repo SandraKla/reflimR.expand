@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 This vignette demonstrates regression tree partitioning using rpart for indirect reference interval estimation across continuous and categorical covariates (e.g., age and sex).
 
 ## Usage
-Below is a standard workflow demonstration using the generate_rpart() function for regression tree partitioning and visualization.
+Below is a standard workflow demonstration using the generate.rpart() function for regression tree partitioning and visualization.
 
 ```{r setup, message = FALSE}
 library(reflimR.expand)
@@ -34,7 +34,7 @@ We can estimate age- and sex-dependent reference intervals using partitioning de
 data("livertests", package = "reflimR")
 
 # Fit decision tree model to partition ALT by Age and Sex
-fit_tree <- generate_rpart(
+fit_tree <- generate.rpart(
   df = livertests,
   analyte = "ALT",
   tree_cp = 0.01,

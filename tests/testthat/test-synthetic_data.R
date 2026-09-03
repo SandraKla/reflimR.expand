@@ -1,7 +1,7 @@
 library(testthat)
 
-test_that("make_data generiert gueltige Normalverteilungsdaten mit prop.path und LOD", {
-  df <- make_data(
+test_that("generate_data generiert gueltige Normalverteilungsdaten mit prop.path und LOD", {
+  df <- generate_data(
     age = 2,
     age_steps = 365,
     distribution = "NO",
@@ -24,9 +24,9 @@ test_that("make_data generiert gueltige Normalverteilungsdaten mit prop.path und
   expect_true(any(df$IS_BELOW_LOD))
 })
 
-test_that("make_data unterstuetzt LOGNO, Rueckwaertskompatibilitaet und wirft Fehler bei ungueltiger Verteilung", {
+test_that("generate_data unterstuetzt LOGNO, Rueckwaertskompatibilitaet und wirft Fehler bei ungueltiger Verteilung", {
   # 1. LOGNO mit ill_factor Rueckwaertskompatibilitaet
-  df_logno <- make_data(
+  df_logno <- generate_data(
     age = 1,
     age_steps = 365,
     distribution = "LOGNO",
@@ -42,16 +42,16 @@ test_that("make_data unterstuetzt LOGNO, Rueckwaertskompatibilitaet und wirft Fe
 
   # 2. Fehler bei unbekanntem Verteilungstyp
   expect_error(
-    make_data(age = 1, distribution = "UNKNOWN_DIST"),
+    generate_data(age = 1, distribution = "UNKNOWN_DIST"),
     regexp = "Unsupported distribution type"
   )
 })
 
-test_that("make_data unterstuetzt Box-Cox Verteilungen (BCCG, BCPE, BCT)", {
+test_that("generate_data unterstuetzt Box-Cox Verteilungen (BCCG, BCPE, BCT)", {
   skip_if_not_installed("gamlss.dist")
 
   # BCCG
-  df_bccg <- make_data(
+  df_bccg <- generate_data(
     age = 1, age_steps = 365, distribution = "BCCG", n_ = 10,
     formula_mu = "linear(x, 0, 10)", formula_sigma = "linear(x, 0, 0.2)", formula_nu = "linear(x, 0, 1)",
     seed = 42
@@ -59,7 +59,7 @@ test_that("make_data unterstuetzt Box-Cox Verteilungen (BCCG, BCPE, BCT)", {
   expect_equal(nrow(df_bccg), 20)
 
   # BCPE
-  df_bcpe <- make_data(
+  df_bcpe <- generate_data(
     age = 1, age_steps = 365, distribution = "BCPE", n_ = 10,
     formula_mu = "linear(x, 0, 10)", formula_sigma = "linear(x, 0, 0.2)",
     formula_nu = "linear(x, 0, 1)", formula_tau = "linear(x, 0, 2)",
@@ -68,7 +68,7 @@ test_that("make_data unterstuetzt Box-Cox Verteilungen (BCCG, BCPE, BCT)", {
   expect_equal(nrow(df_bcpe), 20)
 
   # BCT
-  df_bct <- make_data(
+  df_bct <- generate_data(
     age = 1, age_steps = 365, distribution = "BCT", n_ = 10,
     formula_mu = "linear(x, 0, 10)", formula_sigma = "linear(x, 0, 0.2)",
     formula_nu = "linear(x, 0, 1)", formula_tau = "linear(x, 0, 2)",
@@ -77,14 +77,14 @@ test_that("make_data unterstuetzt Box-Cox Verteilungen (BCCG, BCPE, BCT)", {
   expect_equal(nrow(df_bct), 20)
 })
 
-test_that("generate_data_from_ri funktioniert mit definierten Referenzgrenzen und Spalten-Fallback", {
+test_that("generate.data.from.ri funktioniert mit definierten Referenzgrenzen und Spalten-Fallback", {
   # 1. Standard-Spalten
   ref_df <- data.frame(
     age = c(365, 730),
     down = c(2, 2),
     up = c(6, 6)
   )
-  df <- generate_data_from_ri(ref_df, n_ = 10, text_name = "AST", seed = 123)
+  df <- generate.data.from.ri(ref_df, n_ = 10, text_name = "AST", seed = 123)
 
   expect_s3_class(df, "data.frame")
   expect_equal(nrow(df), 20)
@@ -92,19 +92,19 @@ test_that("generate_data_from_ri funktioniert mit definierten Referenzgrenzen un
 
   # 2. Spalten ohne exakte Namen (Positions-Fallback)
   ref_anon <- data.frame(c(365, 730), c(2, 2), c(6, 6))
-  df_anon <- generate_data_from_ri(ref_anon, n_ = 5, seed = 123)
+  df_anon <- generate.data.from.ri(ref_anon, n_ = 5, seed = 123)
   expect_equal(nrow(df_anon), 10)
 
   # 3. Fehler bei zu wenigen Spalten
   expect_error(
-    generate_data_from_ri(data.frame(c(365), c(2))),
+    generate.data.from.ri(data.frame(c(365), c(2))),
     regexp = "must have at least 3 columns"
   )
 })
 
-test_that("synthetic_data berechnet korrekte Subgruppenparameter und faengt Fehler ab", {
+test_that("synthetic.data berechnet korrekte Subgruppenparameter und faengt Fehler ab", {
   # 1. Standard-Normalverteilung testen (ohne Plot)
-  res <- synthetic_data(
+  res <- synthetic.data(
     n = c(50, 50),
     ll = c(10, 15),
     ul = c(20, 25),
@@ -118,7 +118,7 @@ test_that("synthetic_data berechnet korrekte Subgruppenparameter und faengt Fehl
   expect_true(all(c("mean", "sd") %in% colnames(res$stats)))
 
   # 2. Lognormal-Verteilung testen
-  res_log <- synthetic_data(
+  res_log <- synthetic.data(
     n = c(30),
     ll = c(5),
     ul = c(15),
@@ -129,7 +129,7 @@ test_that("synthetic_data berechnet korrekte Subgruppenparameter und faengt Fehl
 
   # 3. Fehlerbehandlung bei ungleicher Vektorlaenge validieren
   expect_error(
-    synthetic_data(n = c(100, 100), ll = c(10), ul = c(20, 30), plot.it = FALSE),
+    synthetic.data(n = c(100, 100), ll = c(10), ul = c(20, 30), plot.it = FALSE),
     regexp = "must have the same length"
   )
 })

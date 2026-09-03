@@ -43,7 +43,7 @@
 #'   rnorm(120, mean = 40, sd = 3)
 #' )
 #'
-#' result <- lab_mclust(
+#' result <- lab.mclust(
 #'   values,
 #'   lognormal = FALSE,
 #'   remove.extremes = FALSE,
@@ -58,7 +58,7 @@
 #' @import mclust
 #'
 #' @export
-lab_mclust <- function(
+lab.mclust <- function(
   x,
   lognormal = FALSE,
   remove.extremes = FALSE,
@@ -193,7 +193,7 @@ lab_mclust <- function(
     }
   }
 
-  # Calculate the number of decimal places to retain based on the VeRIf specification and safety checks
+  # Calculate the number of decimal places to retain based on specification and safety checks
   if (is.null(digits)) {
     med_val <- stats::median(x)
     digits <- if (med_val > 0) max(0, 2 - floor(log10(med_val))) else 2
@@ -349,3 +349,5 @@ lab_mclust <- function(
     BIC = mc$BIC
   )
 }
+
+utils::globalVariables(c("x"))

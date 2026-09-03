@@ -196,12 +196,12 @@ modTrunc <- function(measured.values,lod,n.lod,right.quantile=0.75){
 
   while (length(x) < x.length.old) {
     x.length.old <- length(x)
-	  x.qmr <- quantile(x,probs = c(median.mod,right.quantile.mod))
+    x.qmr <- quantile(x,probs = c(median.mod,right.quantile.mod))
     upper.truncation <- x.qmr[1] + (x.qmr[2] - x.qmr[1])*quantile.factor
     x <- x[x <= upper.truncation]
-	  if (length(x) < n.min.values) {
+    if (length(x) < n.min.values) {
       return(list(selected.values = NA,upper.truncation = NA,median = NA,lod = lod,n.lod = n.lod))
-	  }
+    }
   }
 
   return(list(selected.values = x[-(1:n.lod)],upper.truncation = upper.truncation,median = x.qmr[1],lod = lod,n.lod = n.lod))
@@ -420,7 +420,7 @@ reflimLOD.Quant <- function(measured.values, lod, n.lod, lambda=0, right.quantil
 #' \donttest{
 #' set.seed(123)
 #' measured <- 5 + rlnorm(200, meanlog = log(5), sdlog = 0.2)
-#' intervals <- ci.reflimLOD.MLE(
+#' intervals <- reflimLOD.ci.MLE(
 #'   measured.values = measured,
 #'   lod = 5,
 #'   n.lod = 10,
@@ -430,7 +430,7 @@ reflimLOD.Quant <- function(measured.values, lod, n.lod, lambda=0, right.quantil
 #' intervals
 #' }
 #' @export
-ci.reflimLOD.MLE <- function(measured.values, lod, n.lod, lambda=0, right.quantile=0.75, conf.level=0.95, n.bootstrap=1000){
+reflimLOD.ci.MLE <- function(measured.values, lod, n.lod, lambda=0, right.quantile=0.75, conf.level=0.95, n.bootstrap=1000){
   lower.limits <- rep(NA,n.bootstrap)
   upper.limits <- rep(NA,n.bootstrap)
   percentile1s <- rep(NA,n.bootstrap)
@@ -442,20 +442,20 @@ ci.reflimLOD.MLE <- function(measured.values, lod, n.lod, lambda=0, right.quanti
   x <- c(rep(lod/2,n.lod),measured.values)
   for (i in 1:n.bootstrap) {
     xi <- sample(x,length(x),replace = T)
-	mvi <- subset(xi,xi >= lod)
-	n.lodi <- sum(xi < lod)
+    mvi <- subset(xi,xi >= lod)
+    n.lodi <- sum(xi < lod)
 
-	resi <- reflimLOD.MLE(mvi,lod,n.lodi,lambda = lambda,right.quantile = right.quantile)
+    resi <- reflimLOD.MLE(mvi,lod,n.lodi,lambda = lambda,right.quantile = right.quantile)
 
-	  if (!is.na(resi$lower.limit)) {
-	    lower.limits[i] <- resi$lower.limit
+    if (!is.na(resi$lower.limit)) {
+      lower.limits[i] <- resi$lower.limit
       upper.limits[i] <- resi$upper.limit
-	    percentile1s[i] <- resi$percentile1
+      percentile1s[i] <- resi$percentile1
       percentile99s[i] <- resi$percentile99
       mu.logs[i] <- resi$mu.log
       sigma.logs[i] <- resi$sigma.log
       upper.truncations[i] <- resi$upper.truncation
-	  }
+    }
   }
 
   conf.lims <- c((1 - conf.level)/2,1 - (1 - conf.level)/2)
@@ -561,7 +561,7 @@ lod.qqplot <- function(res.lodiboxplot, pch=16, line.col="red", lwd=2, col.grid=
   }
   if (!is.na(line.col)) {
     regline <- lm(quants.dat~quants.norm)
-	abline(regline,col = line.col,lwd = lwd)
+    abline(regline,col = line.col,lwd = lwd)
   }
 }
 
@@ -604,12 +604,12 @@ draw.r.squared <- function(measured.values, lod, n.lod, lambdas=seq(from = 0,to 
   }
   for (i in 1:length(lambdas)) {
     lbxpi <- reflimLOD.MLE(measured.values,lod,n.lod,lambda = lambdas[i],right.quantile = right.quantile)
-	  rsqs2 <- compute.r.squared(lbxpi)
-	  if (adjusted) {
-	    rsqs[i] <- rsqs2$adj.r.squared
-	  }else{
-	    rsqs[i] <- rsqs2$r.squared
-	  }
+    rsqs2 <- compute.r.squared(lbxpi)
+    if (adjusted) {
+      rsqs[i] <- rsqs2$adj.r.squared
+    }else{
+      rsqs[i] <- rsqs2$r.squared
+    }
   }
 
   plot(lambdas,rsqs,ylim = ylim,xlab = expression(lambda),ylab = paste0(strylab,"R-squared"),pch = pch)
@@ -645,7 +645,7 @@ draw.r.squared <- function(measured.values, lod, n.lod, lambdas=seq(from = 0,to 
 #' \donttest{
 #' set.seed(123)
 #' measured <- 5 + rlnorm(200, meanlog = log(5), sdlog = 0.2)
-#' draw.reflims(
+#' draw.reflim(
 #'   measured.values = measured,
 #'   lod = 5,
 #'   n.lod = 10,
@@ -654,14 +654,14 @@ draw.r.squared <- function(measured.values, lod, n.lod, lambdas=seq(from = 0,to 
 #' }
 #'
 #' @export
-draw.reflims <- function(measured.values, lod, n.lod, lambdas=seq(from = 0,to = 1,by = 0.1), right.quantile=0.75, lwd=2, ylim=NULL, ylab="", pch=c(15,16), col=c(2,4), col.grid=NULL){
+draw.reflim <- function(measured.values, lod, n.lod, lambdas=seq(from = 0,to = 1,by = 0.1), right.quantile=0.75, lwd=2, ylim=NULL, ylab="", pch=c(15,16), col=c(2,4), col.grid=NULL){
   # Old name: plot.reflims
   lower.limit <- rep(-1,length(lambdas))
   upper.limit <- rep(-1,length(lambdas))
   for (i in 1:length(lambdas)) {
     lbxpi <- reflimLOD.MLE(measured.values,lod,n.lod,lambda = lambdas[i],right.quantile = right.quantile)
-	lower.limit[i] <- lbxpi$lower.limit
-	upper.limit[i] <- lbxpi$upper.limit
+    lower.limit[i] <- lbxpi$lower.limit
+    upper.limit[i] <- lbxpi$upper.limit
   }
 
   ylims <- ylim
@@ -733,10 +733,10 @@ lod.hist <- function(res.lodiboxplot, xlab="", ylab="Frequency", main="", lwd=2,
     length.out = 101
   )
   curve.y <- area * dens.box.cox.inv(
-      curve.x,
-      mu = res.lodiboxplot$mu.log,
-      sigma = res.lodiboxplot$sigma.log,
-      lambda = lambda
+    curve.x,
+    mu = res.lodiboxplot$mu.log,
+    sigma = res.lodiboxplot$sigma.log,
+    lambda = lambda
   )
   lines(
     curve.x,
@@ -769,9 +769,9 @@ fit.trunc.norm <- function(x, a=-Inf, b=Inf){
       return(-sum(log(truncnorm::dtruncnorm(x,a = a,b = b,mean = pars[1],sd = pars[2]))))
     }
 
-	pars.initial <- c(median(x),sd(x))
+    pars.initial <- c(median(x),sd(x))
     optim.result <- optim(pars.initial,obj.fun)
-	return(list(mu = optim.result$par[1],sigma = optim.result$par[2]))
+    return(list(mu = optim.result$par[1],sigma = optim.result$par[2]))
   }
 }
 

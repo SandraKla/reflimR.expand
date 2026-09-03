@@ -22,21 +22,34 @@
 #'
 #' @return A data.frame with standard laboratory columns: \code{AGE_YEARS}, \code{AGE_DAYS},
 #'   \code{VALUE}, \code{IS_BELOW_LOD}, \code{ID}, \code{SEX}, \code{STATION}, and \code{ANALYTE}.
+#'
+#' @examples
+#' # Generate simple normal synthetic data across age range 0-5 years
+#' df_synth <- generate_data(
+#'   age = 5,
+#'   age_steps = 365,
+#'   distribution = "NO",
+#'   n_ = 20,
+#'   name_value = "ALT",
+#'   seed = 42
+#' )
+#' head(df_synth)
+#'
 #' @export
-make_data <- function(age,
-                      age_steps = 365,
-                      distribution = "NO",
-                      n_ = 100,
-                      name_value = "Synthetic_Analyte",
-                      formula_mu = "linear(x, 0, 10)",
-                      formula_sigma = "linear(x, 0, 1)",
-                      formula_nu = "linear(x, 0, 1)",
-                      formula_tau = "linear(x, 0, 2)",
-                      prop.path = 0,
-                      ill_factor = NULL,
-                      mu_factor_ill = 0,
-                      lod = NULL,
-                      seed = NULL) {
+generate_data <- function(age,
+                          age_steps = 365,
+                          distribution = "NO",
+                          n_ = 100,
+                          name_value = "Synthetic_Analyte",
+                          formula_mu = "linear(x, 0, 10)",
+                          formula_sigma = "linear(x, 0, 1)",
+                          formula_nu = "linear(x, 0, 1)",
+                          formula_tau = "linear(x, 0, 2)",
+                          prop.path = 0,
+                          ill_factor = NULL,
+                          mu_factor_ill = 0,
+                          lod = NULL,
+                          seed = NULL) {
 
   if (!is.null(seed)) {
     set.seed(seed)
@@ -157,8 +170,18 @@ make_data <- function(age,
 #' @param seed Optional integer. Random seed for reproducibility (default: NULL).
 #'
 #' @return A data.frame with standard laboratory columns.
+#'
+#' @examples
+#' ref_intervals <- data.frame(
+#'   age = c(365, 730, 1095),
+#'   down = c(10, 12, 11),
+#'   up = c(40, 45, 42)
+#' )
+#' df_from_ri <- generate.data.from.ri(ref_intervals, n_ = 25, text_name = "AST", seed = 123)
+#' head(df_from_ri)
+#'
 #' @export
-generate_data_from_ri <- function(reference_data, n_ = 100, text_name = "Analyte", seed = NULL) {
+generate.data.from.ri <- function(reference_data, n_ = 100, text_name = "Analyte", seed = NULL) {
   if (!is.null(seed)) {
     set.seed(seed)
   }
@@ -231,8 +254,19 @@ generate_data_from_ri <- function(reference_data, n_ = 100, text_name = "Analyte
 #' @param digits Integer, number of decimal digits to round. If \code{NULL}, auto-determined.
 #'
 #' @return A list containing `values` and `stats`.
+#'
+#' @examples
+#' res <- synthetic.data(
+#'   n = c(50, 200, 50),
+#'   ll = c(10, 12, 15),
+#'   ul = c(13, 16, 20),
+#'   plot.it = FALSE
+#' )
+#' head(res$values)
+#' print(res$stats)
+#'
 #' @export
-synthetic_data <- function(n = c(100, 800, 100),
+synthetic.data <- function(n = c(100, 800, 100),
                            ll = c(10, 12, 15),
                            ul = c(13, 16, 20),
                            lognormal = FALSE, hist.bins = 50,

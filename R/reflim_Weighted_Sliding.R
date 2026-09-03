@@ -46,30 +46,30 @@
 #'
 #' @export
 sliding.w.reflim <- function(x, t, distribution = "truncated_gaussian", log.scale = FALSE, standard_deviation = 5,
-                            standard_deviation_compare = NULL, vertex1 = NULL, vertex2 = NULL, vertex1_com = NULL, vertex2_com = NULL, window.size=NULL, step.width=NULL, window.size_com = NULL, step.width_com = NULL,
-                            lognormal=NULL, perc.trunc=2.5, n.min.window=200, n.min=100, apply.rounding=FALSE, weight_threshold = NULL, verbose = TRUE, MLE = FALSE) {
-    par(mar = c(3, 3, 3, 3))
-    if (is.null(standard_deviation_compare) && is.null(vertex1_com) && is.null(vertex2_com) && (is.null(window.size_com) || is.null(step.width_com))) {  # no comparison
-        res <- w.sliding.reflim(x, t, distribution = distribution, standard_deviation = standard_deviation,
-                                vertex1 = vertex1, vertex2 = vertex2,
-                                window.size = window.size, step.width = step.width, lognormal = lognormal,
-                                perc.trunc=perc.trunc, n.min.window=n.min.window, n.min=n.min, apply.rounding=apply.rounding,
-                                weight_threshold = weight_threshold, verbose = verbose, MLE = MLE)
-        if (verbose) print(res[, 1:2])
-        draw.sliding.w.reflims(result.sliding.reflim = res, log.scale = log.scale)
-    } else {
-        res1 <- w.sliding.reflim(x, t, distribution = distribution, standard_deviation = standard_deviation,
-                                 vertex1 = vertex1, vertex2 = vertex2,
-                                 window.size = window.size, step.width = step.width, lognormal = lognormal,
-                                 perc.trunc=perc.trunc, n.min.window=n.min.window, n.min=n.min, apply.rounding=apply.rounding,
-                                 weight_threshold = weight_threshold, verbose = verbose, MLE = MLE)
-        res2 <- w.sliding.reflim(x, t, distribution = distribution, standard_deviation = standard_deviation_compare,
-                                 vertex1 = vertex1_com, vertex2 = vertex2_com,
-                                 window.size = window.size_com, step.width = step.width_com, lognormal = lognormal,
-                                 perc.trunc=perc.trunc, n.min.window=n.min.window, n.min=n.min, apply.rounding=apply.rounding,
-                                 weight_threshold = weight_threshold, verbose = verbose, MLE = MLE)
-        draw.sliding.w.reflims.compare(result.sliding.reflim1 = res1, result.sliding.reflim2 = res2, log.scale = log.scale)
-    }
+                             standard_deviation_compare = NULL, vertex1 = NULL, vertex2 = NULL, vertex1_com = NULL, vertex2_com = NULL, window.size=NULL, step.width=NULL, window.size_com = NULL, step.width_com = NULL,
+                             lognormal=NULL, perc.trunc=2.5, n.min.window=200, n.min=100, apply.rounding=FALSE, weight_threshold = NULL, verbose = TRUE, MLE = FALSE) {
+  par(mar = c(3, 3, 3, 3))
+  if (is.null(standard_deviation_compare) && is.null(vertex1_com) && is.null(vertex2_com) && (is.null(window.size_com) || is.null(step.width_com))) {  # no comparison
+    res <- w.sliding.reflim(x, t, distribution = distribution, standard_deviation = standard_deviation,
+                            vertex1 = vertex1, vertex2 = vertex2,
+                            window.size = window.size, step.width = step.width, lognormal = lognormal,
+                            perc.trunc=perc.trunc, n.min.window=n.min.window, n.min=n.min, apply.rounding=apply.rounding,
+                            weight_threshold = weight_threshold, verbose = verbose, MLE = MLE)
+    if (verbose) print(res[, 1:2])
+    draw.sliding.w.reflim(result.sliding.reflim = res, log.scale = log.scale)
+  } else {
+    res1 <- w.sliding.reflim(x, t, distribution = distribution, standard_deviation = standard_deviation,
+                             vertex1 = vertex1, vertex2 = vertex2,
+                             window.size = window.size, step.width = step.width, lognormal = lognormal,
+                             perc.trunc=perc.trunc, n.min.window=n.min.window, n.min=n.min, apply.rounding=apply.rounding,
+                             weight_threshold = weight_threshold, verbose = verbose, MLE = MLE)
+    res2 <- w.sliding.reflim(x, t, distribution = distribution, standard_deviation = standard_deviation_compare,
+                             vertex1 = vertex1_com, vertex2 = vertex2_com,
+                             window.size = window.size_com, step.width = step.width_com, lognormal = lognormal,
+                             perc.trunc=perc.trunc, n.min.window=n.min.window, n.min=n.min, apply.rounding=apply.rounding,
+                             weight_threshold = weight_threshold, verbose = verbose, MLE = MLE)
+    draw.sliding.w.reflim.compare(result.sliding.reflim1 = res1, result.sliding.reflim2 = res2, log.scale = log.scale)
+  }
 
 }
 
@@ -94,13 +94,13 @@ sliding.w.reflim <- function(x, t, distribution = "truncated_gaussian", log.scal
 #' @export
 MLE <- function(data, weights = NULL, verbose = FALSE) {
 
-    data <- data[!is.na(data)]
+  data <- data[!is.na(data)]
 
-    lod_value <- min(data[data > 0])
+  lod_value <- min(data[data > 0])
 
-    n_at_lod <- sum(data == lod_value)
+  n_at_lod <- sum(data == lod_value)
 
-    return(w.reflimLOD.MLE(measured.values = data, weights = weights, lod = lod_value, n.lod = n_at_lod, verbose = verbose))
+  return(w.reflimLOD.MLE(measured.values = data, weights = weights, lod = lod_value, n.lod = n_at_lod, verbose = verbose))
 }
 
 #' Estimates the reference interval based on a maximum likelihood approach with weighting
@@ -176,64 +176,64 @@ MLE <- function(data, weights = NULL, verbose = FALSE) {
 #'
 #' @export
 w.reflimLOD.MLE <- function(measured.values, lod, n.lod, weights = NULL, lambda = 0, right.quantile = 0.75, verbose = FALSE) {
-    if (is.null(weights)) {
-        weights <- rep(1, length(measured.values))
-        print("weights are not provided, using equal weights")
-    }
-    # browser()
+  if (is.null(weights)) {
+    weights <- rep(1, length(measured.values))
+    print("weights are not provided, using equal weights")
+  }
+  # browser()
 
-    transformed.measured.values <- box.cox.trans(measured.values, lambda = lambda)
-    transformed.lod <- box.cox.trans(lod, lambda = lambda)
+  transformed.measured.values <- box.cox.trans(measured.values, lambda = lambda)
+  transformed.lod <- box.cox.trans(lod, lambda = lambda)
 
-    normal.result <- w.modTrunc(transformed.measured.values, transformed.lod, n.lod, right.quantile = right.quantile)
-    # print(normal.result)
+  normal.result <- w.modTrunc(transformed.measured.values, transformed.lod, n.lod, right.quantile = right.quantile)
+  # print(normal.result)
 
-    if (is.na(normal.result$upper.truncation)) {
-        return(list(lower.limit = NA, upper.limit = NA, mu.log = NA, sigma.log = NA,
-                    upper.truncation = NA, selected.values = NA, lod = lod, n.lod = n.lod))
-    }
+  if (is.na(normal.result$upper.truncation)) {
+    return(list(lower.limit = NA, upper.limit = NA, mu.log = NA, sigma.log = NA,
+                upper.truncation = NA, selected.values = NA, lod = lod, n.lod = n.lod))
+  }
 
-    obj.fun <- function(pars){
-        # sigma must >0
-        if (pars[2] <= 0) return(1e10)  # Returns a very large penalty value to prevent the optimizer from continuing in this direction
-        result <- tryCatch({
-            pnorm.lod <- ptruncnorm(transformed.lod, b = normal.result$upper.truncation, mean = pars[1], sd = pars[2])
-            # Prevent probability of 0 or 1
-            if (is.nan(pnorm.lod) || pnorm.lod <= 1e-10 || pnorm.lod >= 1 - 1e-10) return(1e10)
-            lod_weights <- weights[measured.values <= lod]
-            selected_weights <- weights[normal.result$selected.values.index]
-            d_trunc <- dtruncnorm(normal.result$selected.values, a = transformed.lod, b = normal.result$upper.truncation, mean = pars[1], sd = pars[2])
-            if (any(is.nan(d_trunc)) || any(d_trunc <= 1e-10)) return(1e10)
+  obj.fun <- function(pars){
+    # sigma must >0
+    if (pars[2] <= 0) return(1e10)  # Returns a very large penalty value to prevent the optimizer from continuing in this direction
+    result <- tryCatch({
+      pnorm.lod <- ptruncnorm(transformed.lod, b = normal.result$upper.truncation, mean = pars[1], sd = pars[2])
+      # Prevent probability of 0 or 1
+      if (is.nan(pnorm.lod) || pnorm.lod <= 1e-10 || pnorm.lod >= 1 - 1e-10) return(1e10)
+      lod_weights <- weights[measured.values <= lod]
+      selected_weights <- weights[normal.result$selected.values.index]
+      d_trunc <- dtruncnorm(normal.result$selected.values, a = transformed.lod, b = normal.result$upper.truncation, mean = pars[1], sd = pars[2])
+      if (any(is.nan(d_trunc)) || any(d_trunc <= 1e-10)) return(1e10)
 
-            val <-  (-sum(lod_weights) * log(pnorm.lod) -
-                sum(selected_weights) * log(1 - pnorm.lod) -
-                sum(selected_weights * log(dtruncnorm(normal.result$selected.values,
-                                                      a = transformed.lod, b = normal.result$upper.truncation,
-                                                      mean = pars[1], sd = pars[2]))))
-            if (is.nan(val) || is.infinite(val)) return(1e10)
-            val
-        }, error = function(e) 1e10)
-        return(result)
-    }
+      val <-  (-sum(lod_weights) * log(pnorm.lod) -
+        sum(selected_weights) * log(1 - pnorm.lod) -
+        sum(selected_weights * log(dtruncnorm(normal.result$selected.values,
+                                              a = transformed.lod, b = normal.result$upper.truncation,
+                                              mean = pars[1], sd = pars[2]))))
+      if (is.nan(val) || is.infinite(val)) return(1e10)
+      val
+    }, error = function(e) 1e10)
+    return(result)
+  }
 
-    sigma <- (normal.result$upper.truncation - transformed.lod)/(qnorm(0.975) - qnorm(0.975*n.lod/(length(normal.result$selected.values) + n.lod)))
-    mu <- normal.result$upper.truncation - sigma*qnorm(0.975)
+  sigma <- (normal.result$upper.truncation - transformed.lod)/(qnorm(0.975) - qnorm(0.975*n.lod/(length(normal.result$selected.values) + n.lod)))
+  mu <- normal.result$upper.truncation - sigma*qnorm(0.975)
 
-    pars.initial <- c(mu,sigma)
-    optim.result <- optim(
-        pars.initial, obj.fun,
-        method = "L-BFGS-B",
-        lower = c(mu - 5 * sigma, 0.001),   # Sigma minimum 0.001
-        upper = c(mu + 5 * sigma, 5 * sigma),
-        control = list(maxit = 1000)
-    )
+  pars.initial <- c(mu,sigma)
+  optim.result <- optim(
+    pars.initial, obj.fun,
+    method = "L-BFGS-B",
+    lower = c(mu - 5 * sigma, 0.001),   # Sigma minimum 0.001
+    upper = c(mu + 5 * sigma, 5 * sigma),
+    control = list(maxit = 1000)
+  )
 
-    lims <- box.cox.inv.trans(qnorm(c(0.025,0.975),mean = optim.result$par[1],sd = optim.result$par[2]),lambda = lambda)
-    lims1perc <- box.cox.inv.trans(qnorm(c(0.01,0.99),mean = optim.result$par[1],sd = optim.result$par[2]),lambda = lambda)
-    return(list(lower.limit = lims[1],upper.limit = lims[2],percentile1 = lims1perc[1],percentile99 = lims1perc[2],mu.log = unname(optim.result$par[1]),
-                sigma.log = unname(optim.result$par[2]),upper.truncation = unname(box.cox.inv.trans(normal.result$upper.truncation,lambda = lambda)),
-                selected.values = box.cox.inv.trans(normal.result$selected.values,lambda = lambda),minus.log.likelihood = optim.result$value,lod = lod,
-                n.lod = n.lod,lambda = lambda))
+  lims <- box.cox.inv.trans(qnorm(c(0.025,0.975),mean = optim.result$par[1],sd = optim.result$par[2]),lambda = lambda)
+  lims1perc <- box.cox.inv.trans(qnorm(c(0.01,0.99),mean = optim.result$par[1],sd = optim.result$par[2]),lambda = lambda)
+  return(list(lower.limit = lims[1],upper.limit = lims[2],percentile1 = lims1perc[1],percentile99 = lims1perc[2],mu.log = unname(optim.result$par[1]),
+              sigma.log = unname(optim.result$par[2]),upper.truncation = unname(box.cox.inv.trans(normal.result$upper.truncation,lambda = lambda)),
+              selected.values = box.cox.inv.trans(normal.result$selected.values,lambda = lambda),minus.log.likelihood = optim.result$value,lod = lod,
+              n.lod = n.lod,lambda = lambda))
 }
 
 #' Removes outliers from a vector of measured values with values below LOD and weights
@@ -277,50 +277,50 @@ w.reflimLOD.MLE <- function(measured.values, lod, n.lod, weights = NULL, lambda 
 #' @export
 w.modTrunc <- function(measured.values, lod, n.lod, right.quantile=0.75){
 
-    n.min.values <- 2*n.lod + 1
-    quantile.factor <- qnorm(0.975)/qnorm(right.quantile)
+  n.min.values <- 2*n.lod + 1
+  quantile.factor <- qnorm(0.975)/qnorm(right.quantile)
 
-    idx <- c(rep(NA, n.lod), seq_along(measured.values))
-    x <- c(rep(lod - 1, n.lod), measured.values)
+  idx <- c(rep(NA, n.lod), seq_along(measured.values))
+  x <- c(rep(lod - 1, n.lod), measured.values)
 
-    if (length(x) < n.min.values) {
-        return(list(selected.values = NA, selected.values.index = NA, upper.truncation = NA, median = NA, lod = lod, n.lod = n.lod))
-    }
+  if (length(x) < n.min.values) {
+    return(list(selected.values = NA, selected.values.index = NA, upper.truncation = NA, median = NA, lod = lod, n.lod = n.lod))
+  }
 
-    x.qmr <- quantile(x, probs = c(0.5, right.quantile))
+  x.qmr <- quantile(x, probs = c(0.5, right.quantile))
+  upper.truncation <- x.qmr[1] + (x.qmr[2] - x.qmr[1])*quantile.factor
+
+  x.length.old <- length(x)
+  keep <- x <= upper.truncation
+  x <- x[keep]
+  idx <- idx[keep]
+
+  if (length(x) < n.min.values) {
+    return(list(selected.values = NA, selected.values.index = NA, upper.truncation = NA, median = NA, lod = lod, n.lod = n.lod))
+  }
+
+  if (length(x) == x.length.old) {
+    return(list(selected.values = x[-(1:n.lod)], selected.values.index = idx[-(1:n.lod)], upper.truncation = upper.truncation, median = x.qmr[1], lod = lod, n.lod = n.lod))
+  }
+
+  median.mod <- 0.5/0.975
+  right.quantile.mod <- right.quantile/0.975
+
+  while (length(x) < x.length.old) {
+    x.length.old <- length(x)
+    x.qmr <- quantile(x, probs = c(median.mod, right.quantile.mod))
     upper.truncation <- x.qmr[1] + (x.qmr[2] - x.qmr[1])*quantile.factor
 
-    x.length.old <- length(x)
     keep <- x <= upper.truncation
     x <- x[keep]
     idx <- idx[keep]
 
     if (length(x) < n.min.values) {
-        return(list(selected.values = NA, selected.values.index = NA, upper.truncation = NA, median = NA, lod = lod, n.lod = n.lod))
+      return(list(selected.values = NA, selected.values.index = NA, upper.truncation = NA, median = NA, lod = lod, n.lod = n.lod))
     }
+  }
 
-    if (length(x) == x.length.old) {
-        return(list(selected.values = x[-(1:n.lod)], selected.values.index = idx[-(1:n.lod)], upper.truncation = upper.truncation, median = x.qmr[1], lod = lod, n.lod = n.lod))
-    }
-
-    median.mod <- 0.5/0.975
-    right.quantile.mod <- right.quantile/0.975
-
-    while (length(x) < x.length.old) {
-        x.length.old <- length(x)
-        x.qmr <- quantile(x, probs = c(median.mod, right.quantile.mod))
-        upper.truncation <- x.qmr[1] + (x.qmr[2] - x.qmr[1])*quantile.factor
-
-        keep <- x <= upper.truncation
-        x <- x[keep]
-        idx <- idx[keep]
-
-        if (length(x) < n.min.values) {
-            return(list(selected.values = NA, selected.values.index = NA, upper.truncation = NA, median = NA, lod = lod, n.lod = n.lod))
-        }
-    }
-
-    return(list(selected.values = x[-(1:n.lod)], selected.values.index = idx[-(1:n.lod)], upper.truncation = upper.truncation, median = x.qmr[1], lod = lod, n.lod = n.lod))
+  return(list(selected.values = x[-(1:n.lod)], selected.values.index = idx[-(1:n.lod)], upper.truncation = upper.truncation, median = x.qmr[1], lod = lod, n.lod = n.lod))
 }
 
 #' Plot Sliding Reference Limits with Confidence Intervals
@@ -364,7 +364,7 @@ w.modTrunc <- function(measured.values, lod, n.lod, right.quantile=0.75){
 #'   covariate.median = age
 #' )
 #'
-#' plot <- draw.sliding.w.reflims(
+#' plot <- draw.sliding.w.reflim(
 #'   result,
 #'   xlab = "Age",
 #'   ylab = "Reference limits"
@@ -372,60 +372,60 @@ w.modTrunc <- function(measured.values, lod, n.lod, right.quantile=0.75){
 #' print(plot)
 #'
 #' @export
-draw.sliding.w.reflims <- function(result.sliding.reflim, log.scale = FALSE, use.mean = TRUE, xlim = NULL, ylim = NULL,
-                     xlab = NULL, ylab = NULL, col.low = c(0, 0, 1), col.upp = c(1, 0, 0),
-                     lwd = 1, transparency = 0.2, draw.cis = TRUE, grid.col = NULL, log = "",
-                     cut.at = 1) {
-    rsr <- result.sliding.reflim
+draw.sliding.w.reflim <- function(result.sliding.reflim, log.scale = FALSE, use.mean = TRUE, xlim = NULL, ylim = NULL,
+                                  xlab = NULL, ylab = NULL, col.low = c(0, 0, 1), col.upp = c(1, 0, 0),
+                                  lwd = 1, transparency = 0.2, draw.cis = TRUE, grid.col = NULL, log = "",
+                                  cut.at = 1) {
+  rsr <- result.sliding.reflim
 
+  cova <- rsr$covariate.mean
+  if (use.mean) {
     cova <- rsr$covariate.mean
-    if (use.mean) {
-        cova <- rsr$covariate.mean
-    }else{
-      cova <- rsr$covariate.median
-    }
+  }else{
+    cova <- rsr$covariate.median
+  }
 
-    df <- data.frame(
-        covariate = cova,
-        lower_lim = rsr$lower.lim,
-        upper_lim = rsr$upper.lim,
-        ci_lower_lim_low = rsr$ci.lower.lim.l,
-        ci_lower_lim_up = rsr$ci.lower.lim.u,
-        ci_upper_lim_low = rsr$ci.upper.lim.l,
-        ci_upper_lim_up = rsr$ci.upper.lim.u
-    )
+  df <- data.frame(
+    covariate = cova,
+    lower_lim = rsr$lower.lim,
+    upper_lim = rsr$upper.lim,
+    ci_lower_lim_low = rsr$ci.lower.lim.l,
+    ci_lower_lim_up = rsr$ci.lower.lim.u,
+    ci_upper_lim_low = rsr$ci.upper.lim.l,
+    ci_upper_lim_up = rsr$ci.upper.lim.u
+  )
 
-    p <- ggplot(df, aes(x = .data$covariate)) +
-        geom_ribbon(aes(ymin = .data$ci_lower_lim_low,
-                        ymax = .data$ci_lower_lim_up),
-                    fill = rgb(col.low[1], col.low[2], col.low[3], transparency),
-                    alpha = transparency) +
-        geom_ribbon(aes(ymin = .data$ci_upper_lim_low,
-                        ymax = .data$ci_upper_lim_up),
-                    fill = rgb(col.upp[1], col.upp[2], col.upp[3], transparency),
-                    alpha = transparency) +
-        geom_line(aes(y = .data$lower_lim, color = "Lower Limit"),
-                  linewidth = lwd) +
-        geom_line(aes(y = .data$upper_lim, color = "Upper Limit"),
-                  linewidth = lwd) +
-        labs(x = xlab, y = ylab) +
-        theme_minimal() +
+  p <- ggplot(df, aes(x = .data$covariate)) +
+    geom_ribbon(aes(ymin = .data$ci_lower_lim_low,
+                    ymax = .data$ci_lower_lim_up),
+                fill = rgb(col.low[1], col.low[2], col.low[3], transparency),
+                alpha = transparency) +
+    geom_ribbon(aes(ymin = .data$ci_upper_lim_low,
+                    ymax = .data$ci_upper_lim_up),
+                fill = rgb(col.upp[1], col.upp[2], col.upp[3], transparency),
+                alpha = transparency) +
+    geom_line(aes(y = .data$lower_lim, color = "Lower Limit"),
+              linewidth = lwd) +
+    geom_line(aes(y = .data$upper_lim, color = "Upper Limit"),
+              linewidth = lwd) +
+    labs(x = xlab, y = ylab) +
+    theme_minimal() +
 
 
-        scale_color_manual(
-            values = c("Upper Limit" = rgb(col.upp[1], col.upp[2], col.upp[3]),
-                       "Lower Limit" = rgb(col.low[1], col.low[2], col.low[3])),
-            limits = c("Upper Limit", "Lower Limit")
-        ) +
-        labs(color = "Limits") +
-        theme(legend.position = "right")
+    scale_color_manual(
+      values = c("Upper Limit" = rgb(col.upp[1], col.upp[2], col.upp[3]),
+                 "Lower Limit" = rgb(col.low[1], col.low[2], col.low[3])),
+      limits = c("Upper Limit", "Lower Limit")
+    ) +
+    labs(color = "Limits") +
+    theme(legend.position = "right")
 
-    # logarithmic scaling
-    if (log.scale) {
-        p <- p + scale_x_log10()
-    }
+  # logarithmic scaling
+  if (log.scale) {
+    p <- p + scale_x_log10()
+  }
 
-    return(p)
+  return(p)
 }
 
 #' Plot Sliding Reference Limits with Confidence Intervals
@@ -474,7 +474,7 @@ draw.sliding.w.reflims <- function(result.sliding.reflim, log.scale = FALSE, use
 #' result2$lower.lim <- result2$lower.lim + 1
 #' result2$upper.lim <- result2$upper.lim + 1
 #'
-#' plot <- draw.sliding.w.reflims.compare(
+#' plot <- draw.sliding.w.reflim.compare(
 #'   result.sliding.reflim1 = result1,
 #'   result.sliding.reflim2 = result2,
 #'   xlab = "Age",
@@ -483,94 +483,94 @@ draw.sliding.w.reflims <- function(result.sliding.reflim, log.scale = FALSE, use
 #' print(plot)
 #'
 #' @export
-draw.sliding.w.reflims.compare <- function(result.sliding.reflim1, result.sliding.reflim2, log.scale = FALSE, use.mean = TRUE,
-                            xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL,
-                            col.low1 = c(0, 0, 1), col.upp1 = c(1, 0, 0), col.low2 = c(0, 1, 0),
-                            col.upp2 = c(0, 0, 0), lwd = 1, transparency = 0.2,
-                            draw.cis = TRUE, grid.col = NULL, log = "", cut.at = 1) {
-    # Extract data from both results
-    rsr1 <- result.sliding.reflim1
-    rsr2 <- result.sliding.reflim2
+draw.sliding.w.reflim.compare <- function(result.sliding.reflim1, result.sliding.reflim2, log.scale = FALSE, use.mean = TRUE,
+                                          xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL,
+                                          col.low1 = c(0, 0, 1), col.upp1 = c(1, 0, 0), col.low2 = c(0, 1, 0),
+                                          col.upp2 = c(0, 0, 0), lwd = 1, transparency = 0.2,
+                                          draw.cis = TRUE, grid.col = NULL, log = "", cut.at = 1) {
+  # Extract data from both results
+  rsr1 <- result.sliding.reflim1
+  rsr2 <- result.sliding.reflim2
 
-    cova1 <- if (use.mean) rsr1$covariate.mean else rsr1$covariate.median
-    cova2 <- if (use.mean) rsr2$covariate.mean else rsr2$covariate.median
+  cova1 <- if (use.mean) rsr1$covariate.mean else rsr1$covariate.median
+  cova2 <- if (use.mean) rsr2$covariate.mean else rsr2$covariate.median
 
-    # Create data frames for plotting
-    df1 <- data.frame(
-        covariate = cova1,
-        lower_lim = rsr1$lower.lim,
-        upper_lim = rsr1$upper.lim,
-        ci_lower_lim_low = rsr1$ci.lower.lim.l,
-        ci_lower_lim_up = rsr1$ci.lower.lim.u,
-        ci_upper_lim_low = rsr1$ci.upper.lim.l,
-        ci_upper_lim_up = rsr1$ci.upper.lim.u
-    )
+  # Create data frames for plotting
+  df1 <- data.frame(
+    covariate = cova1,
+    lower_lim = rsr1$lower.lim,
+    upper_lim = rsr1$upper.lim,
+    ci_lower_lim_low = rsr1$ci.lower.lim.l,
+    ci_lower_lim_up = rsr1$ci.lower.lim.u,
+    ci_upper_lim_low = rsr1$ci.upper.lim.l,
+    ci_upper_lim_up = rsr1$ci.upper.lim.u
+  )
 
-    df2 <- data.frame(
-        covariate = cova2,
-        lower_lim = rsr2$lower.lim,
-        upper_lim = rsr2$upper.lim,
-        ci_lower_lim_low = rsr2$ci.lower.lim.l,
-        ci_lower_lim_up = rsr2$ci.lower.lim.u,
-        ci_upper_lim_low = rsr2$ci.upper.lim.l,
-        ci_upper_lim_up = rsr2$ci.upper.lim.u
-    )
+  df2 <- data.frame(
+    covariate = cova2,
+    lower_lim = rsr2$lower.lim,
+    upper_lim = rsr2$upper.lim,
+    ci_lower_lim_low = rsr2$ci.lower.lim.l,
+    ci_lower_lim_up = rsr2$ci.lower.lim.u,
+    ci_upper_lim_low = rsr2$ci.upper.lim.l,
+    ci_upper_lim_up = rsr2$ci.upper.lim.u
+  )
 
-    # Set ylim if not provided
-    if (is.null(ylim)) {
-        ylim <- range(c(df1$ci_lower_lim_low, df1$ci_upper_lim_up, df2$ci_lower_lim_low, df2$ci_upper_lim_up), na.rm = TRUE)
-        if (log == "y" || log == "xy") {
-            ylim[1] <- max(c(cut.at, ylim[1]))
-        }
+  # Set ylim if not provided
+  if (is.null(ylim)) {
+    ylim <- range(c(df1$ci_lower_lim_low, df1$ci_upper_lim_up, df2$ci_lower_lim_low, df2$ci_upper_lim_up), na.rm = TRUE)
+    if (log == "y" || log == "xy") {
+      ylim[1] <- max(c(cut.at, ylim[1]))
     }
+  }
 
-    # Start plotting
-    p <- ggplot() +
-        geom_ribbon(data = df1, aes(x = .data$covariate, ymin = .data$ci_lower_lim_low, ymax = .data$ci_lower_lim_up),
-                    fill = rgb(col.low1[1], col.low1[2], col.low1[3], transparency), alpha = transparency) +
-        geom_ribbon(data = df1, aes(x = .data$covariate, ymin = .data$ci_upper_lim_low, ymax = .data$ci_upper_lim_up),
-                    fill = rgb(col.upp1[1], col.upp1[2], col.upp1[3], transparency), alpha = transparency) +
-        geom_line(data = df1, aes(x = .data$covariate, y = .data$lower_lim, color = "Lower Limit 1(standard)"), linewidth = lwd) +
-        geom_line(data = df1, aes(x = .data$covariate, y = .data$upper_lim, color = "Upper Limit 1(standard)"), linewidth = lwd) +
+  # Start plotting
+  p <- ggplot() +
+    geom_ribbon(data = df1, aes(x = .data$covariate, ymin = .data$ci_lower_lim_low, ymax = .data$ci_lower_lim_up),
+                fill = rgb(col.low1[1], col.low1[2], col.low1[3], transparency), alpha = transparency) +
+    geom_ribbon(data = df1, aes(x = .data$covariate, ymin = .data$ci_upper_lim_low, ymax = .data$ci_upper_lim_up),
+                fill = rgb(col.upp1[1], col.upp1[2], col.upp1[3], transparency), alpha = transparency) +
+    geom_line(data = df1, aes(x = .data$covariate, y = .data$lower_lim, color = "Lower Limit 1(standard)"), linewidth = lwd) +
+    geom_line(data = df1, aes(x = .data$covariate, y = .data$upper_lim, color = "Upper Limit 1(standard)"), linewidth = lwd) +
 
-        geom_ribbon(data = df2, aes(x = .data$covariate, ymin = .data$ci_lower_lim_low, ymax = .data$ci_lower_lim_up),
-                    fill = rgb(col.low2[1], col.low2[2], col.low2[3], transparency), alpha = transparency) +
-        geom_ribbon(data = df2, aes(x = .data$covariate, ymin = .data$ci_upper_lim_low, ymax = .data$ci_upper_lim_up),
-                    fill = rgb(col.upp2[1], col.upp2[2], col.upp2[3], transparency), alpha = transparency) +
-        geom_line(data = df2, aes(x = .data$covariate, y = .data$lower_lim, color = "Lower Limit 2(comparison)"), linewidth = lwd) +
-        geom_line(data = df2, aes(x = .data$covariate, y = .data$upper_lim, color = "Upper Limit 2(comparison)"), linewidth = lwd) +
+    geom_ribbon(data = df2, aes(x = .data$covariate, ymin = .data$ci_lower_lim_low, ymax = .data$ci_lower_lim_up),
+                fill = rgb(col.low2[1], col.low2[2], col.low2[3], transparency), alpha = transparency) +
+    geom_ribbon(data = df2, aes(x = .data$covariate, ymin = .data$ci_upper_lim_low, ymax = .data$ci_upper_lim_up),
+                fill = rgb(col.upp2[1], col.upp2[2], col.upp2[3], transparency), alpha = transparency) +
+    geom_line(data = df2, aes(x = .data$covariate, y = .data$lower_lim, color = "Lower Limit 2(comparison)"), linewidth = lwd) +
+    geom_line(data = df2, aes(x = .data$covariate, y = .data$upper_lim, color = "Upper Limit 2(comparison)"), linewidth = lwd) +
 
-        labs(x = xlab, y = ylab, color = "Limits") +
-        scale_color_manual(values = c("Upper Limit 1(standard)"     = rgb(col.upp1[1], col.upp1[2], col.upp1[3]),
-                                      "Lower Limit 1(standard)"     = rgb(col.low1[1], col.low1[2], col.low1[3]),
-                                      "Upper Limit 2(comparison)"   = rgb(col.upp2[1], col.upp2[2], col.upp2[3]),
-                                      "Lower Limit 2(comparison)"   = rgb(col.low2[1], col.low2[2], col.low2[3])),
-                           limits = c("Upper Limit 1(standard)",
-                                      "Upper Limit 2(comparison)",
-                                      "Lower Limit 1(standard)",
-                                      "Lower Limit 2(comparison)")) +
-        theme_minimal() +
-        theme(legend.position = "right")
+    labs(x = xlab, y = ylab, color = "Limits") +
+    scale_color_manual(values = c("Upper Limit 1(standard)"     = rgb(col.upp1[1], col.upp1[2], col.upp1[3]),
+                                  "Lower Limit 1(standard)"     = rgb(col.low1[1], col.low1[2], col.low1[3]),
+                                  "Upper Limit 2(comparison)"   = rgb(col.upp2[1], col.upp2[2], col.upp2[3]),
+                                  "Lower Limit 2(comparison)"   = rgb(col.low2[1], col.low2[2], col.low2[3])),
+                       limits = c("Upper Limit 1(standard)",
+                                  "Upper Limit 2(comparison)",
+                                  "Lower Limit 1(standard)",
+                                  "Lower Limit 2(comparison)")) +
+    theme_minimal() +
+    theme(legend.position = "right")
 
-    # Apply xlim and ylim if provided
-    if (!is.null(xlim)) {
-        p <- p + xlim(xlim)
-    }
+  # Apply xlim and ylim if provided
+  if (!is.null(xlim)) {
+    p <- p + xlim(xlim)
+  }
 
-    if (!is.null(ylim)) {
-        p <- p + ylim(ylim)
-    }
+  if (!is.null(ylim)) {
+    p <- p + ylim(ylim)
+  }
 
-    # Optionally add grid lines
-    if (!is.null(grid.col)) {
-        p <- p + theme(panel.grid.major = element_line(color = grid.col))
-    }
+  # Optionally add grid lines
+  if (!is.null(grid.col)) {
+    p <- p + theme(panel.grid.major = element_line(color = grid.col))
+  }
 
-    if (log.scale) {
-        p <- p + scale_x_log10()
-    }
+  if (log.scale) {
+    p <- p + scale_x_log10()
+  }
 
-    return(p)
+  return(p)
 }
 
 #' Triangular Probability Density Function
@@ -589,10 +589,10 @@ draw.sliding.w.reflims.compare <- function(result.sliding.reflim1, result.slidin
 #'
 #' @export
 dtriang <- function(x, a, b, c) {
-    y <- ifelse(x < a | x > c, 0,
-                ifelse(x <= b, (x - a) / ((b - a) * (c - a)),
-                       (c - x) / ((c - b) * (c - a))))
-    return(y)
+  y <- ifelse(x < a | x > c, 0,
+              ifelse(x <= b, (x - a) / ((b - a) * (c - a)),
+                     (c - x) / ((c - b) * (c - a))))
+  return(y)
 }
 
 #' Trapezoidal Probability Density Function
@@ -618,11 +618,11 @@ dtriang <- function(x, a, b, c) {
 #'
 #' @export
 dtrapezoid <- function(x, a, b, c, d) {
-    y <- ifelse(x < a | x > d, 0,
-                ifelse(x <= b, (x - a) / ((b - a) * (d - a)),
-                       ifelse(x <= c, 1 / (d - a),
-                              (d - x) / ((d - c) * (d - a)))))
-    return(y)
+  y <- ifelse(x < a | x > d, 0,
+              ifelse(x <= b, (x - a) / ((b - a) * (d - a)),
+                     ifelse(x <= c, 1 / (d - a),
+                            (d - x) / ((d - c) * (d - a)))))
+  return(y)
 }
 
 #' Generate a weighting function based on the specified distribution type
@@ -643,41 +643,41 @@ dtrapezoid <- function(x, a, b, c, d) {
 #'
 #' @export
 makeWeightFunction <- function(distribution = "truncated_gaussian", ...) {
-    args <- list(...)
-    if (distribution == "truncated_gaussian") {
-        sigma <- args$sigma
-        if (is.null(sigma)) {
-            sigma <- 5
-        }
-        return(function(x, mean) {
-            dnorm(x, mean = mean, sd = sigma) / dnorm(mean, mean = mean, sd = sigma)
-        })
-    } else if (distribution == "gaussian") {
-        sigma <- args$sigma
-        if (is.null(sigma)) {
-            sigma <- 5
-        }
-        return(function(x, mean) {
-            dnorm(x, mean = mean, sd = sigma) / dnorm(mean, mean = mean, sd = sigma)
-        })
-    } else if (distribution == "triangular") {
-        a <- args$a
-        b <- args$b
-        c <- args$c
-        return(function(x) {
-            dtriang(x, a = a, b = b, c = c) / dtriang(b, a = a, b = b, c = c)
-        })
-    } else if (distribution == "trapezoidal") {
-        a <- args$a
-        b <- args$b
-        c <- args$c
-        d <- args$d
-        return(function(x) {
-            dtrapezoid(x, a = a, b = b, c = c, d = d) / dtrapezoid((b + c) / 2, a = a, b = b, c = c, d = d)
-        })
-    } else {
-        stop("Unsupported distribution type")
+  args <- list(...)
+  if (distribution == "truncated_gaussian") {
+    sigma <- args$sigma
+    if (is.null(sigma)) {
+      sigma <- 5
     }
+    return(function(x, mean) {
+      dnorm(x, mean = mean, sd = sigma) / dnorm(mean, mean = mean, sd = sigma)
+    })
+  } else if (distribution == "gaussian") {
+    sigma <- args$sigma
+    if (is.null(sigma)) {
+      sigma <- 5
+    }
+    return(function(x, mean) {
+      dnorm(x, mean = mean, sd = sigma) / dnorm(mean, mean = mean, sd = sigma)
+    })
+  } else if (distribution == "triangular") {
+    a <- args$a
+    b <- args$b
+    c <- args$c
+    return(function(x) {
+      dtriang(x, a = a, b = b, c = c) / dtriang(b, a = a, b = b, c = c)
+    })
+  } else if (distribution == "trapezoidal") {
+    a <- args$a
+    b <- args$b
+    c <- args$c
+    d <- args$d
+    return(function(x) {
+      dtrapezoid(x, a = a, b = b, c = c, d = d) / dtrapezoid((b + c) / 2, a = a, b = b, c = c, d = d)
+    })
+  } else {
+    stop("Unsupported distribution type")
+  }
 }
 
 #' Calculate the weight threshold for a given distribution and parameters.
@@ -691,7 +691,7 @@ makeWeightFunction <- function(distribution = "truncated_gaussian", ...) {
 #' @return Sum of weights.
 #'
 #' @examples
-#' threshold <- calculate_weight_threshold(
+#' threshold <- calculate.weight.threshold(
 #'   distribution = "gaussian",
 #'   params = list(standard_deviation = 5),
 #'   n = 40
@@ -699,31 +699,31 @@ makeWeightFunction <- function(distribution = "truncated_gaussian", ...) {
 #' threshold
 #'
 #' @export
-calculate_weight_threshold <- function(distribution, params, n = 40) {
+calculate.weight.threshold <- function(distribution, params, n = 40) {
 
-    uniform_sample <- seq(0, 1, length.out = n)
+  uniform_sample <- seq(0, 1, length.out = n)
 
-    w.function <- switch(distribution,
-                         "gaussian" = makeWeightFunction("gaussian", sigma = params$standard_deviation),
-                         "truncated_gaussian" = makeWeightFunction("truncated_gaussian", sigma = params$standard_deviation),
-                         "triangular" = {
-                             vertex1 <- if (is.null(params$vertex1)) 0.5 else params$vertex1
-                             makeWeightFunction("triangular", a = 0, b = vertex1, c = 1)
-                         },
-                         "trapezoidal" = {
-                             vertex1 <- if (is.null(params$vertex1)) 0.3 else params$vertex1
-                             vertex2 <- if (is.null(params$vertex2)) 0.6 else params$vertex2
-                             makeWeightFunction(distribution = "trapezoidal", a = 0, b = vertex1, c = vertex2, d = 1)
-                         }
-    )
+  w.function <- switch(distribution,
+                       "gaussian" = makeWeightFunction("gaussian", sigma = params$standard_deviation),
+                       "truncated_gaussian" = makeWeightFunction("truncated_gaussian", sigma = params$standard_deviation),
+                       "triangular" = {
+                         vertex1 <- if (is.null(params$vertex1)) 0.5 else params$vertex1
+                         makeWeightFunction("triangular", a = 0, b = vertex1, c = 1)
+                       },
+                       "trapezoidal" = {
+                         vertex1 <- if (is.null(params$vertex1)) 0.3 else params$vertex1
+                         vertex2 <- if (is.null(params$vertex2)) 0.6 else params$vertex2
+                         makeWeightFunction(distribution = "trapezoidal", a = 0, b = vertex1, c = vertex2, d = 1)
+                       }
+  )
 
 
-    weights <- if (distribution %in% c("gaussian", "truncated_gaussian")) {
-        w.function(uniform_sample, mean = 0.5)
-    } else {
-        w.function(uniform_sample)
-    }
-    return(sum(weights))
+  weights <- if (distribution %in% c("gaussian", "truncated_gaussian")) {
+    w.function(uniform_sample, mean = 0.5)
+  } else {
+    w.function(uniform_sample)
+  }
+  return(sum(weights))
 }
 
 #' Estimate reference limits using sliding windows with weighting functions
@@ -780,345 +780,345 @@ w.sliding.reflim <- function(x,covariate,distribution = "truncated_gaussian", st
                              start_point = NULL, vertex1 = NULL, vertex2 = NULL, end_point = NULL,
                              window.size=NULL, step.width=NULL, lognormal=NULL, perc.trunc=2.5, n.min.window=200,
                              n.min=100, apply.rounding=FALSE, plot.weight=TRUE, weight_threshold = NULL, verbose = TRUE, MLE = FALSE) {
-    # print(paste("sd = ", standard_deviation))
+  # print(paste("sd = ", standard_deviation))
 
-    is.nona <- !is.na(x) & !is.na(covariate)
-    xx <- x[is.nona]
-    covcomp <- covariate[is.nona]
+  is.nona <- !is.na(x) & !is.na(covariate)
+  xx <- x[is.nona]
+  covcomp <- covariate[is.nona]
 
-    ord.cov <- order(covcomp)
-    xx <- xx[ord.cov]
-    covcomp <- covcomp[ord.cov]
+  ord.cov <- order(covcomp)
+  xx <- xx[ord.cov]
+  covcomp <- covcomp[ord.cov]
 
-    if (!is.numeric(xx)) {stop("(reflim) x must be numeric.")}
-    if (min(xx) < 0) {stop("(reflim) only positive values allowed.")} # original <=
-    n <- length(xx)
-    if (n < 39) {stop(paste0("(iboxplot) n = ", n, ". The length of x should be 200 or more. The absolute minimum for reference limit estimation is 39."))}
-    if (n < n.min) {  # Determine enough points
-        print(noquote(paste("n =", n, "where a minimum of", n.min, "is required. You may try to reduce n.min at the loss of accuracy.")))
-        return(c(mean = NA, sd = NA, lower.lim = NA, upper.lim = NA))
-    }
+  if (!is.numeric(xx)) {stop("(reflim) x must be numeric.")}
+  if (min(xx) < 0) {stop("(reflim) only positive values allowed.")} # original <=
+  n <- length(xx)
+  if (n < 39) {stop(paste0("(iboxplot) n = ", n, ". The length of x should be 200 or more. The absolute minimum for reference limit estimation is 39."))}
+  if (n < n.min) {  # Determine enough points
+    print(noquote(paste("n =", n, "where a minimum of", n.min, "is required. You may try to reduce n.min at the loss of accuracy.")))
+    return(c(mean = NA, sd = NA, lower.lim = NA, upper.lim = NA))
+  }
 
-    cov.unique <- covcomp[!duplicated(covcomp)]
-    n.steps <- length(cov.unique)
+  cov.unique <- covcomp[!duplicated(covcomp)]
+  n.steps <- length(cov.unique)
 
-    if (verbose)
+  if (verbose)
     print(paste("n.steps =", n.steps))
-    if (n.steps == 1) {stop("The covariate is constant.")}
+  if (n.steps == 1) {stop("The covariate is constant.")}
 
-    if (!is.null(window.size) & !is.null(step.width)) {
-        n.steps <- ceiling(max(c(1,(covcomp[length(covcomp)] - covcomp[1] - window.size)/step.width)))
-        if (verbose)
-        print(paste("get new n.steps =", n.steps))
-    }
+  if (!is.null(window.size) & !is.null(step.width)) {
+    n.steps <- ceiling(max(c(1,(covcomp[length(covcomp)] - covcomp[1] - window.size)/step.width)))
+    if (verbose)
+      print(paste("get new n.steps =", n.steps))
+  }
 
-    lower.lim <- rep(NA,n.steps)
-    upper.lim <- rep(NA,n.steps)
-    ci.lower.lim.l <- rep(NA,n.steps)
-    ci.lower.lim.u <- rep(NA,n.steps)
-    ci.upper.lim.l <- rep(NA,n.steps)
-    ci.upper.lim.u <- rep(NA,n.steps)
-    distribution.type <- rep(NA,n.steps)
+  lower.lim <- rep(NA,n.steps)
+  upper.lim <- rep(NA,n.steps)
+  ci.lower.lim.l <- rep(NA,n.steps)
+  ci.lower.lim.u <- rep(NA,n.steps)
+  ci.upper.lim.l <- rep(NA,n.steps)
+  ci.upper.lim.u <- rep(NA,n.steps)
+  distribution.type <- rep(NA,n.steps)
 
-    covariate.left <- rep(NA,n.steps)
-    covariate.right <- rep(NA,n.steps)
-    covariate.mean <- rep(NA,n.steps)
-    covariate.median <- rep(NA,n.steps)
-    covariate.n <- rep(NA,n.steps)
+  covariate.left <- rep(NA,n.steps)
+  covariate.right <- rep(NA,n.steps)
+  covariate.mean <- rep(NA,n.steps)
+  covariate.median <- rep(NA,n.steps)
+  covariate.n <- rep(NA,n.steps)
 
-    sum.www <- rep(NA, n.steps)
+  sum.www <- rep(NA, n.steps)
 
-    if (is.null(weight_threshold))
-    weight_threshold <- calculate_weight_threshold(distribution = distribution,
+  if (is.null(weight_threshold))
+    weight_threshold <- calculate.weight.threshold(distribution = distribution,
                                                    params = list(standard_deviation = standard_deviation,
                                                                  vertex1 = vertex1,
                                                                  vertex2 = vertex2),
                                                    n = 40)
 
 
-    if (distribution == "gaussian") {
-        w.function <- makeWeightFunction("gaussian", sigma = standard_deviation)
-        for (i in seq(min(covcomp), max(covcomp), length.out = n.steps)) {  # Generate an equally spaced sequence from the minimum to the maximum value of covcomp.
-            www <- w.function(covcomp, mean = i)
-            www_sum <- sum(www)
-            if (www_sum < weight_threshold) {
-                warning("Weight sum is too low. Skipping this step.")
-                next
-            }
+  if (distribution == "gaussian") {
+    w.function <- makeWeightFunction("gaussian", sigma = standard_deviation)
+    for (i in seq(min(covcomp), max(covcomp), length.out = n.steps)) {  # Generate an equally spaced sequence from the minimum to the maximum value of covcomp.
+      www <- w.function(covcomp, mean = i)
+      www_sum <- sum(www)
+      if (www_sum < weight_threshold) {
+        warning("Weight sum is too low. Skipping this step.")
+        next
+      }
 
-            if (!MLE) {
-                res.reflim <- w.reflim(xx, www, n.min = n.min, apply.rounding = apply.rounding, lognormal = lognormal, perc.trunc=perc.trunc, plot.all = FALSE)
+      if (!MLE) {
+        res.reflim <- w.reflim(xx, www, n.min = n.min, apply.rounding = apply.rounding, lognormal = lognormal, perc.trunc=perc.trunc, plot.all = FALSE)
 
-                lower.lim[i] <- res.reflim$limits[1]
-                upper.lim[i] <- res.reflim$limits[2]
-                ci.lower.lim.l[i] <- res.reflim$confidence.int[1]
-                ci.lower.lim.u[i] <- res.reflim$confidence.int[2]
-                ci.upper.lim.l[i] <- res.reflim$confidence.int[3]
-                ci.upper.lim.u[i] <- res.reflim$confidence.int[4]
-                sum.www[i] <- sum(www)
-            }
+        lower.lim[i] <- res.reflim$limits[1]
+        upper.lim[i] <- res.reflim$limits[2]
+        ci.lower.lim.l[i] <- res.reflim$confidence.int[1]
+        ci.lower.lim.u[i] <- res.reflim$confidence.int[2]
+        ci.upper.lim.l[i] <- res.reflim$confidence.int[3]
+        ci.upper.lim.u[i] <- res.reflim$confidence.int[4]
+        sum.www[i] <- sum(www)
+      }
 
 
-            if (MLE) {
-                res.reflim <- w.reflimLOD.MLE(xx, weights = www, lod = min(xx[xx > 0]), n.lod = sum(xx == min(xx[xx > 0])), verbose = verbose)
+      if (MLE) {
+        res.reflim <- w.reflimLOD.MLE(xx, weights = www, lod = min(xx[xx > 0]), n.lod = sum(xx == min(xx[xx > 0])), verbose = verbose)
 
-                if (is.na(res.reflim$lower.limit)) {
-                    warning("MLE failed for this step (pnorm.lod=0 or 1). Skipping.")
-                    next
-                }
-
-                lower.lim[i] <- round(res.reflim$lower.limit, 4)
-                upper.lim[i] <- round(res.reflim$upper.limit, 4)
-                ci.lower.lim.l[i] <- res.reflim$lower.limit
-                ci.lower.lim.u[i] <- res.reflim$lower.limit
-                ci.upper.lim.l[i] <- res.reflim$upper.limit
-                ci.upper.lim.u[i] <- res.reflim$upper.limit
-                sum.www[i] <- sum(www)
-            }
-
-            distribution.type[i] <- ifelse(names(res.reflim)[1] == "mean", "normal", "lognormal")
-
-            covariate.left[i] <- min(covcomp)
-            covariate.right[i] <- max(covcomp)
-            covariate.mean[i] <- covcomp[which.max(www)]    # Use the mean parameter to record the point where the weights are maximal
-            covariate.median[i] <- median(covcomp)
-            covariate.n[i] <- length(covcomp)  # Count of all covariates
-
-            if (plot.weight)
-            plot(covcomp, www, type = "l", col = "blue", lwd = 2, main = paste("Gaussian Weight Function at i =", i))   # Plot the weight function
-            points(covcomp, www, col = "red")
-            www_sum <- sum(www)
-            text(x = mean(covcomp), y = mean(www),
-                 labels = paste("sum of www=", round(www_sum,2)))
+        if (is.na(res.reflim$lower.limit)) {
+          warning("MLE failed for this step (pnorm.lod=0 or 1). Skipping.")
+          next
         }
-    } else {
-        if (!is.null(window.size) & !is.null(step.width)) {
-            if (verbose)
-            print("window.size & step.width not null")
-            window.left <- covcomp[1]
-            window.right <- window.left + window.size
-            plot_index <- 1
-            for (i in 1:n.steps) {
-                is.in.interval <- covcomp >= window.left & covcomp <= window.right
-                if (sum(is.in.interval) >= n.min) { # enough points in the interval
-                    interval_cov <- covcomp[is.in.interval]
 
-                    xxx <- xx[is.in.interval]
+        lower.lim[i] <- round(res.reflim$lower.limit, 4)
+        upper.lim[i] <- round(res.reflim$upper.limit, 4)
+        ci.lower.lim.l[i] <- res.reflim$lower.limit
+        ci.lower.lim.u[i] <- res.reflim$lower.limit
+        ci.upper.lim.l[i] <- res.reflim$upper.limit
+        ci.upper.lim.u[i] <- res.reflim$upper.limit
+        sum.www[i] <- sum(www)
+      }
 
-                    if (distribution == "truncated_gaussian") {
-                        w.function <- makeWeightFunction(distribution, sigma = standard_deviation)
-                        www <- w.function(interval_cov, mean = (min(interval_cov) + max(interval_cov)) / 2)
-                    } else if (distribution == "triangular") {
-                        vertex1 <- if (is.null(vertex1)) 0.5 else vertex1
+      distribution.type[i] <- ifelse(names(res.reflim)[1] == "mean", "normal", "lognormal")
 
-                        start_point.value <- min(interval_cov)
-                        end_point.value <- max(interval_cov)
-                        vertex1.value <- (end_point.value - start_point.value) * vertex1 + start_point.value  # vertex1 is the vertex of the triangle
+      covariate.left[i] <- min(covcomp)
+      covariate.right[i] <- max(covcomp)
+      covariate.mean[i] <- covcomp[which.max(www)]    # Use the mean parameter to record the point where the weights are maximal
+      covariate.median[i] <- median(covcomp)
+      covariate.n[i] <- length(covcomp)  # Count of all covariates
 
-                        w.function <- makeWeightFunction(distribution, a = start_point.value, b = vertex1.value, c = end_point.value)
-                        www <- w.function(interval_cov)
-                    } else if (distribution == "trapezoidal") {
-                        vertex1 <- if (is.null(vertex1)) 0.3 else vertex1
-                        vertex2 <- if (is.null(vertex2)) 0.6 else vertex2
-
-                        start_point.value <- min(interval_cov)
-                        end_point.value <- max(interval_cov)
-                        vertex1.value <- (end_point.value - start_point.value) * vertex1 + start_point.value  # vertex1 is the left horizontal point
-                        vertex2.value <- (end_point.value - start_point.value) * vertex2 + start_point.value  # vertex2 is the right horizontal point
-
-                        w.function <- makeWeightFunction(distribution = distribution, a = start_point.value, b = vertex1.value, c = vertex2.value, d = end_point.value)
-                        www <- w.function(interval_cov)
-                    }
-
-                    www_sum <- sum(www)
-                    sum.www[i] <- www_sum
-
-                    if (www_sum < weight_threshold) {
-                        warning("Weight sum is too low. Skipping this step.")
-                        next
-                    }
-
-                    if (plot.weight)
-                    plot(interval_cov, www, type = "l", col = "blue", lwd = 2, main = paste("www VS interval_cov", plot_index))
-                    points(interval_cov, www, col = "red")
-                    text(x = mean(interval_cov), y = mean(www),
-                         labels = paste("Sum of www =", round(www_sum, 2)),
-                         col = "darkgreen", cex = 1.5, font = 2)
-                    sum.www[i] <- www_sum
-                    plot_index <- plot_index + 1
-
-
-                    if (!MLE) {
-                        res.reflim <- w.reflim(
-                            xxx,
-                            www,
-                            n.min = n.min,
-                            apply.rounding = apply.rounding,
-                            lognormal = lognormal,
-                            perc.trunc=perc.trunc,
-                            plot.all = FALSE
-                        )
-
-
-                        lower.lim[i] <- res.reflim$limits[1]
-                        upper.lim[i] <- res.reflim$limits[2]
-                        ci.lower.lim.l[i] <- res.reflim$confidence.int[1]
-                        ci.lower.lim.u[i] <- res.reflim$confidence.int[2]
-                        ci.upper.lim.l[i] <- res.reflim$confidence.int[3]
-                        ci.upper.lim.u[i] <- res.reflim$confidence.int[4]
-
-
-                        if (names(res.reflim$stats)[1] == "mean") {
-                            distribution.type[i] <- "normal"
-                        } else {
-                            distribution.type[i] <- "lognormal"
-                        }
-                    } else {
-                        res.reflim <- MLE(xxx, www, verbose = verbose)
-
-                        lower.lim[i] <- round(res.reflim$lower.limit, 4)
-                        upper.lim[i] <- round(res.reflim$upper.limit, 4)
-                        ci.lower.lim.l[i] <- res.reflim$lower.limit
-                        ci.lower.lim.u[i] <- res.reflim$lower.limit
-                        ci.upper.lim.l[i] <- res.reflim$upper.limit
-                        ci.upper.lim.u[i] <- res.reflim$upper.limit
-                    }
-
-
-
-                    covals <- covcomp[is.in.interval]
-                    covariate.left[i] <- window.left
-                    covariate.right[i] <- window.right
-                    covariate.mean[i] <- mean(covals)
-                    covariate.median[i] <- median(covals)
-                    covariate.n[i] <- sum(is.in.interval)
-
-                } else {
-                    if (verbose)
-                    print("not enough points in the interval")
-                    covariate.left[i] <- window.left
-                    covariate.right[i] <- window.right
-                    covariate.n[i] <- sum(is.in.interval)
-                }
-                window.left <- window.left + step.width
-                window.right <- window.right + step.width
-            }
-        } else {
-            if (verbose)
-            print("window.size or step.width is null")
-            ind <- 1
-            indl <- 1
-            indr <- 2
-            plot_index <- 1
-            while (indr <= length(cov.unique)) {
-                is.in.interval <- covcomp >= cov.unique[indl] & covcomp < cov.unique[indr]
-
-                if (sum(is.in.interval) >= n.min.window) {
-
-                    interval_cov <- covcomp[is.in.interval]
-
-                    xxx <- xx[is.in.interval]
-
-                    if (distribution == "truncated_gaussian") {
-                        w.function <- makeWeightFunction(distribution, sigma = standard_deviation)
-                        www <- w.function(interval_cov, mean = (min(interval_cov) + max(interval_cov)) / 2)
-                    } else if (distribution == "triangular") {
-                        vertex1 <- if (is.null(vertex1)) 0.5 else vertex1
-
-                        start_point.value <- min(interval_cov)
-                        end_point.value <- max(interval_cov)
-                        vertex1.value <- (end_point.value - start_point.value) * vertex1 + start_point.value
-
-                        w.function <- makeWeightFunction(distribution, a = start_point.value, b = vertex1.value, c = end_point.value)
-                        www <- w.function(interval_cov)
-                    } else if (distribution == "trapezoidal") {
-                        vertex1 <- if (is.null(vertex1)) 0.3 else vertex1
-                        vertex2 <- if (is.null(vertex2)) 0.6 else vertex2
-
-                        start_point.value <- min(interval_cov)
-                        end_point.value <- max(interval_cov)
-                        vertex1.value <- (end_point.value - start_point.value) * vertex1 + start_point.value
-                        vertex2.value <- (end_point.value - start_point.value) * vertex2 + start_point.value
-
-                        w.function <- makeWeightFunction(distribution = distribution, a = start_point.value, b = vertex1.value, c = vertex2.value, d = end_point.value)
-                        www <- w.function(interval_cov)
-                    }
-
-                    www_sum <- sum(www)
-                    sum.www[ind] <- www_sum
-
-                    if (www_sum < weight_threshold) {
-                        indr <- indr + 1
-                        warning("Weight sum is too low. Expanding the window.")
-                        next
-                    }
-
-                    if (plot.weight)
-                    plot(interval_cov, www, type = "l", col = "blue", lwd = 2, main = paste("www VS interval_cov", plot_index))
-                    points(interval_cov, www, col = "red")
-                    www_sum <- sum(www)
-                    text(x = mean(interval_cov), y = mean(www),
-                         labels = paste("Sum of www =", round(www_sum, 2)),
-                         col = "darkgreen", cex = 1.5, font = 2)
-                    sum.www[ind] <- www_sum
-                    plot_index <- plot_index + 1
-
-                    if (!MLE) {
-                        res.reflim <- w.reflim(
-                            xxx,
-                            www,
-                            n.min = n.min,
-                            apply.rounding = apply.rounding,
-                            lognormal = lognormal,
-                            perc.trunc=perc.trunc,
-                            plot.all = FALSE
-                        )
-
-                        lower.lim[ind] <- res.reflim$limits[1]
-                        upper.lim[ind] <- res.reflim$limits[2]
-                        ci.lower.lim.l[ind] <- res.reflim$confidence.int[1]
-                        ci.lower.lim.u[ind] <- res.reflim$confidence.int[2]
-                        ci.upper.lim.l[ind] <- res.reflim$confidence.int[3]
-                        ci.upper.lim.u[ind] <- res.reflim$confidence.int[4]
-
-                        if (names(res.reflim$stats)[1] == "mean") {
-                            distribution.type[ind] <- "normal"
-                        } else {
-                            distribution.type[ind] <- "lognormal"
-                        }
-                    } else {
-                        res.reflim <- MLE(xxx, www, verbose = verbose)
-
-                        lower.lim[ind] <- round(res.reflim$lower.limit, 4)
-                        upper.lim[ind] <- round(res.reflim$upper.limit, 4)
-                        ci.lower.lim.l[ind] <- res.reflim$lower.limit
-                        ci.lower.lim.u[ind] <- res.reflim$lower.limit
-                        ci.upper.lim.l[ind] <- res.reflim$upper.limit
-                        ci.upper.lim.u[ind] <- res.reflim$upper.limit
-                    }
-
-                    covals <- covcomp[is.in.interval]
-                    covariate.left[ind] <- min(covals)
-                    covariate.right[ind] <- max(covals)
-                    covariate.mean[ind] <- mean(covals)
-                    covariate.median[ind] <- median(covals)
-                    covariate.n[ind] <- sum(is.in.interval)
-
-                    indl <- indl + 1
-                    indr <- indr + 1
-                    ind <- ind + 1
-
-                } else {
-                    indr <- indr + 1
-                }
-            }
-        }
+      if (plot.weight)
+        plot(covcomp, www, type = "l", col = "blue", lwd = 2, main = paste("Gaussian Weight Function at i =", i))   # Plot the weight function
+      points(covcomp, www, col = "red")
+      www_sum <- sum(www)
+      text(x = mean(covcomp), y = mean(www),
+           labels = paste("sum of www=", round(www_sum,2)))
     }
+  } else {
+    if (!is.null(window.size) & !is.null(step.width)) {
+      if (verbose)
+        print("window.size & step.width not null")
+      window.left <- covcomp[1]
+      window.right <- window.left + window.size
+      plot_index <- 1
+      for (i in 1:n.steps) {
+        is.in.interval <- covcomp >= window.left & covcomp <= window.right
+        if (sum(is.in.interval) >= n.min) { # enough points in the interval
+          interval_cov <- covcomp[is.in.interval]
 
-    res <- data.frame(lower.lim,upper.lim,ci.lower.lim.l,ci.lower.lim.u,ci.upper.lim.l,ci.upper.lim.u,distribution.type,covariate.left,covariate.right,covariate.mean,covariate.median,covariate.n,sum.www)
-    # Remove rows containing NA
-    res <- res[!is.na(covariate.n) & !is.na(lower.lim),]
-    return(res)
+          xxx <- xx[is.in.interval]
+
+          if (distribution == "truncated_gaussian") {
+            w.function <- makeWeightFunction(distribution, sigma = standard_deviation)
+            www <- w.function(interval_cov, mean = (min(interval_cov) + max(interval_cov)) / 2)
+          } else if (distribution == "triangular") {
+            vertex1 <- if (is.null(vertex1)) 0.5 else vertex1
+
+            start_point.value <- min(interval_cov)
+            end_point.value <- max(interval_cov)
+            vertex1.value <- (end_point.value - start_point.value) * vertex1 + start_point.value  # vertex1 is the vertex of the triangle
+
+            w.function <- makeWeightFunction(distribution, a = start_point.value, b = vertex1.value, c = end_point.value)
+            www <- w.function(interval_cov)
+          } else if (distribution == "trapezoidal") {
+            vertex1 <- if (is.null(vertex1)) 0.3 else vertex1
+            vertex2 <- if (is.null(vertex2)) 0.6 else vertex2
+
+            start_point.value <- min(interval_cov)
+            end_point.value <- max(interval_cov)
+            vertex1.value <- (end_point.value - start_point.value) * vertex1 + start_point.value  # vertex1 is the left horizontal point
+            vertex2.value <- (end_point.value - start_point.value) * vertex2 + start_point.value  # vertex2 is the right horizontal point
+
+            w.function <- makeWeightFunction(distribution = distribution, a = start_point.value, b = vertex1.value, c = vertex2.value, d = end_point.value)
+            www <- w.function(interval_cov)
+          }
+
+          www_sum <- sum(www)
+          sum.www[i] <- www_sum
+
+          if (www_sum < weight_threshold) {
+            warning("Weight sum is too low. Skipping this step.")
+            next
+          }
+
+          if (plot.weight)
+            plot(interval_cov, www, type = "l", col = "blue", lwd = 2, main = paste("www VS interval_cov", plot_index))
+          points(interval_cov, www, col = "red")
+          text(x = mean(interval_cov), y = mean(www),
+               labels = paste("Sum of www =", round(www_sum, 2)),
+               col = "darkgreen", cex = 1.5, font = 2)
+          sum.www[i] <- www_sum
+          plot_index <- plot_index + 1
+
+
+          if (!MLE) {
+            res.reflim <- w.reflim(
+              xxx,
+              www,
+              n.min = n.min,
+              apply.rounding = apply.rounding,
+              lognormal = lognormal,
+              perc.trunc=perc.trunc,
+              plot.all = FALSE
+            )
+
+
+            lower.lim[i] <- res.reflim$limits[1]
+            upper.lim[i] <- res.reflim$limits[2]
+            ci.lower.lim.l[i] <- res.reflim$confidence.int[1]
+            ci.lower.lim.u[i] <- res.reflim$confidence.int[2]
+            ci.upper.lim.l[i] <- res.reflim$confidence.int[3]
+            ci.upper.lim.u[i] <- res.reflim$confidence.int[4]
+
+
+            if (names(res.reflim$stats)[1] == "mean") {
+              distribution.type[i] <- "normal"
+            } else {
+              distribution.type[i] <- "lognormal"
+            }
+          } else {
+            res.reflim <- MLE(xxx, www, verbose = verbose)
+
+            lower.lim[i] <- round(res.reflim$lower.limit, 4)
+            upper.lim[i] <- round(res.reflim$upper.limit, 4)
+            ci.lower.lim.l[i] <- res.reflim$lower.limit
+            ci.lower.lim.u[i] <- res.reflim$lower.limit
+            ci.upper.lim.l[i] <- res.reflim$upper.limit
+            ci.upper.lim.u[i] <- res.reflim$upper.limit
+          }
+
+
+
+          covals <- covcomp[is.in.interval]
+          covariate.left[i] <- window.left
+          covariate.right[i] <- window.right
+          covariate.mean[i] <- mean(covals)
+          covariate.median[i] <- median(covals)
+          covariate.n[i] <- sum(is.in.interval)
+
+        } else {
+          if (verbose)
+            print("not enough points in the interval")
+          covariate.left[i] <- window.left
+          covariate.right[i] <- window.right
+          covariate.n[i] <- sum(is.in.interval)
+        }
+        window.left <- window.left + step.width
+        window.right <- window.right + step.width
+      }
+    } else {
+      if (verbose)
+        print("window.size or step.width is null")
+      ind <- 1
+      indl <- 1
+      indr <- 2
+      plot_index <- 1
+      while (indr <= length(cov.unique)) {
+        is.in.interval <- covcomp >= cov.unique[indl] & covcomp < cov.unique[indr]
+
+        if (sum(is.in.interval) >= n.min.window) {
+
+          interval_cov <- covcomp[is.in.interval]
+
+          xxx <- xx[is.in.interval]
+
+          if (distribution == "truncated_gaussian") {
+            w.function <- makeWeightFunction(distribution, sigma = standard_deviation)
+            www <- w.function(interval_cov, mean = (min(interval_cov) + max(interval_cov)) / 2)
+          } else if (distribution == "triangular") {
+            vertex1 <- if (is.null(vertex1)) 0.5 else vertex1
+
+            start_point.value <- min(interval_cov)
+            end_point.value <- max(interval_cov)
+            vertex1.value <- (end_point.value - start_point.value) * vertex1 + start_point.value
+
+            w.function <- makeWeightFunction(distribution, a = start_point.value, b = vertex1.value, c = end_point.value)
+            www <- w.function(interval_cov)
+          } else if (distribution == "trapezoidal") {
+            vertex1 <- if (is.null(vertex1)) 0.3 else vertex1
+            vertex2 <- if (is.null(vertex2)) 0.6 else vertex2
+
+            start_point.value <- min(interval_cov)
+            end_point.value <- max(interval_cov)
+            vertex1.value <- (end_point.value - start_point.value) * vertex1 + start_point.value
+            vertex2.value <- (end_point.value - start_point.value) * vertex2 + start_point.value
+
+            w.function <- makeWeightFunction(distribution = distribution, a = start_point.value, b = vertex1.value, c = vertex2.value, d = end_point.value)
+            www <- w.function(interval_cov)
+          }
+
+          www_sum <- sum(www)
+          sum.www[ind] <- www_sum
+
+          if (www_sum < weight_threshold) {
+            indr <- indr + 1
+            warning("Weight sum is too low. Expanding the window.")
+            next
+          }
+
+          if (plot.weight)
+            plot(interval_cov, www, type = "l", col = "blue", lwd = 2, main = paste("www VS interval_cov", plot_index))
+          points(interval_cov, www, col = "red")
+          www_sum <- sum(www)
+          text(x = mean(interval_cov), y = mean(www),
+               labels = paste("Sum of www =", round(www_sum, 2)),
+               col = "darkgreen", cex = 1.5, font = 2)
+          sum.www[ind] <- www_sum
+          plot_index <- plot_index + 1
+
+          if (!MLE) {
+            res.reflim <- w.reflim(
+              xxx,
+              www,
+              n.min = n.min,
+              apply.rounding = apply.rounding,
+              lognormal = lognormal,
+              perc.trunc=perc.trunc,
+              plot.all = FALSE
+            )
+
+            lower.lim[ind] <- res.reflim$limits[1]
+            upper.lim[ind] <- res.reflim$limits[2]
+            ci.lower.lim.l[ind] <- res.reflim$confidence.int[1]
+            ci.lower.lim.u[ind] <- res.reflim$confidence.int[2]
+            ci.upper.lim.l[ind] <- res.reflim$confidence.int[3]
+            ci.upper.lim.u[ind] <- res.reflim$confidence.int[4]
+
+            if (names(res.reflim$stats)[1] == "mean") {
+              distribution.type[ind] <- "normal"
+            } else {
+              distribution.type[ind] <- "lognormal"
+            }
+          } else {
+            res.reflim <- MLE(xxx, www, verbose = verbose)
+
+            lower.lim[ind] <- round(res.reflim$lower.limit, 4)
+            upper.lim[ind] <- round(res.reflim$upper.limit, 4)
+            ci.lower.lim.l[ind] <- res.reflim$lower.limit
+            ci.lower.lim.u[ind] <- res.reflim$lower.limit
+            ci.upper.lim.l[ind] <- res.reflim$upper.limit
+            ci.upper.lim.u[ind] <- res.reflim$upper.limit
+          }
+
+          covals <- covcomp[is.in.interval]
+          covariate.left[ind] <- min(covals)
+          covariate.right[ind] <- max(covals)
+          covariate.mean[ind] <- mean(covals)
+          covariate.median[ind] <- median(covals)
+          covariate.n[ind] <- sum(is.in.interval)
+
+          indl <- indl + 1
+          indr <- indr + 1
+          ind <- ind + 1
+
+        } else {
+          indr <- indr + 1
+        }
+      }
+    }
+  }
+
+  res <- data.frame(lower.lim,upper.lim,ci.lower.lim.l,ci.lower.lim.u,ci.upper.lim.l,ci.upper.lim.u,distribution.type,covariate.left,covariate.right,covariate.mean,covariate.median,covariate.n,sum.www)
+  # Remove rows containing NA
+  res <- res[!is.na(covariate.n) & !is.na(lower.lim),]
+  return(res)
 }
 
 #' Sliding Window Analysis with Weighted Reference Limit Estimation
@@ -1170,232 +1170,232 @@ w.sliding.reflim.plot <- function(x,covariate,distribution = "truncated_gaussian
                                   standard_deviation = 5, vertex1 = NULL, vertex2 = NULL,
                                   window.size=NULL, step.width=NULL, lognormal=NULL,
                                   perc.trunc=2.5, n.min.window=200, n.min=100, apply.rounding=FALSE, weight_threshold = NULL, verbose = TRUE) {
-    is.nona <- !is.na(x) & !is.na(covariate)
-    xx <- x[is.nona]
-    covcomp <- covariate[is.nona]
+  is.nona <- !is.na(x) & !is.na(covariate)
+  xx <- x[is.nona]
+  covcomp <- covariate[is.nona]
 
-    ord.cov <- order(covcomp)
-    xx <- xx[ord.cov]
-    covcomp <- covcomp[ord.cov]
+  ord.cov <- order(covcomp)
+  xx <- xx[ord.cov]
+  covcomp <- covcomp[ord.cov]
 
-    if (!is.numeric(xx)) {stop("(reflim) x must be numeric.")}
-    if (min(xx) < 0) {stop("(reflim) only positive values allowed.")} # original <=
-    n <- length(xx)
-    if (n < 39) {stop(paste0("(iboxplot) n = ", n, ". The length of x should be 200 or more. The absolute minimum for reference limit estimation is 39."))}
-    if (n < n.min) {  # Determine enough points
-        print(noquote(paste("n =", n, "where a minimum of", n.min, "is required. You may try to reduce n.min at the loss of accuracy.")))
-        return(c(mean = NA, sd = NA, lower.lim = NA, upper.lim = NA))
-    }
+  if (!is.numeric(xx)) {stop("(reflim) x must be numeric.")}
+  if (min(xx) < 0) {stop("(reflim) only positive values allowed.")} # original <=
+  n <- length(xx)
+  if (n < 39) {stop(paste0("(iboxplot) n = ", n, ". The length of x should be 200 or more. The absolute minimum for reference limit estimation is 39."))}
+  if (n < n.min) {  # Determine enough points
+    print(noquote(paste("n =", n, "where a minimum of", n.min, "is required. You may try to reduce n.min at the loss of accuracy.")))
+    return(c(mean = NA, sd = NA, lower.lim = NA, upper.lim = NA))
+  }
 
-    cov.unique <- covcomp[!duplicated(covcomp)]
-    n.steps <- length(cov.unique)
-    if (n.steps == 1) {stop("The covariate is constant.")}
+  cov.unique <- covcomp[!duplicated(covcomp)]
+  n.steps <- length(cov.unique)
+  if (n.steps == 1) {stop("The covariate is constant.")}
 
-    if (!is.null(window.size) & !is.null(step.width)) {
-        n.steps <- ceiling(max(c(1,(covcomp[length(covcomp)] - covcomp[1] - window.size)/step.width)))
-    }
+  if (!is.null(window.size) & !is.null(step.width)) {
+    n.steps <- ceiling(max(c(1,(covcomp[length(covcomp)] - covcomp[1] - window.size)/step.width)))
+  }
 
-    x.interval <- list()
-    t.interval <- list()
-    w.interval <- list()
+  x.interval <- list()
+  t.interval <- list()
+  w.interval <- list()
 
-    sum.www <- rep(NA, n.steps)
+  sum.www <- rep(NA, n.steps)
 
-    loop <- 0
+  loop <- 0
 
-    if (is.null(weight_threshold))
-    weight_threshold <- calculate_weight_threshold(distribution = distribution,
+  if (is.null(weight_threshold))
+    weight_threshold <- calculate.weight.threshold(distribution = distribution,
                                                    params = list(standard_deviation = standard_deviation,
                                                                  vertex1 = vertex1,
                                                                  vertex2 = vertex2),
                                                    n = 40)
 
-    if (distribution == "gaussian") {
-        w.function <- makeWeightFunction("gaussian", sigma = standard_deviation)
-        step_index <- 1
-        for (i in seq(min(covcomp), max(covcomp), length.out = n.steps)) {  # Generate an equally spaced sequence from the minimum to the maximum value of covcomp.
-            www <- w.function(covcomp, mean = i)
+  if (distribution == "gaussian") {
+    w.function <- makeWeightFunction("gaussian", sigma = standard_deviation)
+    step_index <- 1
+    for (i in seq(min(covcomp), max(covcomp), length.out = n.steps)) {  # Generate an equally spaced sequence from the minimum to the maximum value of covcomp.
+      www <- w.function(covcomp, mean = i)
 
-            www_sum <- sum(www)
-            if (www_sum < weight_threshold) {
-                warning("Weight sum is too low. Skipping this step.")
-                next
-            }
+      www_sum <- sum(www)
+      if (www_sum < weight_threshold) {
+        warning("Weight sum is too low. Skipping this step.")
+        next
+      }
 
-            loop <- loop + 1
+      loop <- loop + 1
 
-            x.interval[[step_index]] <- xx
-            t.interval[[step_index]] <- covcomp
-            w.interval[[step_index]] <- www
+      x.interval[[step_index]] <- xx
+      t.interval[[step_index]] <- covcomp
+      w.interval[[step_index]] <- www
 
-            step_index <- step_index + 1
-        }
-    } else {
-        if (!is.null(window.size) & !is.null(step.width)) {
-            window.left <- covcomp[1]
-            window.right <- window.left + window.size
+      step_index <- step_index + 1
+    }
+  } else {
+    if (!is.null(window.size) & !is.null(step.width)) {
+      window.left <- covcomp[1]
+      window.right <- window.left + window.size
 
-            covariate.left <- numeric(n.steps)
-            covariate.right <- numeric(n.steps)
-            covariate.n <- numeric(n.steps)
-            for (i in 1:n.steps) {
+      covariate.left <- numeric(n.steps)
+      covariate.right <- numeric(n.steps)
+      covariate.n <- numeric(n.steps)
+      for (i in 1:n.steps) {
 
-                is.in.interval <- covcomp >= window.left & covcomp <= window.right
-                if (sum(is.in.interval) >= n.min) {
+        is.in.interval <- covcomp >= window.left & covcomp <= window.right
+        if (sum(is.in.interval) >= n.min) {
 
-                    interval_cov <- covcomp[is.in.interval]
-                    t.interval[[i]] <- interval_cov
+          interval_cov <- covcomp[is.in.interval]
+          t.interval[[i]] <- interval_cov
 
-                    xxx <- xx[is.in.interval]
-                    x.interval[[i]] <- xxx
+          xxx <- xx[is.in.interval]
+          x.interval[[i]] <- xxx
 
 
-                    if (distribution == "truncated_gaussian") {
-                        w.function <- makeWeightFunction(distribution, sigma = standard_deviation)
-                        www <- w.function(interval_cov, mean = (min(interval_cov) + max(interval_cov)) / 2)
-                    } else if (distribution == "triangular") {
-                        vertex1 <- if (is.null(vertex1)) 0.5 else vertex1
+          if (distribution == "truncated_gaussian") {
+            w.function <- makeWeightFunction(distribution, sigma = standard_deviation)
+            www <- w.function(interval_cov, mean = (min(interval_cov) + max(interval_cov)) / 2)
+          } else if (distribution == "triangular") {
+            vertex1 <- if (is.null(vertex1)) 0.5 else vertex1
 
-                        start_point.value <- min(interval_cov)
-                        end_point.value <- max(interval_cov)
-                        vertex1.value <- (end_point.value - start_point.value) * vertex1 + start_point.value
+            start_point.value <- min(interval_cov)
+            end_point.value <- max(interval_cov)
+            vertex1.value <- (end_point.value - start_point.value) * vertex1 + start_point.value
 
-                        w.function <- makeWeightFunction(distribution, a = start_point.value, b = vertex1.value, c = end_point.value)
-                        www <- w.function(interval_cov)
-                    } else if (distribution == "trapezoidal") {
-                        vertex1 <- if (is.null(vertex1)) 0.3 else vertex1
-                        vertex2 <- if (is.null(vertex2)) 0.6 else vertex2
+            w.function <- makeWeightFunction(distribution, a = start_point.value, b = vertex1.value, c = end_point.value)
+            www <- w.function(interval_cov)
+          } else if (distribution == "trapezoidal") {
+            vertex1 <- if (is.null(vertex1)) 0.3 else vertex1
+            vertex2 <- if (is.null(vertex2)) 0.6 else vertex2
 
-                        start_point.value <- min(interval_cov)
-                        end_point.value <- max(interval_cov)
-                        vertex1.value <- (end_point.value - start_point.value) * vertex1 + start_point.value
-                        vertex2.value <- (end_point.value - start_point.value) * vertex2 + start_point.value
+            start_point.value <- min(interval_cov)
+            end_point.value <- max(interval_cov)
+            vertex1.value <- (end_point.value - start_point.value) * vertex1 + start_point.value
+            vertex2.value <- (end_point.value - start_point.value) * vertex2 + start_point.value
 
-                        w.function <- makeWeightFunction(distribution = distribution, a = start_point.value, b = vertex1.value, c = vertex2.value, d = end_point.value)
-                        www <- w.function(interval_cov)
-                    }
-                    w.interval[[i]] <- www
+            w.function <- makeWeightFunction(distribution = distribution, a = start_point.value, b = vertex1.value, c = vertex2.value, d = end_point.value)
+            www <- w.function(interval_cov)
+          }
+          w.interval[[i]] <- www
 
-                    www_sum <- sum(www)
+          www_sum <- sum(www)
 
-                    sum.www[i] <- www_sum
+          sum.www[i] <- www_sum
 
-                    if (www_sum < weight_threshold) {
-                        warning("Weight sum is too low. Skipping this step.")
-                        next
-                    }
+          if (www_sum < weight_threshold) {
+            warning("Weight sum is too low. Skipping this step.")
+            next
+          }
 
-                    loop <- loop + 1
+          loop <- loop + 1
 
-                } else {
-                    covariate.left[i] <- window.left
-                    covariate.right[i] <- window.right
-                    covariate.n[i] <- sum(is.in.interval)
-                }
-                window.left <- window.left + step.width
-                window.right <- window.right + step.width
-            }
         } else {
-            ind <- 1
-            indl <- 1
-            indr <- 2
-            while (indr <= length(cov.unique)) {
-                is.in.interval <- covcomp >= cov.unique[indl] & covcomp < cov.unique[indr]
-
-                if (sum(is.in.interval) >= n.min.window) {
-
-                    interval_cov <- covcomp[is.in.interval]
-                    t.interval[[ind]] <- interval_cov
-
-                    xxx <- xx[is.in.interval]
-                    x.interval[[ind]] <- xxx
-
-                    if (distribution == "truncated_gaussian") {
-                        w.function <- makeWeightFunction(distribution = distribution, sigma = standard_deviation)
-                        www <- w.function(interval_cov, mean = (min(interval_cov) + max(interval_cov)) / 2)
-                    } else if (distribution == "triangular") {
-                        vertex1 <- if (is.null(vertex1)) 0.5 else vertex1
-
-                        start_point.value <- min(interval_cov)
-                        end_point.value <- max(interval_cov)
-                        vertex1.value <- (end_point.value - start_point.value) * vertex1 + start_point.value
-
-                        w.function <- makeWeightFunction(distribution, a = start_point.value, b = vertex1.value, c = end_point.value)
-                        www <- w.function(interval_cov)
-                    } else if (distribution == "trapezoidal") {
-                        vertex1 <- if (is.null(vertex1)) 0.3 else vertex1
-                        vertex2 <- if (is.null(vertex2)) 0.6 else vertex2
-
-                        start_point.value <- min(interval_cov)
-                        end_point.value <- max(interval_cov)
-                        vertex1.value <- (end_point.value - start_point.value) * vertex1 + start_point.value
-                        vertex2.value <- (end_point.value - start_point.value) * vertex2 + start_point.value
-
-                        w.function <- makeWeightFunction(distribution = distribution, a = start_point.value, b = vertex1.value, c = vertex2.value, d = end_point.value)
-
-                        www <- w.function(interval_cov)
-                    }
-                    w.interval[[ind]] <- www
-
-                    www_sum <- sum(www)
-
-                    sum.www[ind] <- www_sum
-
-                    if (www_sum < weight_threshold) {
-                        indr <- indr + 1
-                        warning("Weight sum is too low. Expanding the window.")
-                        next
-                    }
-
-                    loop <- loop + 1
-
-                    indl <- indl + 1
-                    indr <- indr + 1
-                    ind <- ind + 1
-
-                } else {
-                    indr <- indr + 1
-                }
-            }
+          covariate.left[i] <- window.left
+          covariate.right[i] <- window.right
+          covariate.n[i] <- sum(is.in.interval)
         }
+        window.left <- window.left + step.width
+        window.right <- window.right + step.width
+      }
+    } else {
+      ind <- 1
+      indl <- 1
+      indr <- 2
+      while (indr <= length(cov.unique)) {
+        is.in.interval <- covcomp >= cov.unique[indl] & covcomp < cov.unique[indr]
+
+        if (sum(is.in.interval) >= n.min.window) {
+
+          interval_cov <- covcomp[is.in.interval]
+          t.interval[[ind]] <- interval_cov
+
+          xxx <- xx[is.in.interval]
+          x.interval[[ind]] <- xxx
+
+          if (distribution == "truncated_gaussian") {
+            w.function <- makeWeightFunction(distribution = distribution, sigma = standard_deviation)
+            www <- w.function(interval_cov, mean = (min(interval_cov) + max(interval_cov)) / 2)
+          } else if (distribution == "triangular") {
+            vertex1 <- if (is.null(vertex1)) 0.5 else vertex1
+
+            start_point.value <- min(interval_cov)
+            end_point.value <- max(interval_cov)
+            vertex1.value <- (end_point.value - start_point.value) * vertex1 + start_point.value
+
+            w.function <- makeWeightFunction(distribution, a = start_point.value, b = vertex1.value, c = end_point.value)
+            www <- w.function(interval_cov)
+          } else if (distribution == "trapezoidal") {
+            vertex1 <- if (is.null(vertex1)) 0.3 else vertex1
+            vertex2 <- if (is.null(vertex2)) 0.6 else vertex2
+
+            start_point.value <- min(interval_cov)
+            end_point.value <- max(interval_cov)
+            vertex1.value <- (end_point.value - start_point.value) * vertex1 + start_point.value
+            vertex2.value <- (end_point.value - start_point.value) * vertex2 + start_point.value
+
+            w.function <- makeWeightFunction(distribution = distribution, a = start_point.value, b = vertex1.value, c = vertex2.value, d = end_point.value)
+
+            www <- w.function(interval_cov)
+          }
+          w.interval[[ind]] <- www
+
+          www_sum <- sum(www)
+
+          sum.www[ind] <- www_sum
+
+          if (www_sum < weight_threshold) {
+            indr <- indr + 1
+            warning("Weight sum is too low. Expanding the window.")
+            next
+          }
+
+          loop <- loop + 1
+
+          indl <- indl + 1
+          indr <- indr + 1
+          ind <- ind + 1
+
+        } else {
+          indr <- indr + 1
+        }
+      }
     }
+  }
 
 
-    if (verbose)
+  if (verbose)
     print(paste("Number of loops = ", loop))
-    res <- data.frame()
+  res <- data.frame()
 
-    last_was_separetor <- TRUE
+  last_was_separetor <- TRUE
 
 
-    #optimized
-    all_dfs <- vector("list", loop * 2)  # Leave space for data and separators
-    df_count <- 0
+  #optimized
+  all_dfs <- vector("list", loop * 2)  # Leave space for data and separators
+  df_count <- 0
 
-    for (i in 1:loop) {
-        if (!is.null(x.interval[[i]]) && !is.null(t.interval[[i]]) && !is.null(w.interval[[i]])) {
-            df_count <- df_count + 1
-            all_dfs[[df_count]] <- data.frame(
-                x = x.interval[[i]],
-                t = t.interval[[i]],
-                w = w.interval[[i]]
-            )
+  for (i in 1:loop) {
+    if (!is.null(x.interval[[i]]) && !is.null(t.interval[[i]]) && !is.null(w.interval[[i]])) {
+      df_count <- df_count + 1
+      all_dfs[[df_count]] <- data.frame(
+        x = x.interval[[i]],
+        t = t.interval[[i]],
+        w = w.interval[[i]]
+      )
 
-            # Add separators only when needed
-            if (i < loop && !is.null(x.interval[[i + 1]])) {
-                df_count <- df_count + 1
-                all_dfs[[df_count]] <- data.frame(
-                    x = "---",
-                    t = "---",
-                    w = "---"
-                )
-            }
-        }
+      # Add separators only when needed
+      if (i < loop && !is.null(x.interval[[i + 1]])) {
+        df_count <- df_count + 1
+        all_dfs[[df_count]] <- data.frame(
+          x = "---",
+          t = "---",
+          w = "---"
+        )
+      }
     }
+  }
 
-    # Merge all data frames at once
-    res <- do.call(rbind, all_dfs[1:df_count])
-    return(res)
+  # Merge all data frames at once
+  res <- do.call(rbind, all_dfs[1:df_count])
+  return(res)
 }
 
 #' Reference limits
@@ -1449,189 +1449,189 @@ w.sliding.reflim.plot <- function(x,covariate,distribution = "truncated_gaussian
 #'
 #' @export
 w.reflim <- function(x, x_weight, lognormal = NULL, targets = NULL, perc.trunc = 2.5,
-             n.min = 200, apply.rounding = TRUE, plot.it = FALSE, plot.all = FALSE,
-             print.n = TRUE, main = "reference limits", xlab = "x") {
-    na_indices <- is.na(x)
-    x_clean <- x[!na_indices]
-    ww_clean <- x_weight[!na_indices]
+                     n.min = 200, apply.rounding = TRUE, plot.it = FALSE, plot.all = FALSE,
+                     print.n = TRUE, main = "reference limits", xlab = "x") {
+  na_indices <- is.na(x)
+  x_clean <- x[!na_indices]
+  ww_clean <- x_weight[!na_indices]
 
-    result <- list(stats = c(mean = NA, sd = NA, n.total = NA,
-                             n.trunc = NA), lognormal = lognormal, limits = c(lower.lim = NA,
-                                                                              upper.lim = NA, lower.lim.low = NA, lower.lim.upp = NA,
-                                                                              upper.lim.low = NA, upper.lim.upp = NA), targets = c(lower.lim = NA,
-                                                                                                                                   upper.lim = NA, lower.lim.low = NA, lower.lim.up = NA,
-                                                                                                                                   upper.lim.low = NA, upper.lim.upp = NA), perc.norm = NA,
-                   confidence.int = c(lower.lim.low = NA, lower.lim.upp = NA,
-                                      upper.lim.low = NA, upper.lim.upp = NA, n = NA),
-                   interpretation = c(lower.limit = NA, upper.limit = NA),
-                   remarks = NA)
+  result <- list(stats = c(mean = NA, sd = NA, n.total = NA,
+                           n.trunc = NA), lognormal = lognormal, limits = c(lower.lim = NA,
+                                                                            upper.lim = NA, lower.lim.low = NA, lower.lim.upp = NA,
+                                                                            upper.lim.low = NA, upper.lim.upp = NA), targets = c(lower.lim = NA,
+                                                                                                                                 upper.lim = NA, lower.lim.low = NA, lower.lim.up = NA,
+                                                                                                                                 upper.lim.low = NA, upper.lim.upp = NA), perc.norm = NA,
+                 confidence.int = c(lower.lim.low = NA, lower.lim.upp = NA,
+                                    upper.lim.low = NA, upper.lim.upp = NA, n = NA),
+                 interpretation = c(lower.limit = NA, upper.limit = NA),
+                 remarks = NA)
 
-    if (!is.numeric(x_clean)) {
-        warning("x must be numeric. Non-numeric values removed.")
-        x_clean <- as.numeric(x_clean)
+  if (!is.numeric(x_clean)) {
+    warning("x must be numeric. Non-numeric values removed.")
+    x_clean <- as.numeric(x_clean)
 
-        na_indices <- is.na(x_clean)
-        x_clean <- x_clean[!na_indices]
-        ww_clean <- ww_clean[!na_indices]
-    }
-    if (min(x_clean) <= 0) {
-        warning("Only positive values allowed. values <= 0 removed.")
-        x_clean <- x_clean[x_clean > 0]
-        ww_clean <- ww_clean[x_clean > 0]
-        result$remarks <- "Values <= 0 removed"
-    }
+    na_indices <- is.na(x_clean)
+    x_clean <- x_clean[!na_indices]
+    ww_clean <- ww_clean[!na_indices]
+  }
+  if (min(x_clean) <= 0) {
+    warning("Only positive values allowed. values <= 0 removed.")
+    x_clean <- x_clean[x_clean > 0]
+    ww_clean <- ww_clean[x_clean > 0]
+    result$remarks <- "Values <= 0 removed"
+  }
 
-    if (!is.null(targets)) {
-        targets <- na.omit(as.numeric(targets))
-        if (length(targets) != 2) {
-            warning("targets must be a vector with length 2. NA not allowed. Targets removed.")
-            targets = NULL
-            result$remarks <- "Unsuitable target values removed"
-        }
+  if (!is.null(targets)) {
+    targets <- na.omit(as.numeric(targets))
+    if (length(targets) != 2) {
+      warning("targets must be a vector with length 2. NA not allowed. Targets removed.")
+      targets = NULL
+      result$remarks <- "Unsuitable target values removed"
     }
-    if (!is.null(targets)) {
-        if (is.na(targets[1]) | is.na(targets[2])) {
-            warning("Targets must be numeric. NA not allowed. Targets removed.")
-            targets = NULL
-            result$remarks <- "Unsuitable target values removed"
-        }
+  }
+  if (!is.null(targets)) {
+    if (is.na(targets[1]) | is.na(targets[2])) {
+      warning("Targets must be numeric. NA not allowed. Targets removed.")
+      targets = NULL
+      result$remarks <- "Unsuitable target values removed"
     }
-    if (!is.null(targets)) {
-        if (targets[1] >= targets[2]) {
-            warning("The upper target limit must be greater than the lower target limit. Targets removed. ")
-            targets = NULL
-            result$remarks <- "Unsuitable target values removed"
-        }
+  }
+  if (!is.null(targets)) {
+    if (targets[1] >= targets[2]) {
+      warning("The upper target limit must be greater than the lower target limit. Targets removed. ")
+      targets = NULL
+      result$remarks <- "Unsuitable target values removed"
     }
-    if (!is.null(targets)) {
-        if (targets[1] <= 0 | targets[2] <= 0) {
-            warning("Only positive target values allowed. Targets removed.")
-            targets = NULL
-            result$remarks <- "Unsuitable target values removed"
-        }
+  }
+  if (!is.null(targets)) {
+    if (targets[1] <= 0 | targets[2] <= 0) {
+      warning("Only positive target values allowed. Targets removed.")
+      targets = NULL
+      result$remarks <- "Unsuitable target values removed"
     }
-    n <- length(x_clean)
-    if (n < 40) {
-        warning(paste("n = ", n, ". The absolute minimum for reference limit estimation is 40. NAs returned."))
-        result$stats[3] <- n
-        result$remarks <- "Total n < 40"
-        return(result)
-    }
-    if (n < n.min) {
-        warning(paste("n = ", n, "where a minimum of ", n.min,
-                      "is required. n.min has been set to 40 at a potential loss of accuracy."))
-        result$stats[3] <- n
-        result$remarks <- "Attention: low.n"
-        n.min <- 40
-    }
-    digits <- adjust_digits(median(x_clean))$digits
-    if (is.null(lognormal)) {
-        plot.logtype <- TRUE
-        lognormal <- w.lognorm(x_clean, ww_clean)$lognormal
-    } else {
-        plot.logtype <- FALSE
-    }
-
-
-    res.lognorm <- w.lognorm(x_clean, ww_clean, plot.it = FALSE)
-    res.trunc <- w.iboxplot(x_clean, ww_clean, lognormal = lognormal, perc.trunc = perc.trunc,
-                            apply.rounding = apply.rounding, plot.it = FALSE)
-
-    n.trunc <- length(res.trunc$trunc)
-    if (n.trunc < 40) {
-        warning(paste("n = ", n.trunc, "after truncation. The absolute minimum for reference limit estimation is 40. NAs returned."))
-        result$stats[3] <- n
-        result$stats[4] <- n.trunc
-        result$remarks <- "n < 40 after truncation."
-        return(result)
-    }
-    if (n.trunc < n.min) {
-        warning(paste("n.trunc =", n.trunc, "where a minimum of",
-                      n.min, "is required. n.min has been set to 40 at a potential loss of accuracy."))
-        result$stats[3] <- n
-        result$stats[4] <- n.trunc
-        result$remarks <- "Low n after truncation."
-        n.min <- 40
-    }
-
-    res.qq <- w.truncated_qqplot(res.trunc$trunc, res.trunc$w_trunc, lognormal = lognormal,
-                                 perc.trunc = perc.trunc, n.min = n.min, apply.rounding = apply.rounding,
-                                 plot.it = FALSE)$result
-    if (!is.na(res.qq[3]) && !is.na(res.qq[4]) && res.qq[3] >= res.qq[4]) {
-        warning("Lower limit >= upper limit. Adjusting limits.")
-        res.qq[4] <- res.qq[3] + 1
-    }
-    res.ci <- conf_int95(n = n, lower.limit = as.numeric(res.qq[3]),
-                         upper.limit = as.numeric(res.qq[4]), lognormal = lognormal,
-                         apply.rounding = apply.rounding)
-
-    if (res.qq[3] > 0) {
-        res.pu <- permissible_uncertainty(lower.limit = as.numeric(res.qq[3]),
-                                          upper.limit = as.numeric(res.qq[4]), apply.rounding = apply.rounding)
-    } else {
-        warning("Estimated lower limit <- 0. No tolerance limits calculated. No graphics produced.")
-        res.pu <- rep(NA, 4)
-        targets = NULL
-        result$remarks <- "Lower limit <= 0"
-    }
-    res.lim <- c(as.numeric(res.qq[3:4]), as.numeric(res.pu))
-    names(res.lim) <- c("lower.lim", "upper.lim", "lower.lim.low",
-                        "lower.lim.upp", "upper.lim.low", "upper.lim.upp")
-    if (apply.rounding) {
-        res.lim <- round(res.lim, digits)
-    }
-
-    res.tar <- c(lower.lim = NA, upper.lim = NA, lower.lim.low = NA,
-                 lower.lim.up = NA, upper.lim.low = NA, upper.lim.upp = NA)
-    dev.lim <- c(lower.limit = NA, upper.limit = NA)
-
-    if (!is.null(targets)) {
-        ip <- interpretation(res.lim[1:2], targets) # Check that the given limit and target values are within the permissible uncertainty range
-        res.tar[1:2] <- targets
-        res.tar[3:6] <- ip$tol.tar
-        if (apply.rounding) {
-            res.tar <- round(res.tar, digits)
-        }
-        dev.lim <- ip$dev.lim
-    }
-
-    if (res.qq[3] > 0) {
-        if (plot.all) {
-            plot.it <- TRUE
-        }
-        if (plot.all) {
-            oldpar <- par(mfrow = c(2, 2))
-            on.exit(par(oldpar))
-        }
-        if (plot.it) {
-            rh <- ri_hist(x_clean, lognormal = lognormal, stats = res.qq[1:2],
-                          limits = res.qq[3:4], targets = targets, perc.norm = res.trunc$perc.norm,
-                          main = main, xlab = xlab)
-            if (print.n) {
-                legend("topright", legend = paste("n = ", n.trunc,
-                                                  "after truncation"), bty = "n", cex = 0.75)
-            }
-        }
-        if (plot.all) {
-            w.lognorm(x_clean, ww_clean, main = "Step 1: Bowley skewness", xlab = "",
-                      plot.logtype = plot.logtype)
-            w.iboxplot(x_clean, ww_clean, lognormal = lognormal, perc.trunc = perc.trunc,
-                       apply.rounding = apply.rounding, main = "Step 2: iBoxplot",
-                       xlab = "")
-            w.truncated_qqplot(res.trunc$trunc, res.trunc$w_trunc, lognormal = lognormal,
-                               perc.trunc = perc.trunc, n.min = n.min, apply.rounding = apply.rounding,
-                               main = "Step 3: Q-Q plot", xlab = "", ylab = "")
-        }
-    }
-
-    result$stats = c(res.qq[1:2], n.total = n, n.trunc = n.trunc)
-    result$lognormal = lognormal
-    result$limits = res.lim
-    result$targets = res.tar
-    result$perc.norm = res.trunc$perc.norm
-    result$confidence.int = res.ci[1:4]
-    result$interpretation = dev.lim
+  }
+  n <- length(x_clean)
+  if (n < 40) {
+    warning(paste("n = ", n, ". The absolute minimum for reference limit estimation is 40. NAs returned."))
+    result$stats[3] <- n
+    result$remarks <- "Total n < 40"
     return(result)
+  }
+  if (n < n.min) {
+    warning(paste("n = ", n, "where a minimum of ", n.min,
+                  "is required. n.min has been set to 40 at a potential loss of accuracy."))
+    result$stats[3] <- n
+    result$remarks <- "Attention: low.n"
+    n.min <- 40
+  }
+  digits <- adjust_digits(median(x_clean))$digits
+  if (is.null(lognormal)) {
+    plot.logtype <- TRUE
+    lognormal <- w.lognorm(x_clean, ww_clean)$lognormal
+  } else {
+    plot.logtype <- FALSE
+  }
+
+
+  res.lognorm <- w.lognorm(x_clean, ww_clean, plot.it = FALSE)
+  res.trunc <- w.iboxplot(x_clean, ww_clean, lognormal = lognormal, perc.trunc = perc.trunc,
+                          apply.rounding = apply.rounding, plot.it = FALSE)
+
+  n.trunc <- length(res.trunc$trunc)
+  if (n.trunc < 40) {
+    warning(paste("n = ", n.trunc, "after truncation. The absolute minimum for reference limit estimation is 40. NAs returned."))
+    result$stats[3] <- n
+    result$stats[4] <- n.trunc
+    result$remarks <- "n < 40 after truncation."
+    return(result)
+  }
+  if (n.trunc < n.min) {
+    warning(paste("n.trunc =", n.trunc, "where a minimum of",
+                  n.min, "is required. n.min has been set to 40 at a potential loss of accuracy."))
+    result$stats[3] <- n
+    result$stats[4] <- n.trunc
+    result$remarks <- "Low n after truncation."
+    n.min <- 40
+  }
+
+  res.qq <- w.truncated.qqplot(res.trunc$trunc, res.trunc$w_trunc, lognormal = lognormal,
+                               perc.trunc = perc.trunc, n.min = n.min, apply.rounding = apply.rounding,
+                               plot.it = FALSE)$result
+  if (!is.na(res.qq[3]) && !is.na(res.qq[4]) && res.qq[3] >= res.qq[4]) {
+    warning("Lower limit >= upper limit. Adjusting limits.")
+    res.qq[4] <- res.qq[3] + 1
+  }
+  res.ci <- conf_int95(n = n, lower.limit = as.numeric(res.qq[3]),
+                       upper.limit = as.numeric(res.qq[4]), lognormal = lognormal,
+                       apply.rounding = apply.rounding)
+
+  if (res.qq[3] > 0) {
+    res.pu <- permissible_uncertainty(lower.limit = as.numeric(res.qq[3]),
+                                      upper.limit = as.numeric(res.qq[4]), apply.rounding = apply.rounding)
+  } else {
+    warning("Estimated lower limit <- 0. No tolerance limits calculated. No graphics produced.")
+    res.pu <- rep(NA, 4)
+    targets = NULL
+    result$remarks <- "Lower limit <= 0"
+  }
+  res.lim <- c(as.numeric(res.qq[3:4]), as.numeric(res.pu))
+  names(res.lim) <- c("lower.lim", "upper.lim", "lower.lim.low",
+                      "lower.lim.upp", "upper.lim.low", "upper.lim.upp")
+  if (apply.rounding) {
+    res.lim <- round(res.lim, digits)
+  }
+
+  res.tar <- c(lower.lim = NA, upper.lim = NA, lower.lim.low = NA,
+               lower.lim.up = NA, upper.lim.low = NA, upper.lim.upp = NA)
+  dev.lim <- c(lower.limit = NA, upper.limit = NA)
+
+  if (!is.null(targets)) {
+    ip <- interpretation(res.lim[1:2], targets) # Check that the given limit and target values are within the permissible uncertainty range
+    res.tar[1:2] <- targets
+    res.tar[3:6] <- ip$tol.tar
+    if (apply.rounding) {
+      res.tar <- round(res.tar, digits)
+    }
+    dev.lim <- ip$dev.lim
+  }
+
+  if (res.qq[3] > 0) {
+    if (plot.all) {
+      plot.it <- TRUE
+    }
+    if (plot.all) {
+      oldpar <- par(mfrow = c(2, 2))
+      on.exit(par(oldpar))
+    }
+    if (plot.it) {
+      rh <- ri_hist(x_clean, lognormal = lognormal, stats = res.qq[1:2],
+                    limits = res.qq[3:4], targets = targets, perc.norm = res.trunc$perc.norm,
+                    main = main, xlab = xlab)
+      if (print.n) {
+        legend("topright", legend = paste("n = ", n.trunc,
+                                          "after truncation"), bty = "n", cex = 0.75)
+      }
+    }
+    if (plot.all) {
+      w.lognorm(x_clean, ww_clean, main = "Step 1: Bowley skewness", xlab = "",
+                plot.logtype = plot.logtype)
+      w.iboxplot(x_clean, ww_clean, lognormal = lognormal, perc.trunc = perc.trunc,
+                 apply.rounding = apply.rounding, main = "Step 2: iBoxplot",
+                 xlab = "")
+      w.truncated.qqplot(res.trunc$trunc, res.trunc$w_trunc, lognormal = lognormal,
+                         perc.trunc = perc.trunc, n.min = n.min, apply.rounding = apply.rounding,
+                         main = "Step 3: Q-Q plot", xlab = "", ylab = "")
+    }
+  }
+
+  result$stats = c(res.qq[1:2], n.total = n, n.trunc = n.trunc)
+  result$lognormal = lognormal
+  result$limits = res.lim
+  result$targets = res.tar
+  result$perc.norm = res.trunc$perc.norm
+  result$confidence.int = res.ci[1:4]
+  result$interpretation = dev.lim
+  return(result)
 }
 
 #' Bowley skewness with weights
@@ -2060,7 +2060,7 @@ w.iboxplot <- function(x, x_weight, lognormal = NULL, perc.trunc = 2.5,
 #'   plot.it = FALSE
 #' )
 #'
-#' result <- w.truncated_qqplot(
+#' result <- w.truncated.qqplot(
 #'   x.trunc = truncated$trunc,
 #'   x_weight = truncated$w_trunc,
 #'   n.min = 40,
@@ -2069,93 +2069,93 @@ w.iboxplot <- function(x, x_weight, lognormal = NULL, perc.trunc = 2.5,
 #' result$result
 #'
 #' @export
-w.truncated_qqplot <- function(x.trunc, x_weight, lognormal = NULL, perc.trunc = 2.5, n.min = 200,
+w.truncated.qqplot <- function(x.trunc, x_weight, lognormal = NULL, perc.trunc = 2.5, n.min = 200,
                                apply.rounding = TRUE, plot.it = FALSE, main = "w.Q-Q plot",
                                xlab = "theoretical quantiles", ylab = "sample quantiles") {
-    na_indices <- is.na(x.trunc)
-    x_clean <- x.trunc[!na_indices]
-    ww_clean <- x_weight[!na_indices]
+  na_indices <- is.na(x.trunc)
+  x_clean <- x.trunc[!na_indices]
+  ww_clean <- x_weight[!na_indices]
 
-    if (!is.numeric(x_clean)) {
-        stop("x.trunc must be numeric.")
-    }
-    if (min(x_clean) < 0) {
-        stop("Only positive values allowed.")
-    }
-    n <- length(x_clean)
-    if (n < 40) {
-        stop(paste0("n = ", n, ". The absolute minimum for reference limit estimation is 40."))
-    }
-    if (n < n.min) {
-        warning(paste("(w.truncated_qqplot) n =", n, "where a minimum of",
-                    n.min, "is required. You may try to reduce n.min at the loss of accuracy."))
-        return(list(result = NULL, lognormal = NULL))
-    }
+  if (!is.numeric(x_clean)) {
+    stop("x.trunc must be numeric.")
+  }
+  if (min(x_clean) < 0) {
+    stop("Only positive values allowed.")
+  }
+  n <- length(x_clean)
+  if (n < 40) {
+    stop(paste0("n = ", n, ". The absolute minimum for reference limit estimation is 40."))
+  }
+  if (n < n.min) {
+    warning(paste("(w.truncated.qqplot) n =", n, "where a minimum of",
+                  n.min, "is required. You may try to reduce n.min at the loss of accuracy."))
+    return(list(result = NULL, lognormal = NULL))
+  }
 
 
-    n.quantiles <- 100
-    if (n < n.quantiles) {
-        n.quantiles <- n
-    }
-    digits <- adjust_digits(median(x_clean))$digits
-    if (is.null(lognormal)) {
-        lognormal <- w.lognorm(x_clean, ww_clean, plot.it = FALSE)$lognormal
-    }
-    if (lognormal) {
-        x_clean <- log(x_clean)
-    }
-    p1 <- seq(from = perc.trunc / 100, to = 1 - perc.trunc / 100, length.out = n.quantiles)
-    p2 <- seq(from = 0, to = 1, length.out = n.quantiles)
-    x.ax <- qnorm(p1) # theoretical quantiles
-    y.ax <- Hmisc::wtd.quantile(x_clean, ww_clean, p2) #  sample quantiles
-    central.part <- floor(0.05 * n.quantiles):ceiling(0.95 * n.quantiles)
-    reg <- lm(y.ax[central.part] ~ x.ax[central.part])
-    a <- reg$coefficients[2]  # Regression Steigung slope
-    b <- reg$coefficients[1]  #  Achsenabschnitt intercept
+  n.quantiles <- 100
+  if (n < n.quantiles) {
+    n.quantiles <- n
+  }
+  digits <- adjust_digits(median(x_clean))$digits
+  if (is.null(lognormal)) {
+    lognormal <- w.lognorm(x_clean, ww_clean, plot.it = FALSE)$lognormal
+  }
+  if (lognormal) {
+    x_clean <- log(x_clean)
+  }
+  p1 <- seq(from = perc.trunc / 100, to = 1 - perc.trunc / 100, length.out = n.quantiles)
+  p2 <- seq(from = 0, to = 1, length.out = n.quantiles)
+  x.ax <- qnorm(p1) # theoretical quantiles
+  y.ax <- Hmisc::wtd.quantile(x_clean, ww_clean, p2) #  sample quantiles
+  central.part <- floor(0.05 * n.quantiles):ceiling(0.95 * n.quantiles)
+  reg <- lm(y.ax[central.part] ~ x.ax[central.part])
+  a <- reg$coefficients[2]  # Regression Steigung slope
+  b <- reg$coefficients[1]  #  Achsenabschnitt intercept
 
-    result <- c(b, a, b - 1.96 * a, b + 1.96 * a)
-    result <- setNames(result, c("mean", "sd", "lower.lim", "upper.lim"))
+  result <- c(b, a, b - 1.96 * a, b + 1.96 * a)
+  result <- setNames(result, c("mean", "sd", "lower.lim", "upper.lim"))
 
-    if (lognormal) {
-        names(result)[1:2] <- paste0(names(result)[1:2], "log") # meanlog  sdlog
-        result[1:2] <- round(result[1:2], 3)
-        result[3:4] <- exp(result[3:4])
-    }
-    if (result[3] < 0) {
-        result[3] <- 0
-    }
-    if (apply.rounding) {
-        result[3:4] <- round(result[3:4], digits)
-    }
+  if (lognormal) {
+    names(result)[1:2] <- paste0(names(result)[1:2], "log") # meanlog  sdlog
+    result[1:2] <- round(result[1:2], 3)
+    result[3:4] <- exp(result[3:4])
+  }
+  if (result[3] < 0) {
+    result[3] <- 0
+  }
+  if (apply.rounding) {
+    result[3:4] <- round(result[3:4], digits)
+  }
 
-    if (plot.it) {
-        if (!lognormal) {
-            ll <- result[3]
-            ul <- result[4]
-            diff <- ul - ll
-            plot(y.ax ~ x.ax, pch = 20, col = "blue", xlim = c(-3,
-                                                                3), ylim = c(ll - 0.2 * diff, ul + 0.2 * diff),
-                main = main, xlab = xlab, ylab = ylab)
-        } else {
-            ll <- log(result[3])
-            ul <- log(result[4])
-            diff <- ul - ll
-            plot(y.ax ~ x.ax, yaxt = "n", xlim = c(-3, 3), ylim = c(ll -
-                                                                        0.2 * diff, ul + 0.2 * diff), main = main, xlab = xlab,
-                ylab = ylab)
-            y.pos <- c(50, 100, 150, 200, 300, 400, 500, 1000, 1500) / (10^digits)
-            axis(2, at = log(y.pos), labels = y.pos)
-        }
-        abline(v = 0)
-        abline(v = c(-1.96, 1.96), lty = 2)
-        abline(h = c(ll, ul),
-               col = "green",
-               lwd = 2)
-        abline(reg$coefficients, lwd = 2, col = "blue")
-        points(c(-1.96, 1.96), c(ll, ul), pch = 19, col = "green")
-        text(-2, ll, formatC(result[3], digits, format = "f"), pos = 1)
-        text(2, ul, formatC(result[4], digits, format = "f"), pos = 3)
-
+  if (plot.it) {
+    if (!lognormal) {
+      ll <- result[3]
+      ul <- result[4]
+      diff <- ul - ll
+      plot(y.ax ~ x.ax, pch = 20, col = "blue", xlim = c(-3,
+                                                         3), ylim = c(ll - 0.2 * diff, ul + 0.2 * diff),
+           main = main, xlab = xlab, ylab = ylab)
+    } else {
+      ll <- log(result[3])
+      ul <- log(result[4])
+      diff <- ul - ll
+      plot(y.ax ~ x.ax, yaxt = "n", xlim = c(-3, 3), ylim = c(ll -
+                                                                0.2 * diff, ul + 0.2 * diff), main = main, xlab = xlab,
+           ylab = ylab)
+      y.pos <- c(50, 100, 150, 200, 300, 400, 500, 1000, 1500) / (10^digits)
+      axis(2, at = log(y.pos), labels = y.pos)
     }
-    return(list(result = result, lognormal = lognormal))
+    abline(v = 0)
+    abline(v = c(-1.96, 1.96), lty = 2)
+    abline(h = c(ll, ul),
+           col = "green",
+           lwd = 2)
+    abline(reg$coefficients, lwd = 2, col = "blue")
+    points(c(-1.96, 1.96), c(ll, ul), pch = 19, col = "green")
+    text(-2, ll, formatC(result[3], digits, format = "f"), pos = 1)
+    text(2, ul, formatC(result[4], digits, format = "f"), pos = 3)
+
+  }
+  return(list(result = result, lognormal = lognormal))
 }

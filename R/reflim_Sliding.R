@@ -1,4 +1,4 @@
- #' Reference intervals based on a sliding window technique
+#' Reference intervals based on a sliding window technique
 #'
 #' Computes reference intervals based on a sliding window technique. There are two variants.
 #' A fixed window size and a fixed step width by which the window is shifted or windows with
@@ -259,14 +259,14 @@ count.n.per.window <- function(x,covariate,window.size,step.width){
 #'   covariate.mean = age,
 #'   covariate.median = age
 #' )
-#' draw.sliding.reflims(
+#' draw.sliding.reflim(
 #'   result,
 #'   xlab = "Age",
 #'   ylab = "Reference limits"
 #' )
 #'
 #' @export
-draw.sliding.reflims <- function(result.sliding.reflim, use.mean=T, xlim=NULL, ylim=NULL, xlab=NULL, ylab=NULL, col.low=c(0,0,1), col.upp=c(1,0,0), lwd=2, transparency=0.8, draw.cis=T, grid.col=NULL){
+draw.sliding.reflim <- function(result.sliding.reflim, use.mean=T, xlim=NULL, ylim=NULL, xlab=NULL, ylab=NULL, col.low=c(0,0,1), col.upp=c(1,0,0), lwd=2, transparency=0.8, draw.cis=T, grid.col=NULL){
 
   rsr <- result.sliding.reflim
 
