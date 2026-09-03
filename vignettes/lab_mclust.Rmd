@@ -1,9 +1,9 @@
 ---
-title: "Indirect Reference Interval Estimation using lab_mclust"
-author: "Sandra Klawitter"
+title: "Indirect Reference Interval Estimation using lab.mclust"
+author: "Sandra Klawitter, Weihao Qiu"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Indirect Reference Interval Estimation using lab_mclust}
+  %\VignetteIndexEntry{Indirect Reference Interval Estimation using lab.mclust}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -17,10 +17,10 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-The lab_mclust() function provides an indirect method for estimating reference intervals using Gaussian Finite Mixture Models via the mclust algorithm. This approach is designed to model multi-modal or non-normal laboratory data and isolate the non-pathological subpopulation.
+The lab.mclust() function provides an indirect method for estimating reference intervals using Gaussian Finite Mixture Models via the mclust algorithm. This approach is designed to model multi-modal or non-normal laboratory data and isolate the non-pathological subpopulation.
 
 ## Usage
-Below is a standard workflow for applying lab_mclust to indirect reference interval calculations.
+Below is a standard workflow for applying lab.mclust to indirect reference interval calculations.
 
 ```{r setup, message = FALSE}
 library(reflimR.expand)
@@ -33,9 +33,9 @@ We can estimate reference limits for Alanine Aminotransferase (ALT) using the bu
 # Load example dataset from reflimR
 data("livertests", package = "reflimR")
 
-# Run lab_mclust on ALT values
+# Run lab.mclust on ALT values
 alt_data <- livertests$ALT
-res <- lab_mclust(alt_data)
+res <- lab.mclust(alt_data)
 
 # Print results
 print(res)

@@ -1,4 +1,4 @@
-test_that("lab_mclust identifies two mixture components", {
+test_that("lab.mclust identifies two mixture components", {
   set.seed(123)
 
   values <- c(
@@ -6,7 +6,7 @@ test_that("lab_mclust identifies two mixture components", {
     rnorm(120, mean = 40, sd = 3)
   )
 
-  result <- lab_mclust(
+  result <- lab.mclust(
     values,
     lognormal = FALSE,
     remove.extremes = FALSE,
@@ -26,22 +26,23 @@ test_that("lab_mclust identifies two mixture components", {
   expect_null(result$y.max)
 })
 
-test_that("lab_mclust validates its input", {
+test_that("lab.mclust validates its input", {
   expect_error(
-    lab_mclust("not numeric"),
+    lab.mclust("not numeric"),
     "x must be numeric"
   )
 
   expect_error(
-    lab_mclust(c(NA, -1, 0)),
+    lab.mclust(c(NA, -1, 0)),
     "at least two positive finite values"
   )
 })
-test_that("lab_mclust works with lognormal distribution and proper rounding", {
+
+test_that("lab.mclust works with lognormal distribution and proper rounding", {
   set.seed(42)
   vals <- stats::rlnorm(220, meanlog = log(50), sdlog = 0.2)
 
-  res <- lab_mclust(
+  res <- lab.mclust(
     vals,
     lognormal = TRUE,
     remove.extremes = FALSE,

@@ -27,7 +27,3 @@ zlog(4, L = 2, U = 8)
 zlog(c(2, 4, 8), L = 2, U = 8)
 
 }
-\references{
-The original implementation was developed in the VeRIf repository:
-\url{https://github.com/SandraKla/VeRIf}
-}

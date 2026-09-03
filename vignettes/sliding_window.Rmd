@@ -49,10 +49,10 @@ res_sliding <- sliding.reflim(
 head(res_sliding)
 ```
 
-The companion function draw.sliding.reflims() visualizes local reference limits. You can plot results aligned by local median covariate (use.mean = FALSE) or mean covariate (use.mean = TRUE):
+The companion function draw.sliding.reflim() visualizes local reference limits. You can plot results aligned by local median covariate (use.mean = FALSE) or mean covariate (use.mean = TRUE):
 
 ```{r}
-draw.sliding.reflims(res_sliding, use.mean = FALSE)
+draw.sliding.reflim(res_sliding, use.mean = FALSE)
 ```
 
 ### 2. Weighted Sliding Window (sliding.w.reflim)

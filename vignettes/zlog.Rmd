@@ -32,7 +32,7 @@ We can transform laboratory measurements based on defined lower and upper refere
 vals <- c(10, 15, 20, 25, 30, 100)
 
 # Calculate zlog values using Lower limit (L) and Upper limit (U)
-zlog_scores <- zlog(vals,L = 12, U = 25)
+zlog_scores <- zlog(vals, L = 12, U = 25)
 
 # Print standardized zlog scores
 print(zlog_scores)

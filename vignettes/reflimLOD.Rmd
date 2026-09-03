@@ -1,6 +1,6 @@
 ---
 title: "Reference Limits with Limit of Detection (LOD)"
-author: "Sandra Klawitter"
+author: "Sandra Klawitter, Weihao Qiu"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Reference Limits with Limit of Detection (LOD)}
@@ -25,6 +25,7 @@ Laboratory measurements frequently encounter values below lower limit of detecti
 The reflimLOD.MLE() function adjusts reference limit calculations when a portion of the dataset is below a specified detection threshold:
 ```{r}
 library(reflimR.expand)
+
 
 set.seed(42)
 # Generate synthetic biomarker data
@@ -61,7 +62,7 @@ hist(res_lod$selected.values,
 
 # Use vectorized functions to compute and superimpose density curves
 f_dens <- Vectorize(function(x) {
-  area <- (length(res_lod$selected.values) + res_lod$n.lod) * 1  # 自动计算步长面积
+  area <- (length(res_lod$selected.values) + res_lod$n.lod) * 1  # Automatically calculate step area
   area * dens.box.cox.inv(x, mu = res_lod$mu.log, sigma = res_lod$sigma.log, lambda = res_lod$lambda)
 })
 

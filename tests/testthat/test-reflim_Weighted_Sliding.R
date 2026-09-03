@@ -7,12 +7,12 @@ test_that("reflim_Weighted_Sliding functions handle invalid inputs", {
   expect_error(MLE(dataset_false))
   expect_error(w.reflimLOD.MLE(dataset_false))
   expect_error(w.modTrunc(dataset_false))
-  expect_error(draw.sliding.w.reflims(dataset_false))
-  expect_error(draw.sliding.w.reflims_compare(dataset_false))
+  expect_error(draw.sliding.w.reflim(dataset_false))
+  expect_error(draw.sliding.w.reflim.compare(dataset_false))
   expect_error(dtriang(dataset_false))
   expect_error(dtrapezoid(dataset_false))
   expect_error(makeWeightFunction(dataset_false))
-  expect_error(calculate_weight_threshold(dataset_false))
+  expect_error(calculate.weight.threshold(dataset_false))
   expect_error(w.sliding.reflim(dataset_false))
   expect_error(w.sliding.reflim.plot(dataset_false))
   expect_error(w.reflim(dataset_false))
@@ -20,7 +20,7 @@ test_that("reflim_Weighted_Sliding functions handle invalid inputs", {
   expect_error(w.IQR(dataset_false))
   expect_error(w.lognorm(dataset_false))
   expect_error(w.iboxplot(dataset_false))
-  expect_error(w.truncated_qqplot(dataset_false))
+  expect_error(w.truncated.qqplot(dataset_false))
 })
 
 test_that("sliding.w.reflim forwards arguments in normal mode", {
@@ -31,7 +31,7 @@ test_that("sliding.w.reflim forwards arguments in normal mode", {
       captured$arguments <- list(...)
       data.frame(lower.lim = 1, upper.lim = 2)
     },
-    draw.sliding.w.reflims = function(...) NULL,
+    draw.sliding.w.reflim = function(...) NULL,
     .package = "reflimR.expand"
   )
 
@@ -60,7 +60,7 @@ test_that("comparison mode forwards arguments to both calculations", {
       captured$calls[[length(captured$calls) + 1]] <- list(...)
       data.frame(lower.lim = 1, upper.lim = 2)
     },
-    draw.sliding.w.reflims.compare = function(...) NULL,
+    draw.sliding.w.reflim.compare = function(...) NULL,
     .package = "reflimR.expand"
   )
 
