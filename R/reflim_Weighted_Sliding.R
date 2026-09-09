@@ -628,37 +628,23 @@ dtrapezoid <- function(x, a, b, c, d) {
 #' Generate a weighting function based on the specified distribution type
 #'
 #' @param distribution Distribution type.
-#' @param ... Additional arguments passed to the internal weight function.
+#' @param ... Additional arguments passed to the internal weight function, such as \code{sigma} (numeric or function of \code{mean}).
 #'
 #' @return Weighting function.
-#'
-#' @examples
-#' gaussian_weight <- makeWeightFunction(
-#'   distribution = "gaussian",
-#'   sigma = 5
-#' )
-#' age <- 20:40
-#' weights <- gaussian_weight(age, mean = 30)
-#' plot(age, weights, type = "l")
-#'
 #' @export
 makeWeightFunction <- function(distribution = "truncated_gaussian", ...) {
   args <- list(...)
-  if (distribution == "truncated_gaussian") {
+  if (distribution %in% c("truncated_gaussian", "gaussian")) {
     sigma <- args$sigma
     if (is.null(sigma)) {
       sigma <- 5
     }
     return(function(x, mean) {
-      dnorm(x, mean = mean, sd = sigma) / dnorm(mean, mean = mean, sd = sigma)
-    })
-  } else if (distribution == "gaussian") {
-    sigma <- args$sigma
-    if (is.null(sigma)) {
-      sigma <- 5
-    }
-    return(function(x, mean) {
-      dnorm(x, mean = mean, sd = sigma) / dnorm(mean, mean = mean, sd = sigma)
+      curr_sd <- if (is.function(sigma)) sigma(mean) else sigma
+      if (is.null(curr_sd) || is.na(curr_sd) || curr_sd <= 0) {
+        stop("Standard deviation must be a positive number.")
+      }
+      dnorm(x, mean = mean, sd = curr_sd) / dnorm(mean, mean = mean, sd = curr_sd)
     })
   } else if (distribution == "triangular") {
     a <- args$a
@@ -682,30 +668,29 @@ makeWeightFunction <- function(distribution = "truncated_gaussian", ...) {
 
 #' Calculate the weight threshold for a given distribution and parameters.
 #'
-#' Used to determine if there are enough points in the distribution.
-#'
 #' @param distribution The type of distribution to use for the weight function.
 #' @param params A list of parameters for the distribution.
 #' @param n Number of sample points used to calculate threshold, default is 40.
+#' @param eval_point Numeric. Evaluation point for age-dependent parameter functions.
 #'
 #' @return Sum of weights.
-#'
-#' @examples
-#' threshold <- calculate.weight.threshold(
-#'   distribution = "gaussian",
-#'   params = list(standard_deviation = 5),
-#'   n = 40
-#' )
-#' threshold
-#'
 #' @export
-calculate.weight.threshold <- function(distribution, params, n = 40) {
+calculate.weight.threshold <- function(distribution, params, n = 40, eval_point = 0.5) {
 
   uniform_sample <- seq(0, 1, length.out = n)
+  sd_param <- params$standard_deviation
+
+  # Support standard_deviation as a function of age/covariate
+  if (is.function(sd_param)) {
+    sd_param <- tryCatch(sd_param(eval_point), error = function(e) {
+      tryCatch(sd_param(0.5), error = function(e2) 5)
+    })
+    if (is.null(sd_param) || is.na(sd_param) || sd_param <= 0) sd_param <- 5
+  }
 
   w.function <- switch(distribution,
-                       "gaussian" = makeWeightFunction("gaussian", sigma = params$standard_deviation),
-                       "truncated_gaussian" = makeWeightFunction("truncated_gaussian", sigma = params$standard_deviation),
+                       "gaussian" = makeWeightFunction("gaussian", sigma = sd_param),
+                       "truncated_gaussian" = makeWeightFunction("truncated_gaussian", sigma = sd_param),
                        "triangular" = {
                          vertex1 <- if (is.null(params$vertex1)) 0.5 else params$vertex1
                          makeWeightFunction("triangular", a = 0, b = vertex1, c = 1)
@@ -716,7 +701,6 @@ calculate.weight.threshold <- function(distribution, params, n = 40) {
                          makeWeightFunction(distribution = "trapezoidal", a = 0, b = vertex1, c = vertex2, d = 1)
                        }
   )
-
 
   weights <- if (distribution %in% c("gaussian", "truncated_gaussian")) {
     w.function(uniform_sample, mean = 0.5)
@@ -833,7 +817,8 @@ w.sliding.reflim <- function(x,covariate,distribution = "truncated_gaussian", st
                                                    params = list(standard_deviation = standard_deviation,
                                                                  vertex1 = vertex1,
                                                                  vertex2 = vertex2),
-                                                   n = 40)
+                                                   n = 40,
+                                                   eval_point = median(covcomp))
 
 
   if (distribution == "gaussian") {
@@ -884,12 +869,13 @@ w.sliding.reflim <- function(x,covariate,distribution = "truncated_gaussian", st
       covariate.median[i] <- median(covcomp)
       covariate.n[i] <- length(covcomp)  # Count of all covariates
 
-      if (plot.weight)
-        plot(covcomp, www, type = "l", col = "blue", lwd = 2, main = paste("Gaussian Weight Function at i =", i))   # Plot the weight function
-      points(covcomp, www, col = "red")
-      www_sum <- sum(www)
-      text(x = mean(covcomp), y = mean(www),
-           labels = paste("sum of www=", round(www_sum,2)))
+      if (plot.weight) {
+        plot(covcomp, www, type = "l", col = "blue", lwd = 2, main = paste("Gaussian Weight Function at i =", i))
+        points(covcomp, www, col = "red")
+        www_sum <- sum(www)
+        text(x = mean(covcomp), y = mean(www),
+             labels = paste("sum of www=", round(www_sum, 2)))
+      }
     }
   } else {
     if (!is.null(window.size) & !is.null(step.width)) {
@@ -1208,7 +1194,8 @@ w.sliding.reflim.plot <- function(x,covariate,distribution = "truncated_gaussian
                                                    params = list(standard_deviation = standard_deviation,
                                                                  vertex1 = vertex1,
                                                                  vertex2 = vertex2),
-                                                   n = 40)
+                                                   n = 40,
+                                                   eval_point = median(covcomp))
 
   if (distribution == "gaussian") {
     w.function <- makeWeightFunction("gaussian", sigma = standard_deviation)
