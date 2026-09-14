@@ -4,7 +4,7 @@
 \alias{calculate.weight.threshold}
 \title{Calculate the weight threshold for a given distribution and parameters.}
 \usage{
-calculate.weight.threshold(distribution, params, n = 40)
+calculate.weight.threshold(distribution, params, n = 40, eval_point = 0.5)
 }
 \arguments{
 \item{distribution}{The type of distribution to use for the weight function.}
@@ -12,19 +12,12 @@ calculate.weight.threshold(distribution, params, n = 40)
 \item{params}{A list of parameters for the distribution.}
 
 \item{n}{Number of sample points used to calculate threshold, default is 40.}
+
+\item{eval_point}{Numeric. Evaluation point for age-dependent parameter functions.}
 }
 \value{
 Sum of weights.
 }
 \description{
-Used to determine if there are enough points in the distribution.
-}
-\examples{
-threshold <- calculate.weight.threshold(
-  distribution = "gaussian",
-  params = list(standard_deviation = 5),
-  n = 40
-)
-threshold
-
+Calculate the weight threshold for a given distribution and parameters.
 }
